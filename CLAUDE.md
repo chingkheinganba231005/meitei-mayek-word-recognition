@@ -84,6 +84,42 @@ itself.
 by training the recogniser on generated data and testing on the real set, plus standard image
 metrics.
 
+## Phase 0 findings (first pass, 24 September 2026; details in `docs/phase0_audit.md`)
+
+Found by web search only (no full-text access in that session): every paper still has to be
+checked against its full text before citing.
+
+**Novelty statement (draft).** No published work recognises handwritten Meitei Mayek words or
+lines end to end. Earlier work classifies isolated characters, segments handwritten pages into
+lines and words without recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
+doi 10.1007/s00371-020-01799-4: 189 pages, word segmentation 88.96%), or corrects a character
+classifier on segmented words with zones and the orthographic rule (Hijam and Saharia 2024;
+Hijam's thesis). Meitei Mayek OCR exists only for print and scene text (NE-OCR 2026 preprint,
+IIIT Hyderabad's printed OCR, EMBiL). No handwriting generation model exists for the script. We
+contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
+synthetic words from TUMMHCD at scale; (3) a public, consented, writer-disjoint real word set
+(50+ writers) with a fixed protocol (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how
+much context resolves ꯢ/ꯏ; (5) later, the first diffusion model for Meitei Mayek handwriting.
+
+**Open risk, check first.** IIIT Hyderabad's camera-captured handwritten dataset (ICPR 2024,
+doi 10.1007/978-3-031-78495-8_21, https://cvit.iiit.ac.in/usodi/ucciohd.php) covers 13 languages
+including Manipuri (91K pages, 1,220 writers in total) with word recognition baselines. If its
+Manipuri is in Meitei Mayek, drop "first" from (1), compare against it and use it as a second real
+test set; (2)–(5) stand. If it is in Bengali script, the statement holds.
+
+**Corpora.** Native Unicode Meitei Mayek text is scarce: FineWeb-2 `mni_Mtei` has 61,256 words
+(ODC-By), against 2.69M words of Bengali-script Manipuri. Open native sources: Meitei Wikipedia
+(CC BY-SA 4.0), FineWeb-2 (ODC-By), FLORES+ `mni_Mtei` dev (CC BY-SA 4.0, gated), IN22 (CC BY 4.0,
+script to check), printed-dataset transcriptions (Data in Brief 2022, CC BY). ILCI-II (TDIL-DC,
+about 22,000 Meitei Mayek sentences) needs registration. Newspapers need written permission.
+Decision: evaluate the language model and all ꯢ/ꯏ statistics on native text only.
+Transliterated Bengali-script text may be used for training, flagged, because a transliterator
+bakes its own ꯢ/ꯏ rule into the text. Real-test-set prompts should come from a CC BY source.
+
+**TUMMHCD.** About 500 writers, two collection phases (answer sheets and notes; tabular forms).
+Images are mostly 24 × 24 px. Writer IDs: not yet known. Run `notebooks/phase0_data_audit.ipynb`
+on the Drive copy and record the outcome here.
+
 ## Working rules
 
 - Environment: Google Colab, one NVIDIA A100 (80 GB). Keep notebooks runnable top to bottom.
