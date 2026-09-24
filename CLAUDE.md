@@ -122,16 +122,20 @@ registration; newspapers need written permission. Transliterated Bengali-script 
 training only, flagged. Real-test-set prompts should come from a CC BY source.
 
 **ꯢ/ꯏ in typed text (measured, `results/corpus_stats.json`).** Typed text uses ꯢ only after ꯥ,
-ꯣ or ꯨ (97–99% of all ꯢ), and even there writes ꯏ most of the time (Wikipedia 70%, FineWeb-2
-90%). After a consonant letter (inherent a), the other vowel signs (ꯦ ꯧ ꯤ ꯩ) and vowel letters,
-and at word start, it writes ꯏ (98% or more in Wikipedia). So the thesis rule as coded here (inherent
-a counted as a vowel) holds for only 28–45% of occurrences, and ꯏ outnumbers ꯢ 3.5 to 1 in
-Wikipedia (thesis: ꯢ 3.6 to 1). Decisions pending (owner, with a language expert and the thesis
-text): which vowels the rule means (the data point to ꯥ, ꯣ, ꯨ), and the transcription convention
-for the project, most likely the thesis spelling if TUMMHCD's 044/025 labels follow it. Under it,
-normalise typed text before training, and measure ꯢ/ꯏ and the rule's exceptions only on text with
-checked spelling. A per-document count (next run) looks for pages that always write ꯢ after
-ꯥ/ꯣ/ꯨ: native text in the thesis spelling, if any exists.
+ꯣ or ꯨ (97–99% of all ꯢ); after a consonant letter (inherent a), the other vowel signs, vowel
+letters and at word start it writes ꯏ (98% or more in Wikipedia). For the i after ꯥ, ꯣ or ꯨ there
+are two spelling practices, page by page: of 4,523 Wikipedia pages with at least five such i's,
+1,615 write ꯢ for fewer than 30% of them and 2,463 for 70% or more (445 in between); web text
+outside Wikipedia leans to ꯏ (FineWeb-2: 122 pages against 24). Pages writing ꯢ there 90% of the
+time or more (Wikipedia 605 pages, 55,589 words; about 82,000 words over three overlapping
+sources) match the thesis: the rule holds for 95–97% of their i's (92–95% over distinct words;
+thesis 94.7%) and they have 4–6 ꯢ per ꯏ (thesis 3.6); part of this is built in by the selection,
+but ꯏ at word start (1,002 against 14 ꯢ) is not. Over all pages the rule as coded holds for only
+28–45%. **Recommended convention (owner to confirm with a language expert):** the thesis spelling,
+ꯢ for the i after ꯥ, ꯣ or ꯨ and ꯏ elsewhere, with an expert-checked exception list taken from the
+ꯢ-writing pages. Text for the language model: ꯢ-writing pages (70% cut) as they are, ꯏ-writing
+pages normalised and flagged; ꯢ/ꯏ accuracy measured only on held-out ꯢ-writing pages and on the
+real test set. Also check the thesis's exact wording of the rule and how TUMMHCD labelled 044/025.
 
 **TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
 side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are

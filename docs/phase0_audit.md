@@ -41,9 +41,11 @@ has been checked against the full text (CLAUDE.md rule).
    (section 10). File names are a class number and a running index; neighbouring and
    same-numbered files are unrelated in style; all 85,124 images are 24 × 24 with the ink filling
    the frame. 469 test images (3.7%) have a pixel-identical train image.
-7. **Typed text breaks the ꯢ/ꯏ rule.** Web text uses ꯢ only after ꯥ, ꯣ or ꯨ, and even there
-   writes ꯏ 70–90% of the time; everywhere else it writes ꯏ. So the rule holds for only 28–45%
-   of occurrences. Typed corpora cannot teach or test this pair as they stand (section 10).
+7. **Typed text mixes two spellings of the i after ꯥ, ꯣ and ꯨ.** Web text uses ꯢ only there,
+   and page by page it either writes ꯢ there almost always or almost never (section 10). Pages
+   of the first kind follow the thesis rule for 95–97% of their i's and have 4–6 ꯢ per ꯏ, close
+   to the thesis figures (94.7%, 3.6). So the thesis spelling is a living practice, and about
+   82,000 words of native text in it exist; the rest must be normalised before use.
 
 ## 2. Handwritten Meitei Mayek beyond isolated characters
 
@@ -265,10 +267,11 @@ tabular forms they are clearly positive (`tests/test_audit_tummhcd.py`).
 
 ## 10. Results of the Colab runs (24 September 2026)
 
-Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…),
-`results/tummhcd_audit_duplicates.csv` and `results/corpus_stats.json`, from the second run, which
-repeats the first and adds image sizes per class, the labels of duplicate groups and ꯢ/ꯏ counts by
-preceding character. Every number below comes from these files.
+Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…) and
+`results/tummhcd_audit_duplicates.csv` from the second run, which repeats the first and adds image
+sizes per class, the labels of duplicate groups and ꯢ/ꯏ counts by preceding character;
+`results/corpus_stats.json` from the third run, which adds the count by document. Every number
+below comes from these files.
 
 ### TUMMHCD: no writer information
 
@@ -400,10 +403,50 @@ it must be checked in the thesis itself.
   to say which vowels count. Standard orthography as in the thesis is the natural choice if
   TUMMHCD's labels follow it: check with a language expert, and check what the TUMMHCD paper says
   about labelling 044 and 025.
-- If some documents always write ꯢ after ꯥ, ꯣ and ꯨ, they are native text in the thesis
-  spelling, the best training and test text we could get for this pair. The corpus script now
-  sorts documents by how they spell that i (always ꯢ, always ꯏ, mixed) and reports the always-ꯢ
-  subset separately; this needs one more run.
+**By document (third run).** Share of ꯢ among the i's after ꯥ, ꯣ or ꯨ, for documents with at
+least five such i's:
+
+| Share of ꯢ | 0–0.1 | 0.1–0.2 | 0.2–0.3 | 0.3–0.4 | 0.4–0.5 | 0.5–0.6 | 0.6–0.7 | 0.7–0.8 | 0.8–0.9 | 0.9–1 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Wikipedia pages | 1,071 | 392 | 152 | 90 | 71 | 103 | 181 | 399 | 1,459 | 605 |
+| FineWeb-2 documents | 120 | 2 | 0 | 1 | 1 | 2 | 3 | 3 | 5 | 16 |
+| FineWeb-2 removed | 1,109 | 211 | 103 | 51 | 46 | 38 | 93 | 54 | 102 | 286 |
+
+Two spelling practices, not one noisy one: in Wikipedia 1,615 pages write ꯢ for fewer than 30%
+of these i's and 2,463 for 70% or more, with only 445 in between. The web outside Wikipedia leans
+to ꯏ (FineWeb-2: 122 against 24).
+
+| Documents that write ꯢ for 90% or more | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| documents | 605 | 16 | 286 |
+| running words | 55,589 | 2,404 | 23,705 |
+| rule holds, running words | 95.1% (11,982 i's) | 96.9% (318) | 96.0% (4,407) |
+| rule holds, distinct words | 92.7% (1,293) | 94.5% (165) | 92.0% (807) |
+| ꯢ per ꯏ, running words | 5.9 | 4.1 | 4.8 |
+| ꯢ per ꯏ, distinct words | 2.4 | 3.2 | 2.7 |
+
+These pages match the thesis (94.7% on about 26,000 checked words; ꯢ about 3.6 times ꯏ) closely.
+Part of the match is built in, because the pages were chosen for writing ꯢ after ꯥ, ꯣ and ꯨ; but
+the other half of the rule holds on its own there: ꯏ at word start 1,002 times against 14 ꯢ, after
+a lonsum final 164 against 9 (Wikipedia). No i follows a bare consonant letter anywhere in these
+pages. In the Wikipedia pages the rule misses 587 of 11,982 i's: ꯏ after ꯥ (456, 6% of the i's
+there), ꯏ after ꯣ or ꯨ (33), ꯏ after ꯦ, ꯧ, ꯤ or a vowel letter (75; the rule as coded predicts ꯢ
+there, typed practice never writes it), and ꯢ at word start or after a final (23). The first two
+groups and the last are the candidates for genuine exceptions, or typing slips.
+
+The main ꯢ mode in Wikipedia lies at 80–90%, below the 90% cut: either the thesis spelling keeps ꯏ
+after ꯥ in some words, or pages have several authors. The natural cut between the two practices
+is the valley at 30–70%.
+
+- The thesis spelling is a living practice, and about 82,000 running words of native text in it
+  exist at the strict 90% cut (sources overlap), more at a 70% cut. That is the best text we have
+  for training the language model on this pair and for testing it.
+- Recommended convention (owner to confirm with a language expert): the thesis spelling, with ꯢ
+  for the i after ꯥ, ꯣ or ꯨ and ꯏ everywhere else, plus a short list of exceptions taken from
+  the ꯢ-writing pages and checked by the expert.
+- Text preparation for Phase 1: the ꯢ-writing pages (70% or more) as they are; the ꯏ-writing pages
+  normalised by the rule and the exception list, and flagged; ꯢ/ꯏ accuracy measured only on held-out
+  ꯢ-writing pages and, later, on the real test set.
 - Under that convention, normalise typed text before training (ꯏ after a vowel becomes ꯢ). This
   also erases the genuine exceptions (5.3% of the thesis's checked words), so what context adds
   beyond the rule can only be measured on text with checked spelling: the thesis's TDIL corpus,
@@ -412,11 +455,12 @@ it must be checked in the thesis itself.
 
 ## 11. To do
 
-1. Run the notebook once more for the per-document count (the corpus part is enough; the TUMMHCD
-   part will repeat the numbers above). It also writes the word list of the always-ꯢ documents to
-   Drive.
-2. Fix the ꯢ/ꯏ transcription convention with a language expert, including which vowels count;
-   find out how TUMMHCD labelled 044 and 025.
+1. Send the word list of the always-ꯢ Wikipedia pages
+   (`MyDrive/meitei-word-recognition/wordlists/wikipedia_consistent_i_lonsum.tsv`). From it we
+   extract the exception candidates (words with ꯏ after ꯥ, ꯣ or ꯨ; words with ꯢ at word start or
+   after a final) for the language expert.
+2. Confirm the ꯢ/ꯏ convention with a language expert (recommended: the thesis spelling, ꯢ for
+   the i after ꯥ, ꯣ or ꯨ), and the exception list; find out how TUMMHCD labelled 044 and 025.
 3. First paper: check the size-feature explanation, and score the final system without the 469
    test images that have a train twin.
 4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files

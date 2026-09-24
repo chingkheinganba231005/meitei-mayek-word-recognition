@@ -440,6 +440,173 @@
      "i_letter": 1
     }
    ]
+  },
+  "by_document": {
+   "documents": 15531,
+   "min_i_after_aa_o_u": 5,
+   "share_of_i_lonsum_after_aa_o_u": {
+    "0.0-0.1": 1071,
+    "0.1-0.2": 392,
+    "0.2-0.3": 152,
+    "0.3-0.4": 90,
+    "0.4-0.5": 71,
+    "0.5-0.6": 103,
+    "0.6-0.7": 181,
+    "0.7-0.8": 399,
+    "0.8-0.9": 1459,
+    "0.9-1.0": 605
+   },
+   "consistent_i_lonsum": {
+    "documents": 605,
+    "running_words": 55589
+   },
+   "consistent_i_letter": {
+    "documents": 1082,
+    "running_words": 433145
+   },
+   "mixed": {
+    "documents": 2836,
+    "running_words": 253533
+   },
+   "too_few_to_tell": {
+    "documents": 11008,
+    "running_words": 294016
+   },
+   "consistent_i_lonsum_subset": {
+    "distinct_words": 7810,
+    "rule_running_words": {
+     "occurrences": 11982,
+     "rule_accuracy": 0.951,
+     "actual_i_letter": {
+      "ꯏ": 1176,
+      "ꯢ": 564
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 10219,
+      "ꯏ": 23
+     },
+     "i_lonsum_per_i_letter": 5.886
+    },
+    "rule_distinct_words": {
+     "occurrences": 1293,
+     "rule_accuracy": 0.9273,
+     "actual_i_letter": {
+      "ꯏ": 304,
+      "ꯢ": 76
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 895,
+      "ꯏ": 18
+     },
+     "i_lonsum_per_i_letter": 2.403
+    },
+    "i_contexts_running_words": {
+     "by_kind": [
+      {
+       "before": "vowel sign",
+       "i_lonsum": 10219,
+       "i_letter": 524
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 14,
+       "i_letter": 1002
+      },
+      {
+       "before": "final consonant (lonsum)",
+       "i_lonsum": 9,
+       "i_letter": 164
+      },
+      {
+       "before": "vowel letter",
+       "i_lonsum": 0,
+       "i_letter": 40
+      },
+      {
+       "before": "nung or apun",
+       "i_lonsum": 0,
+       "i_letter": 10
+      }
+     ],
+     "by_character": [
+      {
+       "before": "U+ABE5 ꯥ",
+       "i_lonsum": 7145,
+       "i_letter": 456
+      },
+      {
+       "before": "U+ABE3 ꯣ",
+       "i_lonsum": 2931,
+       "i_letter": 24
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 14,
+       "i_letter": 1002
+      },
+      {
+       "before": "U+ABE8 ꯨ",
+       "i_lonsum": 137,
+       "i_letter": 9
+      },
+      {
+       "before": "U+ABE0 ꯠ",
+       "i_lonsum": 0,
+       "i_letter": 76
+      },
+      {
+       "before": "U+ABDB ꯛ",
+       "i_lonsum": 3,
+       "i_letter": 59
+      },
+      {
+       "before": "U+ABE1 ꯡ",
+       "i_lonsum": 1,
+       "i_letter": 23
+      },
+      {
+       "before": "U+ABD1 ꯑ",
+       "i_lonsum": 0,
+       "i_letter": 22
+      },
+      {
+       "before": "U+ABCE ꯎ",
+       "i_lonsum": 0,
+       "i_letter": 18
+      },
+      {
+       "before": "U+ABE6 ꯦ",
+       "i_lonsum": 2,
+       "i_letter": 16
+      },
+      {
+       "before": "U+ABE7 ꯧ",
+       "i_lonsum": 4,
+       "i_letter": 13
+      },
+      {
+       "before": "U+ABEA ꯪ",
+       "i_lonsum": 0,
+       "i_letter": 10
+      },
+      {
+       "before": "U+ABDD ꯝ",
+       "i_lonsum": 5,
+       "i_letter": 4
+      },
+      {
+       "before": "U+ABE4 ꯤ",
+       "i_lonsum": 0,
+       "i_letter": 6
+      },
+      {
+       "before": "U+ABE2 ꯢ",
+       "i_lonsum": 0,
+       "i_letter": 2
+      }
+     ]
+    }
+   }
   }
  },
  "fineweb2": {
@@ -800,6 +967,153 @@
      "i_letter": 1
     }
    ]
+  },
+  "by_document": {
+   "documents": 169,
+   "min_i_after_aa_o_u": 5,
+   "share_of_i_lonsum_after_aa_o_u": {
+    "0.0-0.1": 120,
+    "0.1-0.2": 2,
+    "0.2-0.3": 0,
+    "0.3-0.4": 1,
+    "0.4-0.5": 1,
+    "0.5-0.6": 2,
+    "0.6-0.7": 3,
+    "0.7-0.8": 3,
+    "0.8-0.9": 5,
+    "0.9-1.0": 16
+   },
+   "consistent_i_lonsum": {
+    "documents": 16,
+    "running_words": 2404
+   },
+   "consistent_i_letter": {
+    "documents": 120,
+    "running_words": 46420
+   },
+   "mixed": {
+    "documents": 17,
+    "running_words": 2560
+   },
+   "too_few_to_tell": {
+    "documents": 16,
+    "running_words": 1011
+   },
+   "consistent_i_lonsum_subset": {
+    "distinct_words": 1034,
+    "rule_running_words": {
+     "occurrences": 318,
+     "rule_accuracy": 0.9686,
+     "actual_i_letter": {
+      "ꯏ": 53,
+      "ꯢ": 9
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 255,
+      "ꯏ": 1
+     },
+     "i_lonsum_per_i_letter": 4.129
+    },
+    "rule_distinct_words": {
+     "occurrences": 165,
+     "rule_accuracy": 0.9455,
+     "actual_i_letter": {
+      "ꯏ": 31,
+      "ꯢ": 8
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 125,
+      "ꯏ": 1
+     },
+     "i_lonsum_per_i_letter": 3.231
+    },
+    "i_contexts_running_words": {
+     "by_kind": [
+      {
+       "before": "vowel sign",
+       "i_lonsum": 254,
+       "i_letter": 4
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 0,
+       "i_letter": 51
+      },
+      {
+       "before": "vowel letter",
+       "i_lonsum": 1,
+       "i_letter": 5
+      },
+      {
+       "before": "final consonant (lonsum)",
+       "i_lonsum": 1,
+       "i_letter": 1
+      },
+      {
+       "before": "nung or apun",
+       "i_lonsum": 0,
+       "i_letter": 1
+      }
+     ],
+     "by_character": [
+      {
+       "before": "U+ABE5 ꯥ",
+       "i_lonsum": 140,
+       "i_letter": 1
+      },
+      {
+       "before": "U+ABE3 ꯣ",
+       "i_lonsum": 104,
+       "i_letter": 1
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 0,
+       "i_letter": 51
+      },
+      {
+       "before": "U+ABE8 ꯨ",
+       "i_lonsum": 8,
+       "i_letter": 0
+      },
+      {
+       "before": "U+ABD1 ꯑ",
+       "i_lonsum": 0,
+       "i_letter": 5
+      },
+      {
+       "before": "U+ABE7 ꯧ",
+       "i_lonsum": 2,
+       "i_letter": 1
+      },
+      {
+       "before": "U+ABCE ꯎ",
+       "i_lonsum": 1,
+       "i_letter": 0
+      },
+      {
+       "before": "U+ABEA ꯪ",
+       "i_lonsum": 0,
+       "i_letter": 1
+      },
+      {
+       "before": "U+ABE6 ꯦ",
+       "i_lonsum": 0,
+       "i_letter": 1
+      },
+      {
+       "before": "U+ABDD ꯝ",
+       "i_lonsum": 1,
+       "i_letter": 0
+      },
+      {
+       "before": "U+ABDB ꯛ",
+       "i_lonsum": 0,
+       "i_letter": 1
+      }
+     ]
+    }
+   }
   }
  },
  "fineweb2_removed": {
@@ -1205,6 +1519,173 @@
      "i_letter": 1
     }
    ]
+  },
+  "by_document": {
+   "documents": 3718,
+   "min_i_after_aa_o_u": 5,
+   "share_of_i_lonsum_after_aa_o_u": {
+    "0.0-0.1": 1109,
+    "0.1-0.2": 211,
+    "0.2-0.3": 103,
+    "0.3-0.4": 51,
+    "0.4-0.5": 46,
+    "0.5-0.6": 38,
+    "0.6-0.7": 93,
+    "0.7-0.8": 54,
+    "0.8-0.9": 102,
+    "0.9-1.0": 286
+   },
+   "consistent_i_lonsum": {
+    "documents": 286,
+    "running_words": 23705
+   },
+   "consistent_i_letter": {
+    "documents": 1167,
+    "running_words": 221527
+   },
+   "mixed": {
+    "documents": 640,
+    "running_words": 68255
+   },
+   "too_few_to_tell": {
+    "documents": 1625,
+    "running_words": 52345
+   },
+   "consistent_i_lonsum_subset": {
+    "distinct_words": 4598,
+    "rule_running_words": {
+     "occurrences": 4407,
+     "rule_accuracy": 0.9605,
+     "actual_i_letter": {
+      "ꯏ": 615,
+      "ꯢ": 151
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 3618,
+      "ꯏ": 23
+     },
+     "i_lonsum_per_i_letter": 4.753
+    },
+    "rule_distinct_words": {
+     "occurrences": 807,
+     "rule_accuracy": 0.9195,
+     "actual_i_letter": {
+      "ꯏ": 168,
+      "ꯢ": 51
+     },
+     "actual_i_lonsum": {
+      "ꯢ": 574,
+      "ꯏ": 14
+     },
+     "i_lonsum_per_i_letter": 2.685
+    },
+    "i_contexts_running_words": {
+     "by_kind": [
+      {
+       "before": "vowel sign",
+       "i_lonsum": 3614,
+       "i_letter": 120
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 7,
+       "i_letter": 563
+      },
+      {
+       "before": "final consonant (lonsum)",
+       "i_lonsum": 14,
+       "i_letter": 52
+      },
+      {
+       "before": "vowel letter",
+       "i_lonsum": 4,
+       "i_letter": 31
+      },
+      {
+       "before": "nung or apun",
+       "i_lonsum": 2,
+       "i_letter": 0
+      }
+     ],
+     "by_character": [
+      {
+       "before": "U+ABE5 ꯥ",
+       "i_lonsum": 2705,
+       "i_letter": 65
+      },
+      {
+       "before": "U+ABE3 ꯣ",
+       "i_lonsum": 860,
+       "i_letter": 13
+      },
+      {
+       "before": "word start",
+       "i_lonsum": 7,
+       "i_letter": 563
+      },
+      {
+       "before": "U+ABE8 ꯨ",
+       "i_lonsum": 38,
+       "i_letter": 3
+      },
+      {
+       "before": "U+ABE6 ꯦ",
+       "i_lonsum": 0,
+       "i_letter": 30
+      },
+      {
+       "before": "U+ABE1 ꯡ",
+       "i_lonsum": 3,
+       "i_letter": 27
+      },
+      {
+       "before": "U+ABDB ꯛ",
+       "i_lonsum": 3,
+       "i_letter": 19
+      },
+      {
+       "before": "U+ABCE ꯎ",
+       "i_lonsum": 4,
+       "i_letter": 15
+      },
+      {
+       "before": "U+ABE7 ꯧ",
+       "i_lonsum": 11,
+       "i_letter": 6
+      },
+      {
+       "before": "U+ABD1 ꯑ",
+       "i_lonsum": 0,
+       "i_letter": 16
+      },
+      {
+       "before": "U+ABDD ꯝ",
+       "i_lonsum": 8,
+       "i_letter": 1
+      },
+      {
+       "before": "U+ABE2 ꯢ",
+       "i_lonsum": 0,
+       "i_letter": 3
+      },
+      {
+       "before": "U+ABE4 ꯤ",
+       "i_lonsum": 0,
+       "i_letter": 3
+      },
+      {
+       "before": "U+ABEA ꯪ",
+       "i_lonsum": 2,
+       "i_letter": 0
+      },
+      {
+       "before": "U+ABE0 ꯠ",
+       "i_lonsum": 0,
+       "i_letter": 2
+      }
+     ]
+    }
+   }
   }
  },
  "all_sources_combined": {
