@@ -1,8 +1,9 @@
 # Phase 0: literature and data audit
 
 Started 24 September 2026. Status: literature search and corpus licence audit done (first
-pass); the IIIT Hyderabad question is settled (section 2); the first Colab run of the data audit
-is done (section 10), and a second run with more detail is pending (section 11).
+pass); the IIIT Hyderabad question is settled (section 2); three Colab runs of the data audit are
+done (section 10); the i convention is decided: everyday spelling, ꯏ for every i (section 10,
+confirmed by the owner). Open items are in section 11.
 
 **How this was done, and what that means for citing.** The search ran in a cloud session whose
 network allowed a web search engine and GitHub, but not publisher sites, arXiv, Hugging Face,
@@ -172,8 +173,9 @@ machine with open internet.
 > Meitei Mayek handwriting, judged by whether it improves recognition of real handwriting.
 
 Contributions (3) and (4) were revised on 24 September 2026 after the owner's note on everyday
-spelling (section 10). Word context still matters for the other confusable pairs, ꯦ/꯰, ꯨ/ꯁ and
-ꯗ/ꯘ (70 of the 241 errors), where the position in the word and the lexicon decide.
+spelling (section 10); the owner confirmed the revision the same day. Word context still matters
+for the other confusable pairs, ꯦ/꯰, ꯨ/ꯁ and ꯗ/ꯘ (70 of the 241 errors), where the position in the
+word and the lexicon decide.
 
 **Distinct from Hijam's thesis:** public benchmark and protocol instead of a private word set;
 segmentation-free sequence model instead of per-character CNN plus LSTM correction; synthetic
@@ -484,23 +486,23 @@ rule-governed (above). So:
   but on reading whole words (no such system exists), the other confusable pairs, and the real
   test set.
 
+The owner confirmed the revised contribution (4) and the shift in motivation on 24 September 2026.
+
 ## 11. To do
 
-1. Confirm the revised contribution (4) and the shift in motivation (section 10), since they
-   change how the paper is framed.
-2. Only if the standard-spelling rendering is offered: give a language expert
+1. Only if the standard-spelling rendering is offered: give a language expert
    `results/i_exception_candidates.csv` (67 words, a column for the verdict) and the questions in
    section 10. Find out how TUMMHCD labelled 044 and 025 (useful for the first paper's discussion).
-3. First paper: check the size-feature explanation, and score the final system without the 469
+2. First paper: check the size-feature explanation, and score the final system without the 469
    test images that have a train twin.
-4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
+3. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
    (Mendeley Data); FLORES+ with `HF_TOKEN`. Check the Manipuri script and size in IN22, BPCC and
    Sangraha.
-5. IIIT Hyderabad: the licence on the IIIT-Indic-HW-UC page, and the script of Manipuri in Mozhi.
-6. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
+4. IIIT Hyderabad: the licence on the IIIT-Indic-HW-UC page, and the script of Manipuri in Mozhi.
+5. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
    (2020): is the MM page dataset available? Read Hijam's thesis chapter on the CNN + LSTM word
    model (test set, size, results), and its exact wording of the ꯢ/ꯏ rule.
-7. TUMMHCD paper: is the official test split meant to be writer-disjoint? 469 test images with an
+6. TUMMHCD paper: is the official test split meant to be writer-disjoint? 469 test images with an
    identical train image show that some images, and so some writers, are shared. Ask the authors
    about the duplicated vowel-sign files.
 

@@ -35,8 +35,9 @@ Key results (TUMMHCD, 55 classes, official test set of 12,794 images):
   TUMMHCD image is 24 × 24 with the ink filling the frame.
 - 044 (ꯢ, i lonsum, U+ABE2) versus 025 (ꯏ, i, U+ABCF) cannot be separated from isolated images:
   a two-class specialist reaches 68.2% against a 67.1% majority baseline. Reading this pair
-  perfectly would lift the ensemble to 98.73%. **This pair is the reason for the word-level project.**
-  Phase 0 (below) found it is a spelling convention: everyday writing uses ꯏ throughout.
+  perfectly would lift the ensemble to 98.73%. This pair was the original reason for the word-level
+  project; Phase 0 (below) found it is a spelling convention (everyday writing uses ꯏ throughout),
+  and the project now reads it as one letter.
 - Rule from Hijam's thesis: ꯢ follows a vowel; ꯏ begins a word or does not follow a vowel.
   Checked by language experts on about 26,000 words (from a corpus of about 190,000): 94.7%.
   ꯢ is about 3.6 times as frequent as ꯏ.
@@ -92,9 +93,10 @@ metrics.
 Found by web search only (no full-text access in that session): every paper still has to be
 checked against its full text before citing.
 
-**Novelty statement (draft; (3) and (4) revised 24 September 2026).** No published work
-recognises handwritten Meitei Mayek words or lines end to end. Earlier work classifies isolated characters, segments handwritten pages into
-lines and words without recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
+**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026).**
+No published work recognises handwritten Meitei Mayek words or lines end to end. Earlier work
+classifies isolated characters, segments handwritten pages into lines and words without
+recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
 doi 10.1007/s00371-020-01799-4: 189 pages, word segmentation 88.96%), or corrects a character
 classifier on segmented words with zones and the orthographic rule (Hijam and Saharia 2024;
 Hijam's thesis). The only large handwritten Manipuri word dataset, IIIT-Indic-HW-UC (Mondal and
@@ -149,6 +151,7 @@ language-model text is all typed text with ꯢ mapped to ꯏ; the recogniser tre
 optional rendering of the output by the rule, evaluated on text (the expert review sheet
 `results/i_exception_candidates.csv` matters only for that). The word-level motivation now rests
 on reading whole words, the other confusable pairs and the real test set, not on ꯢ/ꯏ.
+The owner confirmed this reframing and contribution (4) on 24 September 2026.
 
 **TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
 side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are
