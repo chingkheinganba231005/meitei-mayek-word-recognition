@@ -6,8 +6,9 @@
 The input is a word list as written by corpus_stats.py --words-out (word<TAB>count),
 normally the one of the documents that always write ꯢ after ꯥ, ꯣ or ꯨ.
 
-The convention tested is the one recommended in Phase 0: ꯢ for the i after ꯥ, ꯣ or ꯨ,
-ꯏ everywhere else. Every i that disagrees with it becomes a row of the review sheet,
+The convention tested is the standard spelling's: ꯢ for the i after ꯥ, ꯣ or ꯨ, ꯏ
+everywhere else. (The project itself writes ꯏ throughout; the standard spelling is an
+optional rendering of its output.) Every i that disagrees with it becomes a row of the review sheet,
 with its "twin" (the same word with the other i) and how often the twin occurs in the
 same list. A twin that is more frequent points to a variant or a slip; no twin points to
 a possible genuine exception. The last column is left empty for the language expert.

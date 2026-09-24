@@ -439,8 +439,8 @@ there, typed practice never writes it), and ꯢ at word start or after a final (
 groups and the last are the candidates for genuine exceptions, or typing slips.
 
 **Exception candidates (from the word list of the 605 always-ꯢ Wikipedia pages).**
-`scripts/i_exceptions.py` checks every i in the list against the recommended convention (ꯢ after
-ꯥ, ꯣ or ꯨ, ꯏ elsewhere) and looks up each disagreeing word's twin, the same word with the other i
+`scripts/i_exceptions.py` checks every i in the list against the standard spelling's convention
+(ꯢ after ꯥ, ꯣ or ꯨ, ꯏ elsewhere) and looks up each disagreeing word's twin, the same word with the other i
 (`results/i_exception_summary.json`; review sheet `results/i_exception_candidates.csv`, 67 words
 from the Meitei Wikipedia, CC BY-SA 4.0). The convention holds for 95.7% of the 11,982 i's and
 for 94.8% of distinct words (thesis: 94.7%). Of the 518 misses, 398 are one word, ꯃꯆꯥꯈꯥꯏꯕ,
