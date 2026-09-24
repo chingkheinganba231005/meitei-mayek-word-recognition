@@ -35,6 +35,7 @@ scripts/
   glyph_sizes.py     how large people write each character, measured on TUMMHCD
   build_lexicon.py   the lexicon from the Phase 0 word lists
   render_words.py    fixed synthetic word sets and contact sheets
+  measure_spacing.py how close together handwritten letters are, in real images and synthetic pages
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab

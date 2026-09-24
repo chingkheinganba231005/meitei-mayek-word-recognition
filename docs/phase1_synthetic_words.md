@@ -95,7 +95,8 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 |---|---|
 | letter height L | 32 px, log-normal jitter sd 0.1 |
 | letter width factor | 0.8–1.25 (log-uniform) |
-| gap between characters, added to the font's side bearings | −0.12 to +0.04 L, sd 0.03 L per gap |
+| gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
+| chance that a letter joins the one before it (ink touching) | 5–65% |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.07–0.12 L (TUMMHCD letters: 2.2 px in 24, about 0.09) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -108,13 +109,26 @@ These are guesses to be checked on the contact sheets and, later, against the re
 Stronger augmentation (backgrounds, lighting, perspective) belongs in Phase 2, on the GPU.
 
 **Spacing.** The owner, a native writer, observed that handwritten Meitei Mayek sets its
-letters closer together than the first previews did. Measured on the layout (the ink gap
-between neighbours on the line, in units of L; `synth.line_gaps`): the font spaces letters
-0.12 L apart (median; 10–90%: 0.08–0.16), the first default 0.28 L (0.15–0.41), more than
-twice as far. The default is now tighter than print: 0.08 L (0.01–0.16), with 5% of
-neighbouring letters touching. Every rendered set records these gaps in its `config.json`
-(`ink_gaps_in_L`), and a test keeps the default spacing tighter than the font's. The
-ranges should be set from real handwriting once some is measured.
+letters closer together than the first previews did, and supplied screenshots of published
+handwriting found by web image search (used only for this measurement; the images are not
+kept). `scripts/measure_spacing.py` finds the pieces of ink in an image, the letter height
+L, and the gaps between neighbouring letters; letters that touch form one piece, and their
+number is estimated from the width of the pieces. On six samples (one page twice, as
+photographed and as binarised, and four pages on ruled paper;
+`results/spacing_web_samples.json`), a median of 33.5% of neighbouring letters touch
+(14–73% per sample; the 73% is inflated by fragments of the ruled lines), and the letters
+that do not touch are 0.097 L apart (median of the samples' medians; 0.05–0.18).
+
+So letters either join or keep a small gap. The synthesiser now does the same: each word
+has a chance of 5–65% that a letter joins the letter before it, and a joined letter is slid
+left until its ink meets the ink before it (touching, not overlapping). The other letters
+keep the font's side bearings plus −0.10 to +0.05 L. Measured the same way on 30 pages of
+synthetic words written with the font's characters (`results/spacing_synthetic_font.json`):
+33% touching, visible gaps 0.086 L (at these resolutions one pixel is about 0.03 L). The
+first default (gaps of 0.02–0.3 L on top of the side bearings) spaced letters 0.28 L apart
+by the layout, more than twice the font's 0.12 L. The notebook repeats the check with
+TUMMHCD characters (`results/spacing_synthetic_tummhcd.json`): how readily two letters
+join depends on their shapes.
 
 ## 3. Lexicon
 
@@ -141,7 +155,8 @@ Real-test-set prompts (Phase 3) can be kept out of training with `--exclude`.
 - The whole notebook on a fake archive (font characters, distorted, in TUMMHCD's layout)
   with Colab stubbed out: the split rule (15% of every class, seed 42), the duplicate
   exclusion, the size check, lexicon, contact sheets, fixed sets.
-- 33 tests (`pytest -q`), among them positions of every kind of sign, spacing, pen width, the split
+- 37 tests (`pytest -q`), among them positions of every kind of sign, spacing and joining, the
+  spacing tool on synthetic pages, pen width, the split
   and its stability, duplicate exclusion, and that the committed priors are exactly what
   `scripts/glyph_priors.py` writes.
 

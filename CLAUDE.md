@@ -201,9 +201,12 @@ TUMMHCD (owner, Colab) is pending; nothing below is a TUMMHCD result yet.
 - **No writer IDs, so style matching:** each character is one of the 16 images of its class
   closest to a random anchor (within-class z-scores of slant, stroke width, ink fraction,
   ink darkness); the pen width is made equal across the word.
-- **Spacing:** handwriting sets letters closer than print (owner's observation): median ink
-  gap between letters 0.08 L (font 0.12 L; the first previews had 0.28 L), 5% touching.
-  To be set from real handwriting once measured.
+- **Spacing, from real handwriting:** in six samples of published handwriting (screenshots
+  from the owner, measured with `scripts/measure_spacing.py`, images not kept) a third of
+  neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
+  synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
+  5–65% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
+  the same way, 33% touching, gaps 0.086 L (`results/spacing_*.json`).
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops. Apun must join two consonants, lonsum letters included (typed loanwords:

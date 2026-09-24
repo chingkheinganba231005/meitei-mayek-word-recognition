@@ -6,7 +6,8 @@ import pytest
 from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
 from mayek_words.glyphs import GlyphStore
 from mayek_words.lexicon import Lexicon
-from mayek_words.synth import Config, Words, WordSynth, line_gaps, load_priors, set_pen, stroke_width
+from mayek_words.synth import (Config, Words, WordSynth, contact, line_gaps, load_priors, set_pen,
+                               stroke_width)
 
 K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
@@ -68,6 +69,27 @@ def test_letters_closer_than_in_print(store):
         return float(np.median(line_gaps(layouts, s.prior)["letter to letter"]))
     printed = median_gap(Config(gap=(0, 0), gap_jitter=0, width=(1, 1), glyph_width_jitter=0))
     assert median_gap(Config()) < printed
+
+
+def test_contact():
+    canvas = np.zeros((20, 40), np.float32)
+    canvas[2:18, 10:13] = 1                      # a stroke ending at column 12
+    ink = np.zeros((16, 6), np.float32)
+    ink[:, 1:3] = 1                              # to be pasted at column 20: its ink starts at 21
+    assert contact(canvas, ink, 20, 2, 20) == 21 - 12 - 1
+    assert contact(canvas, ink, 20, 2, 5) == 0   # nothing within reach
+
+
+def test_joined_letters_share_ink(store):
+    """With every letter joined, a word is one piece of ink more often than with none joined."""
+    from scipy import ndimage
+    word = K + LAI + chr(0xABC3) + chr(0xABC4) + chr(0xABC5)
+    def pieces(touch):
+        cfg = Config(touch=touch, gap=(0.1, 0.1), slant=0, rotation=0, blur=(0, 0), noise=0)
+        s = WordSynth(store, config=cfg)
+        return [ndimage.label(s.render(word, np.random.default_rng(i)).image < 128,
+                              structure=np.ones((3, 3)))[1] for i in range(20)]
+    assert np.mean(pieces((1.0, 1.0))) < np.mean(pieces((0.0, 0.0))) - 1.5
 
 
 def test_pen_width():

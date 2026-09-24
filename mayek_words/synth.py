@@ -39,8 +39,12 @@ class Config:
     width: tuple = (0.8, 1.25)          # letter width factor per word
     glyph_width_jitter: float = 0.08    # per character, sd of log
     glyph_height_jitter: float = 0.06
-    gap: tuple = (-0.12, 0.04)          # per word, added to the font's side bearings, in L:
-    gap_jitter: float = 0.03            # letters closer than in print, as in handwriting (owner)
+    gap: tuple = (-0.10, 0.05)          # per word, added to the font's side bearings, in L
+    gap_jitter: float = 0.03
+    max_overlap: float = 0.05           # letters' boxes may overlap this much, in L
+    touch: tuple = (0.05, 0.65)         # per word, the chance that a letter joins the one before it:
+    #                                     slid left until its ink meets theirs (handwriting joins about
+    #                                     a third of neighbouring letters: results/spacing_web_samples.json)
     baseline_jitter: float = 0.04       # drift of the baseline, in L
     mark_scale: tuple = (0.85, 1.3)     # size of the signs relative to print, per word
     mark_size_jitter: float = 0.1       # per sign, sd of log
@@ -135,6 +139,21 @@ def set_pen(alpha, pen):
     return np.clip(signed + delta + 0.5, 0, 1).astype(np.float32), border
 
 
+def contact(canvas, ink, qx, qy, reach):
+    """How many pixels to move `ink` (to be pasted at column qx, row qy) to the left so that
+    it just touches the ink already on the canvas; 0 if nothing is within `reach` pixels."""
+    m = ink > 0.5
+    best = None
+    for r in np.flatnonzero(m.any(1)):
+        left = qx + int(np.argmax(m[r]))
+        lo = max(left - reach - 1, 0)
+        seen = np.flatnonzero(canvas[qy + r, lo:left] > 0.5)
+        if len(seen):
+            gap = left - (lo + int(seen[-1])) - 1
+            best = gap if best is None else min(best, gap)
+    return max(best, 0) if best is not None else 0
+
+
 def resize(alpha, w, h):
     return np.clip(np.asarray(Image.fromarray(alpha.astype(np.float32), "F").resize((w, h), Image.BILINEAR)), 0, 1)
 
@@ -160,30 +179,36 @@ class WordSynth:
                 "slant": float(np.clip(rng.normal(0, c.slant), -2.5 * c.slant, 2.5 * c.slant)),
                 "rotation": float(np.clip(rng.normal(0, c.rotation), -2.5 * c.rotation, 2.5 * c.rotation)),
                 "pen": uniform(c.pen) if c.pen else None,
+                "touch": uniform(c.touch) if c.touch else 0.0,
                 "blur": uniform(c.blur),
                 "paper": uniform(c.paper),
                 "ink": uniform(c.ink) if c.ink else None}
 
     def layout(self, word, rng, st):
-        """-> [(character, x0, x1, bottom, top)] in units of L (y up, baseline at 0)."""
+        """-> ([(character, x0, x1, bottom, top)] in units of L (y up, baseline at 0),
+               [True where the character is to be slid left until it touches the ink before it])."""
         c = self.cfg
 
         def jitter(sd):
             return float(np.exp(rng.normal(0, sd)))
 
-        boxes, pen, drift, base = [], 0.0, 0.0, None
+        boxes, joins, pen, drift, base, right = [], [], 0.0, 0.0, None, None  # right: last ink edge on the line
         for ch in word:
             p = self.prior[ch]
+            join = False
             if p["kind"] == "base" or base is None:
+                join = right is not None and rng.random() < st["touch"]
                 drift = 0.6 * drift + float(rng.normal(0, c.baseline_jitter))
                 w = p["w"] * st["width"] * jitter(c.glyph_width_jitter)
                 h = (p["top"] - p["bottom"]) * jitter(c.glyph_height_jitter)
                 gap = st["gap"] + float(rng.normal(0, c.gap_jitter)) if boxes else 0.0
-                x0 = pen + p.get("lsb", 0.05) + max(gap, -0.1)
+                x0 = pen + p.get("lsb", 0.05) + gap
+                if right is not None:
+                    x0 = max(x0, right - c.max_overlap)
                 bottom = p["bottom"] * h / max(p["top"] - p["bottom"], 1e-6) + drift if p["kind"] == "base" else drift
                 box = [x0, x0 + w, bottom, bottom + h]
                 pen = x0 + w + p.get("rsb", 0.05)
-                base = box
+                base, right = box, x0 + w
             else:
                 s = st["mark_scale"] * jitter(c.mark_size_jitter)
                 w, h = p["w"] * s, (p["top"] - p["bottom"]) * s
@@ -199,10 +224,12 @@ class WordSynth:
                 else:                                              # hanging from its top
                     bottom = p["top"] + dy - h
                 box = [x0, x0 + w, bottom, bottom + h]
-                if p["adv"] > 0.1:
+                if p["adv"] > 0.1:  # a sign beside the letter: the line goes on after it
                     pen = max(pen + p["adv"] * s, x0 + w)
+                    right = max(right, x0 + w)
             boxes.append((ch, *box))
-        return boxes
+            joins.append(join)
+        return boxes, joins
 
     # ------------------------------------------------------------------ drawing
 
@@ -214,7 +241,7 @@ class WordSynth:
         L = st["L"]
         anchor = self.store.anchor(rng) if c.style_k else None
         glyphs = [self.store.pick(ch, rng, anchor, c.style_k) for ch in word]
-        boxes = self.layout(word, rng, st)
+        boxes, joins = self.layout(word, rng, st)
 
         xmin = min(b[1] for b in boxes)
         xmax = max(b[2] for b in boxes)
@@ -224,19 +251,25 @@ class WordSynth:
         W = int(math.ceil((xmax - xmin + 2 * pad) * L))
         H = int(math.ceil((ymax - ymin + 2 * pad) * L))
         canvas = np.zeros((H, W), np.float32)
-        placed = []
-        for (ch, x0, x1, bottom, top), g in zip(boxes, glyphs):
+        placed, shift, final = [], 0, []
+        for (ch, x0, x1, bottom, top), g, join in zip(boxes, glyphs, joins):
             w = max(int(round((x1 - x0) * L)), 1)
             h = max(int(round((top - bottom) * L)), 1)
             ink = resize(self.store.alpha[g], w, h)
-            px, py = int(round((x0 - xmin + pad) * L)), int(round((ymax + pad - top) * L))
-            placed.append((ch, px, py, px + w, py + h))
+            px, py = int(round((x0 - xmin + pad) * L)) + shift, int(round((ymax + pad - top) * L))
+            border = 0
             if st["pen"] is not None and min(w, h) >= 4:
                 ink, border = set_pen(ink, st["pen"] * L * float(np.exp(rng.normal(0, 0.05))))
-                px, py = px - border, py - border
-            assert px >= 0 and py >= 0 and px + ink.shape[1] <= W and py + ink.shape[0] <= H, "canvas too small"
-            region = canvas[py:py + ink.shape[0], px:px + ink.shape[1]]
+            if join:  # slide left until the ink meets the ink before it; what follows moves too
+                d = contact(canvas, ink, px - border, py - border, int(0.4 * L))
+                px, shift = px - d, shift - d
+            placed.append((ch, px, py, px + w, py + h))
+            final.append((ch, x0 + (shift / L), x1 + (shift / L), bottom, top))
+            qx, qy = px - border, py - border
+            assert qx >= 0 and qy >= 0 and qx + ink.shape[1] <= W and qy + ink.shape[0] <= H, "canvas too small"
+            region = canvas[qy:qy + ink.shape[0], qx:qx + ink.shape[1]]
             np.maximum(region, ink, out=region)
+        boxes = final
 
         baseline = (ymax + pad) * L
         canvas, placed = self.transform(canvas, placed, st, baseline)

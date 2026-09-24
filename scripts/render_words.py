@@ -94,7 +94,8 @@ def main():
                "ink_gaps_in_L": {k: {"n": len(v), "p10": round(float(np.percentile(v, 10)), 3),
                                      "median": round(float(np.median(v)), 3),
                                      "p90": round(float(np.percentile(v, 90)), 3),
-                                     "touching": round(float(np.mean(np.array(v) <= 0)), 3)}
+                                     "touching": round(float(np.mean(np.array(v) <= 0)), 3),
+                                     "under_0.03": round(float(np.mean(np.array(v) < 0.03)), 3)}
                                  for k, v in line_gaps(layouts, synth.prior).items() if v}}
     if out:
         (out / "labels.tsv").write_text("".join(lines), encoding="utf-8")
