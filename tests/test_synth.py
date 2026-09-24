@@ -1,0 +1,87 @@
+import json
+
+import numpy as np
+import pytest
+
+from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
+from mayek_words.glyphs import GlyphStore
+from mayek_words.lexicon import Lexicon
+from mayek_words.synth import Config, Words, WordSynth, load_priors, set_pen, stroke_width
+
+K, LAI = chr(0xABC0), chr(0xABC2)
+ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
+PLAIN = Config(width=(1, 1), glyph_width_jitter=0, glyph_height_jitter=0, gap=(0.1, 0.1), gap_jitter=0,
+               baseline_jitter=0, mark_scale=(1, 1), mark_size_jitter=0, mark_jitter=0, slant=0, rotation=0,
+               pen=None, blur=(0, 0), noise=0, letter_height_jitter=0, style_k=None, margin=(0.2, 0.2))
+
+
+@pytest.fixture(scope="module")
+def store():
+    return GlyphStore.from_font()
+
+
+def test_same_seed_same_image(store):
+    s = WordSynth(store)
+    a = s.render(K + ANAP + I_LONSUM, np.random.default_rng(5))
+    b = s.render(K + ANAP + I_LONSUM, np.random.default_rng(5))
+    c = s.render(K + ANAP + I_LONSUM, np.random.default_rng(6))
+    assert a.image.dtype == np.uint8 and a.image.ndim == 2
+    assert np.array_equal(a.image, b.image) and a.image.shape != c.image.shape or not np.array_equal(a.image, c.image)
+    assert a.text == K + ANAP + I_LETTER                      # everyday spelling
+    with pytest.raises(ValueError):
+        s.render("abc", np.random.default_rng(0))
+
+
+def boxes(store, word):
+    return {ch: b for ch, *b in WordSynth(store, config=PLAIN).render(word, np.random.default_rng(0)).boxes}
+
+
+def test_signs_sit_where_they_belong(store):
+    b = boxes(store, K + ANAP)                  # above the letter
+    assert b[ANAP][3] <= b[K][1] + 2 and b[K][0] < b[ANAP][0] < b[K][2]
+    b = boxes(store, K + UNAP)                  # below it
+    assert b[UNAP][1] >= b[K][3] - 2
+    b = boxes(store, K + INAP)                  # beside it, as tall as a letter or taller
+    assert b[INAP][0] >= b[K][2] - 1 and b[INAP][3] - b[INAP][1] >= b[K][3] - b[K][1]
+    b = boxes(store, K + APUN + LAI)            # under the letter before it
+    assert b[APUN][1] >= b[K][3] - 2 and abs(b[APUN][0] - b[K][0]) < 3 and b[LAI][0] > b[K][2]
+    b = boxes(store, K + chr(0xABE3) + NUNG)    # nung above the sign before it
+    assert b[NUNG][3] <= b[chr(0xABE3)][3] and b[NUNG][2] > b[K][2]
+
+
+def test_boxes_inside_image(store):
+    s = WordSynth(store)
+    for i in range(20):
+        r = s.render(K + ANAP + LAI + UNAP + NUNG, np.random.default_rng(i))
+        H, W = r.image.shape
+        for _, x0, y0, x1, y1 in r.boxes:
+            assert 0 <= x0 < x1 <= W and 0 <= y0 < y1 <= H
+
+
+def test_pen_width():
+    alpha = np.zeros((30, 30), np.float32)
+    alpha[3:27, 13:16] = 1                      # a 3 px stroke
+    grown, border = set_pen(alpha, 7)
+    assert border > 0 and abs(stroke_width(grown > 0.5) - 7) <= 1.5
+    thinned, border = set_pen(grown, 3)
+    assert abs(stroke_width(thinned > 0.5) - 3) <= 1
+
+
+def test_measured_sizes_replace_the_font(tmp_path):
+    sizes = tmp_path / "sizes.json"
+    sizes.write_text(json.dumps({"classes": [{"char": ANAP, "w": 0.9, "h": 0.5},
+                                             {"char": UNAP, "w": None, "h": 10.0}]}), encoding="utf-8")
+    font, measured = load_priors(), load_priors(sizes=sizes)
+    assert measured[ANAP]["w"] == 0.9 and measured[ANAP]["bottom"] == font[ANAP]["bottom"]
+    assert abs(measured[ANAP]["top"] - measured[ANAP]["bottom"] - 0.5) < 1e-9
+    h0 = font[UNAP]["top"] - font[UNAP]["bottom"]           # below the baseline: keeps its top, clipped at 2x
+    assert measured[UNAP]["top"] == font[UNAP]["top"]
+    assert abs(measured[UNAP]["top"] - measured[UNAP]["bottom"] - 2 * h0) < 1e-9
+
+
+def test_words_on_demand(store):
+    lex = Lexicon({K + ANAP: 5, LAI: 1})
+    w = Words(WordSynth(store), lex, seed=3)
+    assert np.array_equal(w[7].image, w[7].image) and w[7].text in (K + ANAP, LAI)
+    digits = Words(WordSynth(store), lex, seed=3, numbers=1.0, stop=1.0)[0].text
+    assert digits[-1] == CHEIKHEI and all(ch in DIGITS for ch in digits[:-1])

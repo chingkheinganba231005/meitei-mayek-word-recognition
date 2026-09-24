@@ -169,13 +169,45 @@ from the Phase 3 real set.
 **Checks for the first paper (under review).** (1) Image and ink-box size are (nearly) constant,
 so the size probe's separation of 046/009 (86.5%) and 011/047 (84.1%) must come mostly from ink
 fraction: a small glyph scaled up to 24 px gets thicker strokes. If the paper says the features
-see a character's zone or size directly, correct that at revision. (2) Score the final system
+see a character's zone or size directly, correct that at revision; the Phase 1 size
+measurement (`results/glyph_sizes_tummhcd.json`) shows how much each class was stretched. (2) Score the final system
 without the 469 test images that have a train twin (`results/tummhcd_audit_duplicates.csv`); if
 none of the 241 errors is among them, accuracy would be 98.04% instead of 98.12%. Earlier TUMMHCD
 results share the test set, so the comparison stands; reporting both pre-empts a reviewer.
 (3) Everyday writing does not distinguish ꯢ from ꯏ: the paper could say that 044/025 is a
 spelling convention, under which its ensemble's accuracy is its own figure of 98.73%
 (163 errors).
+
+## Phase 1: synthetic words (code ready 24 September 2026; details in `docs/phase1_synthetic_words.md`)
+
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. The first run on
+TUMMHCD (owner, Colab) is pending; nothing below is a TUMMHCD result yet.
+
+- **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
+  Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
+- **Character images:** the paper's split, made by `mayek.split` (first project, pinned to
+  commit 0d2c6e5). Synthetic training words use train images, validation words our
+  validation part, test words TUMMHCD test without the 469 train twins; the 48 images with
+  conflicting labels are used nowhere.
+- **Proportions and placement** from Noto Sans Meetei Mayek (OFL 1.1, bundled in
+  `mayek_words/assets`, measured with HarfBuzz): ꯥ, ꯩ, ꯪ above the character before them,
+  ꯦ, ꯣ, ꯧ, ꯤ beside it, ꯨ below it, apun under the letter before it; positions relative to
+  the pen, as in the font. With jitter off, the synthesiser reproduces the font's rendering.
+- **Handwritten sizes from TUMMHCD itself:** the stretch to 24 x 24 thickens strokes in
+  proportion, so the thickness of vertical and horizontal strokes gives back each class's
+  lost width and height (checked on the font's characters: heights within 4%, widths
+  within about 15%). Output `results/glyph_sizes_tummhcd.json`; use it instead of the
+  font's sizes (`--sizes`) if the contact sheets look better that way.
+- **No writer IDs, so style matching:** each character is one of the 16 images of its class
+  closest to a random anchor (within-class z-scores of slant, stroke width, ink fraction,
+  ink darkness); the pen width is made equal across the word.
+- **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
+  5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
+  2% full stops. Apun must join two consonants, lonsum letters included (typed loanwords:
+  ꯑꯦꯟ꯭ꯗ "and").
+- **Sets:** training words are rendered on the fly (5–7 ms per word per core); fixed
+  synthetic validation and test sets of 5,000 words each, for model selection and a check.
+  The main evaluation stays the Phase 3 real set.
 
 ## Working rules
 
