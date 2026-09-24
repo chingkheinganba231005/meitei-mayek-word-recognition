@@ -1,14 +1,16 @@
 # Phase 0: literature and data audit
 
 Started 24 September 2026. Status: literature search and corpus licence audit done (first
-pass); TUMMHCD writer check and corpus word counts are scripted but need to be run on Colab
-(`notebooks/phase0_data_audit.ipynb`), because this session could not reach the data.
+pass); the IIIT Hyderabad question is settled (section 2); TUMMHCD writer check and corpus word
+counts are scripted but need to be run on Colab (`notebooks/phase0_data_audit.ipynb`), because
+this session could not reach the data.
 
 **How this was done, and what that means for citing.** The search ran in a cloud session whose
 network allowed a web search engine and GitHub, but not publisher sites, arXiv, Hugging Face,
 IIIT Hyderabad or the Tezpur server. So every paper below was read only through its search-result
 abstract or snippet. The column "Checked" says what was seen: **A** = abstract or snippet only,
-**F** = read from the source file itself (only the FineWeb-2 and AI4Bharat repository files),
+**F** = read from the source itself (the FineWeb-2 and AI4Bharat repository files, and the
+IIIT-Indic-HW-UC paper, whose author PDF the owner supplied),
 **M** = from memory, not searched in this session. Nothing marked A or M may be cited before it
 has been checked against the full text (CLAUDE.md rule).
 
@@ -19,13 +21,17 @@ has been checked against the full text (CLAUDE.md rule).
    characters (Inunganbi et al., 2020), or corrects a character classifier's output on segmented
    words with zones and the orthographic rule (Hijam and Saharia, 2024; Hijam's thesis adds a
    character LSTM language model).
-2. **One open risk to the novelty claim.** IIIT Hyderabad (NLTM project) reports a camera-captured
-   handwritten page dataset in 13 Indic languages *including Manipuri* (91K pages, 1,220 writers,
-   2.6M words; ICPR 2024) with word-recognition baselines, and aims at handwritten recognisers for
-   Manipuri. Which script its Manipuri pages use (Meitei Mayek or Bengali) could not be
-   established from here. **Check this first** (section 7 says what changes either way).
-3. Meitei Mayek recognition exists for **print** (NE-OCR, 2026 preprint; IIIT Hyderabad's printed
-   OCR; a printed benchmark from 2022) and **scene text** (EMBiL, 2023), not for handwriting.
+2. **The one risk to the novelty claim is resolved.** IIIT Hyderabad's camera-captured
+   handwritten dataset, IIIT-Indic-HW-UC (Mondal and Jawahar), includes Manipuri, but in
+   **Bengali script**: the script column of its Table 1 says so, and its Manipuri word samples
+   (Fig. 3) are Bengali-script handwriting (F). 101 writers, 200K words, 75,531 distinct words;
+   CRNN baseline at 90.99% CRR and 83.38% WRR. There is no Meitei Mayek in it, so the novelty
+   statement holds (section 7).
+3. Meitei Mayek text recognition exists only for **print** (NE-OCR, 2026 preprint; a
+   printed-character benchmark from 2022) and for isolated **scene-text characters**. EMBiL (2023)
+   detects Meitei Mayek scene text and identifies its language but does not read it. IIIT
+   Hyderabad's printed OCR (Mozhi) covers Manipuri, script not yet checked; the same group writes
+   Manipuri in Bengali script in IIIT-Indic-HW-UC.
 4. **No handwriting generation model for Meitei Mayek was found.** Indic diffusion work covers
    isolated Bangla characters and an unpublished Devanagari repository.
 5. **Native Unicode Meitei Mayek text is scarce.** FineWeb-2 holds 61,256 words of it (its
@@ -44,8 +50,23 @@ has been checked against the full text (CLAUDE.md rule).
 | Inunganbi, Choudhary, Manglem, "Meitei Mayek handwritten dataset: compilation, segmentation, and character recognition", *The Visual Computer* (online Jan 2020), doi 10.1007/s00371-020-01799-4 | Line and word segmentation of full handwritten pages by projection histograms; CNN on isolated letters | MM dataset: 189 handwritten pages, 809 lines; segmentation 91.84% (lines), 88.96% (words). Mayek27: 4,900 letters, 99.02% | Real handwritten *pages* of Meitei Mayek exist. Is MM public? If so, a source of real words (needs transcription). No word recognition | A |
 | Hijam and Saharia, "Zone and rule assisted recognition of Meitei-Mayek handwritten characters", *Evolutionary Intelligence* 17:2963–2980 (2024), doi 10.1007/s12065-024-00920-z | CNN first stage; second stage uses zones and orthographic rules for confusable pairs, on segmented words | 100 handwritten words (565 characters), 88.50% → 91.86% (figures from CLAUDE.md) | Baseline to re-implement (Phase 2) | A |
 | Hijam, PhD thesis, Tezpur University (2024), http://agnee.tezu.ernet.in:8082/jspui/handle/1994/1707 | Includes CNN + character-level LSTM language model on word images | Private test data (to check) | Must be clearly surpassed: public benchmark, sequence model, synthetic data at scale, real writer-disjoint test set | not reached |
-| IIIT Hyderabad (CVIT), "Unconstrained Camera Captured Indic Offline Handwritten Dataset", ICPR 2024 proceedings (LNCS, same volume as Mathew et al.), doi 10.1007/978-3-031-78495-8_21; data: https://cvit.iiit.ac.in/usodi/ucciohd.php | Camera-captured handwritten pages in 13 languages incl. Manipuri; word recognition baselines | 91K pages, 1,220 writers, 2.6M words (566,187 distinct), all languages together | **Script of the Manipuri part unknown.** If Meitei Mayek: prior word-level work and a second real test set. If Bengali: no overlap | A |
-| NLTM OCR project, IIIT Hyderabad, https://ilocr.iiit.ac.in/ | Goal: handwritten recognisers for 13 languages incl. Manipuri; printed for 22 | Project page | Same question as above; look for a Manipuri handwriting demo or API | A |
+| Mondal and Jawahar (IIIT Hyderabad), "Unconstrained Camera Captured Indic Offline Handwritten Dataset" (IIIT-Indic-HW-UC), ICPR 2024 proceedings (LNCS; venue from the Springer listing, the author PDF names none), doi 10.1007/978-3-031-78495-8_21; data: https://cvit.iiit.ac.in/usodi/ucciohd.php | Paragraphs of at most 50 words (prompts from web text corpora) handwritten on A4 and photographed with the writers' phones; page-level annotation, word images released; CRNN baseline (Gongidi et al.: transformation network, ResNet, 2-layer BLSTM, CTC; 96 × 256 input) | 13 languages, 1,220 writers, 91K pages, 2.6M words. **Manipuri is in Bengali script**: 101 writers, 200K words, 75,531 distinct; CRR 90.99%, WRR 83.38% (trained and tested on its own split) | No Meitei Mayek, so no overlap with contribution (1). Context for the paper (the only large handwritten Manipuri word set is in Bengali script) and lessons for Phases 2 and 3 (below) | F |
+| NLTM OCR project, IIIT Hyderabad, https://ilocr.iiit.ac.in/ | Handwriting recognisers and a web API for 13 languages incl. Manipuri; printed for 22 | The IIIT-Indic-HW-UC paper describes the handwriting API | The API is presented with the Bengali-script data above; no sign of a Meitei Mayek model | A (project page), F (paper) |
+
+**What IIIT-Indic-HW-UC tells us (F).**
+(i) Its split is 75/10/15% of the word images of each language. Each writer wrote 100 to 200
+paragraphs and the same paragraph could be written by several writers; the paper does not say
+that the split is writer-disjoint or text-disjoint. Our real test set should be both, and say
+so: a concrete difference in protocol.
+(ii) Its collection protocol (typed prompts copied by hand on A4, photographed with a phone,
+page-level boxes and reading order) is a tested template for Phase 3. Phone capture would also
+keep our set closer to real use than flatbed scans.
+(iii) Its baseline, the CRNN with CTC of Gongidi et al. (iiit-indic-hw-words), is the standard
+Indic HTR baseline. Re-implement it on our data as a Phase 2 baseline next to the
+pretrained-backbone model.
+(iv) The paper states no licence; check the dataset page before any use. Its Bengali-script
+Manipuri words could at most serve as same-language pretraining for the visual encoder, a
+low-priority experiment.
 
 Isolated-character work (for completeness, not competitors for word recognition): Mayek27
 (above); Nongmeikapam, Kumar et al., ACM TALLIP 2019, doi 10.1145/3309497, dataset of more than
@@ -61,15 +82,15 @@ doi 10.1007/s00371-023-02776-3. All A.
 | Work | What | Relevance | Checked |
 |---|---|---|---|
 | MWire Labs, "NE-OCR: Unified Optical Character Recognition for 10 Languages of Northeast India", Research Square preprint rs-9167777 (2026, date to check); model https://huggingface.co/MWirelabs/ne-ocr (CC BY 4.0) | ViTSTR-Base (86M) + CTC on 32×128 word/line crops, 1,056-character vocabulary, 12 language–script pairs incl. Meitei Mayek; trained on 1.34M images rendered from text corpora; mean character accuracy 94.99% | Printed, rendered text only. Shows word-level Meitei Mayek recognition from synthetic data works in print. Possible pretraining source or baseline to show the print/handwriting gap. Its Meitei Mayek text corpus may be reusable (check) | A |
-| Mathew, Mondal, Jawahar, "Towards Deployable OCR Models for Indic Languages", ICPR 2024, doi 10.1007/978-3-031-78495-8_11, arXiv 2205.06740 | Mozhi: 1.2M printed word images, 13 languages incl. Manipuri; CTC models | Printed; script of Manipuri to check | A |
+| Mathew, Mondal, Jawahar, "Towards Deployable OCR Models for Indic Languages", ICPR 2024, doi 10.1007/978-3-031-78495-8_11, arXiv 2205.06740 | Mozhi: 1.2M printed word images, 13 languages incl. Manipuri; CTC models | Printed; script of Manipuri to check (the same group's handwriting set writes Manipuri in Bengali script) | A |
 | "A benchmark dataset for printed Meitei/Meetei script character recognition", *Data in Brief* 45:108585 (2022), doi 10.1016/j.dib.2022.108585; Mendeley Data rw4b2zdk95 | 824 printed pages with binarised images, text files and XML; 51,460 isolated characters; CC BY | Its page transcriptions are native Meitei Mayek text (section 8) | A |
-| Naosekpam, Islam, Chourasia, Sahu, "EMBiL", CAIP 2023, doi 10.1007/978-3-031-44237-7_7 | English–Manipuri scene text: 720 images, more than 28,500 text instances; detection and language identification (YOLOv5-based) | Scene text, no recognition of handwriting | A |
+| Naosekpam, Islam, Chourasia, Sahu, "EMBiL", CAIP 2023, doi 10.1007/978-3-031-44237-7_7 | English–Manipuri scene text: 720 images, more than 28,500 text instances; detection and language identification (YOLOv5-based) | Detection and language identification only; it does not read the text | A |
 | "Meetei Mayek natural scene character recognition using CNN", Springer 2023, doi 10.1007/978-3-031-27609-5_33 | Scene characters | Character level | A |
 
 ## 4. Indic word- and page-level handwriting recognition
 
-These set the methods and evaluation practice we follow; none includes Meitei Mayek (except
-possibly the IIIT Hyderabad set in section 2).
+These set the methods and evaluation practice we follow; none includes Meitei Mayek
+(IIIT-Indic-HW-UC's Manipuri is in Bengali script, section 2).
 
 | Work | What | Checked |
 |---|---|---|
@@ -118,7 +139,8 @@ been used to synthesise words for 10 Indic languages; source not identified (to 
 
 Not yet searched: Google Scholar and Shodhganga for Indian theses on Meitei Mayek word or text
 recognition since 2020 (Manipur University, NIT Manipur, IIIT Manipur); Bhashini's OCR services
-(does a Manipuri handwriting model exist?); the Hijam thesis itself; Indian conference
+(IIIT Hyderabad's Manipuri handwriting data is in Bengali script; is there any model for
+Meitei Mayek?); the Hijam thesis itself; Indian conference
 proceedings (NCVPRIPG, ICVGIP) for Meitei Mayek word recognition. Worth a second pass from a
 machine with open internet.
 
@@ -128,25 +150,25 @@ machine with open internet.
 > end. Earlier work classifies isolated characters, segments handwritten pages into lines and
 > words without recognising them (Inunganbi et al., 2020), or corrects a character classifier's
 > output on segmented words with zone information and the orthographic rule (Hijam and Saharia,
-> 2024, on 100 words; Hijam's thesis adds a character LSTM language model). Meitei Mayek OCR
-> exists only for print and scene text, and no handwriting generation model exists for the
-> script. We contribute (1) the first segmentation-free handwritten Meitei Mayek word
-> recogniser, built on pretrained visual encoders with a CTC or attention head and a character
-> language model; (2) zone-aware synthetic word images composed from TUMMHCD characters at
-> scale; (3) a public, consented, writer-disjoint set of real handwritten words from 50 or more
-> writers, with a fixed protocol (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how
-> much word context resolves ꯢ versus ꯏ, which isolated-character models cannot separate (68.2%
-> against a 67.1% majority baseline); and later (5) the first diffusion model for Meitei Mayek
-> handwriting, judged by whether it improves recognition of real handwriting.
+> 2024, on 100 words; Hijam's thesis adds a character LSTM language model). The only large
+> handwritten Manipuri word dataset, IIIT-Indic-HW-UC (Mondal and Jawahar, 2024), is in Bengali
+> script. Meitei Mayek text recognition exists only for print (scene-text work classifies
+> isolated characters), and no handwriting generation model exists for the script. We contribute
+> (1) the first segmentation-free handwritten Meitei Mayek word recogniser, built on pretrained
+> visual encoders with a CTC or attention head and a character language model; (2) zone-aware
+> synthetic word images composed from TUMMHCD characters at scale; (3) a public, consented,
+> writer-disjoint set of real handwritten words from 50 or more writers, with a fixed protocol
+> (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how much word context resolves ꯢ
+> versus ꯏ, which isolated-character models cannot separate (68.2% against a 67.1% majority
+> baseline); and later (5) the first diffusion model for Meitei Mayek handwriting, judged by
+> whether it improves recognition of real handwriting.
 
 **Distinct from Hijam's thesis:** public benchmark and protocol instead of a private word set;
 segmentation-free sequence model instead of per-character CNN plus LSTM correction; synthetic
 words at scale; writer-disjoint real test set; the ꯢ/ꯏ question measured directly.
 
-**If the IIIT Hyderabad Manipuri handwriting turns out to be Meitei Mayek:** drop "first" from
-(1) and compare against their published baseline; use their Manipuri pages as a second real test
-set (licence permitting). Contributions (2)–(5) stand. If it is Bengali script, the statement
-holds as written.
+**IIIT Hyderabad check: done (24 September 2026).** Its Manipuri handwriting is in Bengali
+script (IIIT-Indic-HW-UC, Table 1 and Fig. 3), so the statement holds as written.
 
 ## 8. Text corpora
 
@@ -162,6 +184,7 @@ native Meitei Mayek word counts for everything it can download (`results/corpus_
 | FLORES+ `mni_Mtei` (openlanguagedata/flores_plus) | Meitei Mayek | dev split only (FLORES dev is about 1,000 sentences) | CC BY-SA 4.0 | gated on Hugging Face (accept terms) | A |
 | IN22-Gen / IN22-Conv (AI4Bharat) | Manipuri, script to check (IndicTrans2 supports both `mni_Beng` and `mni_Mtei`) | 1,024 / 1,503 sentences | CC BY 4.0 | open | F (IndicTrans2 README) |
 | BPCC (AI4Bharat) | Manipuri, script and size to check | 230M pairs over 22 languages | BPCC-H-Wiki and -Daily: CC BY 4.0; mined part: CC0 packaging, source terms apply | open | F (licence), size not checked |
+| Leipzig Corpora Collection; W2C (ÚFAL) | to check | to check | to check | open | lead only: IIIT-Indic-HW-UC built its prompts from these two collections |
 | Sangraha (AI4Bharat) | Manipuri, script and size to check (paper Table 1, arXiv 2403.06350) | 251B tokens over 22 languages | CC BY 4.0 | open | A |
 | MADLAD-400 `mni_Mtei` | Meitei Mayek | small; authors note most Meitei Mayek web text is in non-Unicode fonts | ODC-By (to check) | open | A |
 | ILCI-II Hindi–Manipuri corpus (TDIL-DC, JNU) | Meitei Mayek | about 22,000 sentences, agriculture and entertainment, POS-tagged | TDIL-DC terms (registration; research use, redistribution to check) | registration | A |
@@ -238,9 +261,8 @@ tabular forms they are clearly positive (`tests/test_audit_tummhcd.py`).
 1. Run `notebooks/phase0_data_audit.ipynb` on Colab with the TUMMHCD archive on Drive; commit
    `results/tummhcd_audit.json` and `results/corpus_stats.json`; then fill the TUMMHCD outcome
    and the native word counts into CLAUDE.md.
-2. Open https://cvit.iiit.ac.in/usodi/ucciohd.php and the ICPR 2024 paper: which script is the
-   Manipuri part in, how many Manipuri pages, writers and words, which licence, and what word
-   recognition accuracy they report for Manipuri.
+2. IIIT Hyderabad: done for handwriting (Bengali script, section 2). Still open: the licence on
+   the IIIT-Indic-HW-UC download page, and the script of Manipuri in the printed Mozhi dataset.
 3. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
    (2020): is the MM page dataset available?
 4. Read Hijam's thesis chapter on the CNN + LSTM word model (test set, size, results).
@@ -255,7 +277,7 @@ Search results used in this report (A entries above link to the same pages):
 - [Inunganbi et al. 2020, Springer](https://link.springer.com/article/10.1007/s00371-020-01799-4)
 - [Hijam and Saharia 2024, Evolutionary Intelligence](https://link.springer.com/article/10.1007/s12065-024-00920-z)
 - [TUMMHCD paper, Springer](https://link.springer.com/article/10.1007/s00371-020-02032-y)
-- [Unconstrained Camera Captured Indic Offline Handwritten Dataset](https://link.springer.com/chapter/10.1007/978-3-031-78495-8_21)
+- [Unconstrained Camera Captured Indic Offline Handwritten Dataset](https://link.springer.com/chapter/10.1007/978-3-031-78495-8_21) (author PDF supplied by the owner, read in full)
 - [NLTM OCR, IIIT Hyderabad](https://ilocr.iiit.ac.in/)
 - [NE-OCR preprint](https://www.researchsquare.com/article/rs-9167777/v1) and [model](https://huggingface.co/MWirelabs/ne-ocr)
 - [Towards Deployable OCR Models for Indic Languages](https://arxiv.org/abs/2205.06740)

@@ -94,18 +94,22 @@ lines end to end. Earlier work classifies isolated characters, segments handwrit
 lines and words without recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
 doi 10.1007/s00371-020-01799-4: 189 pages, word segmentation 88.96%), or corrects a character
 classifier on segmented words with zones and the orthographic rule (Hijam and Saharia 2024;
-Hijam's thesis). Meitei Mayek OCR exists only for print and scene text (NE-OCR 2026 preprint,
-IIIT Hyderabad's printed OCR, EMBiL). No handwriting generation model exists for the script. We
+Hijam's thesis). The only large handwritten Manipuri word dataset, IIIT-Indic-HW-UC (Mondal and
+Jawahar, ICPR 2024), is in Bengali script. Meitei Mayek text recognition exists only for print
+(NE-OCR 2026 preprint); for scene text there is character recognition, and EMBiL only detects
+text and identifies its language. No handwriting generation model exists for the script. We
 contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
 synthetic words from TUMMHCD at scale; (3) a public, consented, writer-disjoint real word set
 (50+ writers) with a fixed protocol (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how
 much context resolves ꯢ/ꯏ; (5) later, the first diffusion model for Meitei Mayek handwriting.
 
-**Open risk, check first.** IIIT Hyderabad's camera-captured handwritten dataset (ICPR 2024,
-doi 10.1007/978-3-031-78495-8_21, https://cvit.iiit.ac.in/usodi/ucciohd.php) covers 13 languages
-including Manipuri (91K pages, 1,220 writers in total) with word recognition baselines. If its
-Manipuri is in Meitei Mayek, drop "first" from (1), compare against it and use it as a second real
-test set; (2)–(5) stand. If it is in Bengali script, the statement holds.
+**IIIT Hyderabad risk: resolved (24 September 2026, from the author PDF).** IIIT-Indic-HW-UC
+(doi 10.1007/978-3-031-78495-8_21) writes Manipuri in Bengali script (its Table 1; the Manipuri
+word samples in Fig. 3 are Bengali-script handwriting): 101 writers, 200K words, 75,531 distinct,
+CRNN baseline 90.99% CRR, 83.38% WRR. No Meitei Mayek, so the statement holds. Take from it:
+its split (75/10/15% of word images) is not stated to be writer- or text-disjoint, so ours must be
+both and say so; its phone-capture protocol is a template for Phase 3; its CRNN + CTC baseline
+(Gongidi et al.) is a Phase 2 baseline. The paper states no licence.
 
 **Corpora.** Native Unicode Meitei Mayek text is scarce: FineWeb-2 `mni_Mtei` has 61,256 words
 (ODC-By), against 2.69M words of Bengali-script Manipuri. Open native sources: Meitei Wikipedia
