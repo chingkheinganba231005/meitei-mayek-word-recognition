@@ -31,7 +31,8 @@ Key results (TUMMHCD, 55 classes, official test set of 12,794 images):
   plain average: 98.12% test accuracy, 241 errors. Previous best: 97.08% (multilevel fusion).
 - Four pairs cause 148 of the 241 errors: 044/025 (78), 046/009 (33), 011/047 (20), 033/034 (17).
 - Size features separate 046/009 and 011/047 (vowel signs sit in the upper/lower zone of a word,
-  digits and consonants in the middle zone).
+  digits and consonants in the middle zone). But see "Checks for the first paper" below: every
+  TUMMHCD image is 24 × 24 with the ink filling the frame.
 - 044 (ꯢ, i lonsum, U+ABE2) versus 025 (ꯏ, i, U+ABCF) cannot be separated from isolated images:
   a two-class specialist reaches 68.2% against a 67.1% majority baseline. Reading this pair
   perfectly would lift the ensemble to 98.73%. **This pair is the reason for the word-level project.**
@@ -120,27 +121,38 @@ printed-dataset transcriptions CC BY; ILCI-II (TDIL-DC, about 22,000 Meitei Maye
 registration; newspapers need written permission. Transliterated Bengali-script text is for
 training only, flagged. Real-test-set prompts should come from a CC BY source.
 
-**ꯢ/ꯏ in typed text (measured).** Web text uses ꯢ almost only after a vowel (99.6% of ꯢ in
-Wikipedia) but writes 71–90% of the i's after a vowel as ꯏ. So the thesis rule holds for only
-28–45% of occurrences, and ꯏ outnumbers ꯢ 3.5 to 1 in Wikipedia (thesis: ꯢ 3.6 to 1 ꯏ). The
-positions match the thesis (3.3 i's after a vowel per other i); the spelling does not. Decision
-pending (owner, with a language expert): fix a transcription convention before Phase 1, most
-likely the thesis orthography if TUMMHCD's 044/025 labels follow it; normalise typed text to it
-before training; measure ꯢ/ꯏ and the rule's exceptions only on text with checked spelling
-(TDIL/ILCI-II, printed-dataset transcriptions, our own test transcriptions). This replaces the
-earlier plan to take ꯢ/ꯏ statistics from native typed text.
+**ꯢ/ꯏ in typed text (measured, `results/corpus_stats.json`).** Typed text uses ꯢ only after ꯥ,
+ꯣ or ꯨ (97–99% of all ꯢ), and even there writes ꯏ most of the time (Wikipedia 70%, FineWeb-2
+90%). After a consonant letter (inherent a), the other vowel signs (ꯦ ꯧ ꯤ ꯩ) and vowel letters,
+and at word start, it writes ꯏ (98% or more in Wikipedia). So the thesis rule as coded here (inherent
+a counted as a vowel) holds for only 28–45% of occurrences, and ꯏ outnumbers ꯢ 3.5 to 1 in
+Wikipedia (thesis: ꯢ 3.6 to 1). Decisions pending (owner, with a language expert and the thesis
+text): which vowels the rule means (the data point to ꯥ, ꯣ, ꯨ), and the transcription convention
+for the project, most likely the thesis spelling if TUMMHCD's 044/025 labels follow it. Under it,
+normalise typed text before training, and measure ꯢ/ꯏ and the rule's exceptions only on text with
+checked spelling. A per-document count (next run) looks for pages that always write ꯢ after
+ꯥ/ꯣ/ꯨ: native text in the thesis spelling, if any exists.
 
 **TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
 side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are
-unrelated in style; file times mark scan batches, not writers. Characters are cropped to their ink
-and scaled to fill a 24 × 24 frame, so size, aspect ratio and zone are lost. 1,741 groups of
-pixel-identical images (3,512 images), 468 of them across train and test. Phase 1 therefore uses
-style-matched characters instead of one writer per word, a per-class size and zone model (the
-stroke width in the frame may estimate relative size), and TUMMHCD's own train/test split for the
-characters; writer-disjoint evaluation comes only from the Phase 3 real set. Pending a second run:
-sizes per class, labels of duplicate groups, test images with an identical train image. For the
-first paper: check the size-feature explanation, and consider scoring without duplicated test
-images.
+unrelated in style; file times mark scan batches, not writers. All 85,124 images are 24 × 24 px
+with the ink filling the frame, so size, aspect ratio and zone are lost. 1,741 groups of
+pixel-identical images, almost all pairs (duplicated files, not look-alike glyphs); about a third
+of the images of ꯩ, ꯥ, ꯤ, ꯭ and ꯧ sit in such pairs. 469 test images (3.7%) have an identical
+train image, 456 with the same label. 24 groups carry conflicting labels, mostly ꯲/꯳ (16) and
+꯲/꯹ (4); none ꯢ/ꯏ, so label noise does not explain that pair. Phase 1 therefore uses
+style-matched characters instead of one writer per word, a per-class size and zone model (stroke
+width in the frame may estimate relative size), and TUMMHCD's own train/test split for the
+characters, without the test images that have a train twin; writer-disjoint evaluation comes only
+from the Phase 3 real set.
+
+**Checks for the first paper (under review).** (1) Image and ink-box size are (nearly) constant,
+so the size probe's separation of 046/009 (86.5%) and 011/047 (84.1%) must come mostly from ink
+fraction: a small glyph scaled up to 24 px gets thicker strokes. If the paper says the features
+see a character's zone or size directly, correct that at revision. (2) Score the final system
+without the 469 test images that have a train twin (`results/tummhcd_audit_duplicates.csv`); if
+none of the 241 errors is among them, accuracy would be 98.04% instead of 98.12%. Earlier TUMMHCD
+results share the test set, so the comparison stands; reporting both pre-empts a reviewer.
 
 ## Working rules
 

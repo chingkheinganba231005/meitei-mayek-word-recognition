@@ -39,12 +39,11 @@ has been checked against the full text (CLAUDE.md rule).
    Meitei Mayek text on the web uses non-Unicode fonts (A).
 6. **TUMMHCD carries no writer information, and its images carry no size or position**
    (section 10). File names are a class number and a running index; neighbouring and
-   same-numbered files are unrelated in style; the characters are scaled to fill a 24 × 24
-   frame. 468 groups of pixel-identical images span train and test.
-7. **Typed text breaks the ꯢ/ꯏ rule.** Web text uses ꯢ almost only after a vowel, as the rule
-   says, but writes 71–90% of the i's after a vowel as ꯏ, so the rule holds for only 28–45% of
-   occurrences. The positions agree with the thesis; the spelling does not. Typed corpora cannot
-   teach or test this pair as they stand (section 10).
+   same-numbered files are unrelated in style; all 85,124 images are 24 × 24 with the ink filling
+   the frame. 469 test images (3.7%) have a pixel-identical train image.
+7. **Typed text breaks the ꯢ/ꯏ rule.** Web text uses ꯢ only after ꯥ, ꯣ or ꯨ, and even there
+   writes ꯏ 70–90% of the time; everywhere else it writes ꯏ. So the rule holds for only 28–45%
+   of occurrences. Typed corpora cannot teach or test this pair as they stand (section 10).
 
 ## 2. Handwritten Meitei Mayek beyond isolated characters
 
@@ -264,11 +263,12 @@ tabular forms they are clearly positive (`tests/test_audit_tummhcd.py`).
   from the Phase 3 real test set only, which is writer-disjoint from TUMMHCD by construction.
   Also ask Hijam and Saharia whether writer IDs exist for the form-based part.
 
-## 10. Results of the first Colab run (24 September 2026)
+## 10. Results of the Colab runs (24 September 2026)
 
-Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…) and
-`results/corpus_stats.json`. Every number below comes from them. The breakdowns added afterwards
-(image sizes per class, the labels of duplicates, what precedes ꯢ and ꯏ) need a second run.
+Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…),
+`results/tummhcd_audit_duplicates.csv` and `results/corpus_stats.json`, from the second run, which
+repeats the first and adds image sizes per class, the labels of duplicate groups and ꯢ/ꯏ counts by
+preceding character. Every number below comes from these files.
 
 ### TUMMHCD: no writer information
 
@@ -280,35 +280,61 @@ Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e�
 | Neighbours in name order | 0.012 at lag 1 and 0.003 at lag 10, against −0.003 in random order: files were not saved writer by writer |
 | Neighbours in file-time order | 0.064 at lag 1, falling slowly (0.025 at lag 100), carried by paper grey level (0.21) and ink grey level (0.11) more than by stroke width (0.06): scan batches, not writers. 682 distinct file times from 23 July to 19 September 2018, a median of 12 per class: each class was written out in about a dozen batches |
 
-**The images carry no size or position.** Height and width never vary within a class, and the
-5th and 95th percentiles over all images are both 24 px. Each margin between the ink and the
-frame is at most one pixel in at least 95% of the images, and zero at the top and left. So the
-characters were cropped to their ink and scaled to fill a 24 × 24 frame: its original size, aspect ratio and place in the word are gone. The second run
-lists any class stored at another fixed size.
+**The images carry no size or position.** All 85,124 images are 24 × 24 px (one size in the
+whole archive). Each margin between the ink and the frame is at most one pixel in at least 95% of
+the images, and zero at the top and left. So the characters were cropped to their ink and scaled
+to fill the frame: their original size, aspect ratio and place in the word are gone.
 
-**Duplicates.** 1,741 groups of pixel-identical images hold 3,512 images; 468 of the groups span
-train and test. How many groups carry different labels, and how many test images have an
-identical train image, needs the second run: the first run's `groups_spanning_classes` (479)
-counted the train and test folders of one class as two classes, so it is not a count of label
-conflicts.
+**Duplicates.** 1,741 groups of pixel-identical images hold 3,512 images. Almost all are pairs
+(1,712 pairs, 28 triples, one group of four), so they are duplicated files, not look-alike glyphs
+(those would form large groups). They cluster in five classes, where about a third of all images
+sit in a pair: ꯩ 049 (33.7%), ꯥ 045 (32.7%), ꯤ 048 (32.1%), ꯭ 054 (32.0%) and ꯧ 051 (31.3%);
+then ꯖ 032 (12.9%) and ꯀ 010 (9.9%).
+
+- 469 test images (3.7% of 12,794) have a pixel-identical train image: 456 with the same label,
+  13 only with another label.
+- 24 groups carry conflicting labels: ꯲/꯳ 001/002 (16), ꯲/꯹ 001/008 (4), and one each for
+  ꯸/꯹, ꯆ/ꯇ, ꯗ/ꯘ and ꯙ/ꯚ. None is ꯢ/ꯏ (044/025), so label noise does not explain why that
+  pair cannot be separated.
+- The first run's `groups_spanning_classes` (479) counted a class's train and test folders as two
+  classes; it was not a count of label conflicts. The fixed count is the 24 above.
 
 **What this means.**
 
 - Phase 1 cannot take a word's characters from one writer, and synthetic data cannot be split by
   writer. Compose words from characters matched in style (stroke width, ink and paper grey level;
   file-time batches as a weak session grouping). Keep TUMMHCD's own train/test split for the
-  characters of synthetic training and test words, and take writer-disjoint evaluation from the
-  Phase 3 real set only.
+  characters of synthetic training and test words, leaving out the test images that have a train
+  twin, and take writer-disjoint evaluation from the Phase 3 real set only.
 - Zone-aware placement needs a size and position model per class, because the images have none.
   One handle is the stroke width in the 24-px frame: for the same pen, a small glyph scaled up to
   fill the frame gets thicker strokes, so the median stroke width per class estimates each
   class's relative size. Check this in Phase 1.
-- For the first paper (under review), two checks. If it explains the gain from the size features
-  by glyph size or zone, compare that with the above: image height and width are constant within
-  classes and the ink fills the frame, so those features can carry little beyond ink fraction
-  (or a class-specific frame size, if the second run finds one). And test images with an
-  identical train image can flatter every TUMMHCD result, the published ones included; once the
-  second run counts them, report accuracy with and without them.
+- For the first paper (under review), two checks.
+  - *Size features.* Image height and width are the same for every image and the ink box nearly
+    always fills the frame, so of the five size numbers mostly the ink fraction can vary. Its
+    size probe still separates 046/009 (86.5% against a 55.8% majority) and 011/047 (84.1%
+    against 50.7%), so the signal is real, but it reaches the model through stroke thickness:
+    a small glyph scaled up to 24 px gets thicker strokes and more ink. If the paper says the
+    features see where a character sits in the word, or its size directly, correct that at
+    revision.
+  - *Duplicates.* 456 test images (3.6%) have an identical train image with the same label, and
+    13 more one with another label. Score the final system without these 469
+    (`results/tummhcd_audit_duplicates.csv` lists them); if none of the 241 errors is among them,
+    accuracy would be 98.04% instead of 98.12%. The published results use the same test set, so
+    the comparison stands; reporting both numbers pre-empts a reviewer. In the first project's
+    notebook, with `pred` the final system's predicted classes in the row order of its
+    `test.csv`:
+
+    ```python
+    import pandas as pd
+    dup = pd.read_csv("tummhcd_audit_duplicates.csv")
+    with_train = set(dup.loc[dup.split == "train", "group"])
+    twins = set(dup[(dup.split == "test") & dup.group.isin(with_train)].path.str.split("TUMMHCD-TEST-TRAIN/").str[-1])
+    test = pd.read_csv("data/splits/test.csv")
+    keep = ~test.path.str.replace("\\", "/").str.split("TUMMHCD-TEST-TRAIN/").str[-1].isin(twins)
+    print(keep.sum(), (pred == test.label).mean(), (pred[keep] == test.label[keep]).mean())
+    ```
 
 ### Corpora: sizes
 
@@ -347,14 +373,37 @@ reading is that typists write ꯏ where the thesis's corpus (and presumably TUMM
 preceding character, which checks this context by context, including after consonant letters,
 where our reading of "after a vowel" (the inherent a) could differ from the thesis's.
 
+**By preceding character (second run).** Share of ꯢ among the i's in each context:
+
+| Before the i | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| ꯥ | 31.8% (60,173 i's) | 10.5% (2,985) | 21.4% (32,253) |
+| ꯣ | 26.6% (41,446) | 9.6% (1,877) | 17.3% (14,991) |
+| ꯨ | 34.4% (1,092) | 20.5% (44) | 24.4% (484) |
+| ꯦ, ꯧ, ꯤ or ꯩ | 1.4% (1,641) | 0.9% (212) | 6.3% (410) |
+| a consonant letter (inherent a) | 0.6% (1,399) | 0.0% (121) | 3.5% (113) |
+| a vowel letter | 1.9% (722) | 4.5% (66) | 3.5% (520) |
+| word start | 0.2% (28,804) | 0.6% (1,152) | 0.2% (8,914) |
+| a lonsum final, nung or apun | 1.8% (3,593) | 1.7% (180) | 10.2% (548) |
+
+Of all ꯢ, 99.4% (Wikipedia), 97.1% and 98.8% follow ꯥ, ꯣ or ꯨ. So in typed practice ꯢ belongs
+to the i after ꯥ, ꯣ or ꯨ (the diphthongs āi, oi, ui) and nowhere else, not even after a
+consonant's inherent a; and after ꯥ, ꯣ or ꯨ most typists still write ꯏ. Our coding of the rule
+counts the inherent a as a vowel, which typed text never follows with ꯢ; whether the thesis means
+it must be checked in the thesis itself.
+
 **What this means.**
 
 - Typed corpora cannot teach or test the ꯢ/ꯏ distinction as they stand: a language model trained
   on them would prefer ꯏ after vowels, against the thesis orthography.
-- The project needs a transcription convention, fixed and written down before Phase 1. Standard
-  orthography as in the thesis (ꯢ after a vowel) is the natural choice if TUMMHCD's labels follow
-  it: check with a language expert, and check what the TUMMHCD paper says about labelling 044
-  and 025.
+- The project needs a transcription convention, fixed and written down before Phase 1, and it has
+  to say which vowels count. Standard orthography as in the thesis is the natural choice if
+  TUMMHCD's labels follow it: check with a language expert, and check what the TUMMHCD paper says
+  about labelling 044 and 025.
+- If some documents always write ꯢ after ꯥ, ꯣ and ꯨ, they are native text in the thesis
+  spelling, the best training and test text we could get for this pair. The corpus script now
+  sorts documents by how they spell that i (always ꯢ, always ꯏ, mixed) and reports the always-ꯢ
+  subset separately; this needs one more run.
 - Under that convention, normalise typed text before training (ꯏ after a vowel becomes ꯢ). This
   also erases the genuine exceptions (5.3% of the thesis's checked words), so what context adds
   beyond the rule can only be measured on text with checked spelling: the thesis's TDIL corpus,
@@ -363,23 +412,23 @@ where our reading of "after a vowel" (the inherent a) could differ from the thes
 
 ## 11. To do
 
-1. Rerun `notebooks/phase0_data_audit.ipynb`: it now takes the scripts from the working branch
-   and adds image sizes per class, the labels of duplicate groups, the test images with an
-   identical train image (listed in `results/tummhcd_audit_duplicates.csv`), and ꯢ/ꯏ counts by
-   preceding character. Commit the new result files.
-2. Fix the ꯢ/ꯏ transcription convention with a language expert; find out how TUMMHCD labelled
-   044 and 025.
-3. First paper: check the size-feature explanation, and score the test set without the images
-   that have an identical train image (after item 1).
+1. Run the notebook once more for the per-document count (the corpus part is enough; the TUMMHCD
+   part will repeat the numbers above). It also writes the word list of the always-ꯢ documents to
+   Drive.
+2. Fix the ꯢ/ꯏ transcription convention with a language expert, including which vowels count;
+   find out how TUMMHCD labelled 044 and 025.
+3. First paper: check the size-feature explanation, and score the final system without the 469
+   test images that have a train twin.
 4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
    (Mendeley Data); FLORES+ with `HF_TOKEN`. Check the Manipuri script and size in IN22, BPCC and
    Sangraha.
 5. IIIT Hyderabad: the licence on the IIIT-Indic-HW-UC page, and the script of Manipuri in Mozhi.
 6. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
    (2020): is the MM page dataset available? Read Hijam's thesis chapter on the CNN + LSTM word
-   model (test set, size, results).
-7. TUMMHCD paper: is the official test split meant to be writer-disjoint? Pixel-identical images in
-   both halves show that at least some images, and so some writers, are shared.
+   model (test set, size, results), and its exact wording of the ꯢ/ꯏ rule.
+7. TUMMHCD paper: is the official test split meant to be writer-disjoint? 469 test images with an
+   identical train image show that some images, and so some writers, are shared. Ask the authors
+   about the duplicated vowel-sign files.
 
 ## Sources
 
