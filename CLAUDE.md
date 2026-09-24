@@ -31,10 +31,12 @@ Key results (TUMMHCD, 55 classes, official test set of 12,794 images):
   plain average: 98.12% test accuracy, 241 errors. Previous best: 97.08% (multilevel fusion).
 - Four pairs cause 148 of the 241 errors: 044/025 (78), 046/009 (33), 011/047 (20), 033/034 (17).
 - Size features separate 046/009 and 011/047 (vowel signs sit in the upper/lower zone of a word,
-  digits and consonants in the middle zone).
+  digits and consonants in the middle zone). But see "Checks for the first paper" below: every
+  TUMMHCD image is 24 × 24 with the ink filling the frame.
 - 044 (ꯢ, i lonsum, U+ABE2) versus 025 (ꯏ, i, U+ABCF) cannot be separated from isolated images:
   a two-class specialist reaches 68.2% against a 67.1% majority baseline. Reading this pair
   perfectly would lift the ensemble to 98.73%. **This pair is the reason for the word-level project.**
+  Phase 0 (below) found it is a spelling convention: everyday writing uses ꯏ throughout.
 - Rule from Hijam's thesis: ꯢ follows a vowel; ꯏ begins a word or does not follow a vowel.
   Checked by language experts on about 26,000 words (from a corpus of about 190,000): 94.7%.
   ꯢ is about 3.6 times as frequent as ꯏ.
@@ -73,7 +75,8 @@ training and test data.
 **Phase 2: recogniser.** Reuse our pretrained backbones as the visual encoder, add a BiLSTM or
 Transformer sequence head with CTC (and try an attention decoder). Decode with a character n-gram or
 small language model. Baselines: our isolated-character ensemble plus the orthographic rule, and a
-re-implementation of the zone-and-rule second stage. Metrics: CER, WER, and accuracy on the ꯢ/ꯏ pair.
+re-implementation of the zone-and-rule second stage. Metrics: CER, WER, and accuracy on the
+confusable pairs (ꯢ/ꯏ turned out to be a spelling convention: see Phase 0 findings).
 
 **Phase 3: real test set.** Collect real handwritten words from volunteers with written consent
 (what is collected, how it is used and licensed). Target roughly 50+ writers. This set is the main
@@ -89,8 +92,8 @@ metrics.
 Found by web search only (no full-text access in that session): every paper still has to be
 checked against its full text before citing.
 
-**Novelty statement (draft).** No published work recognises handwritten Meitei Mayek words or
-lines end to end. Earlier work classifies isolated characters, segments handwritten pages into
+**Novelty statement (draft; (3) and (4) revised 24 September 2026).** No published work
+recognises handwritten Meitei Mayek words or lines end to end. Earlier work classifies isolated characters, segments handwritten pages into
 lines and words without recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
 doi 10.1007/s00371-020-01799-4: 189 pages, word segmentation 88.96%), or corrects a character
 classifier on segmented words with zones and the orthographic rule (Hijam and Saharia 2024;
@@ -100,8 +103,12 @@ Jawahar, ICPR 2024), is in Bengali script. Meitei Mayek text recognition exists 
 text and identifies its language. No handwriting generation model exists for the script. We
 contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
 synthetic words from TUMMHCD at scale; (3) a public, consented, writer-disjoint real word set
-(50+ writers) with a fixed protocol (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how
-much context resolves ꯢ/ꯏ; (5) later, the first diffusion model for Meitei Mayek handwriting.
+(50+ writers) with a fixed protocol (CER, WER, accuracy on the confusable pairs); (4) evidence that
+ꯢ versus ꯏ, the largest error source of isolated-character recognition (78 of 241 errors), is a
+spelling convention, not a visual distinction (everyday writing uses ꯏ throughout; the standard
+spelling's ꯢ after ꯥ, ꯣ, ꯨ follows a rule for 95–99% of words), so the recogniser reads one letter
+and renders either spelling; (5) later, the first diffusion model for Meitei Mayek handwriting.
+Context still matters for ꯦ/꯰, ꯨ/ꯁ and ꯗ/ꯘ (70 of the 241 errors).
 
 **IIIT Hyderabad risk: resolved (24 September 2026, from the author PDF).** IIIT-Indic-HW-UC
 (doi 10.1007/978-3-031-78495-8_21) writes Manipuri in Bengali script (its Table 1; the Manipuri
@@ -111,18 +118,61 @@ its split (75/10/15% of word images) is not stated to be writer- or text-disjoin
 both and say so; its phone-capture protocol is a template for Phase 3; its CRNN + CTC baseline
 (Gongidi et al.) is a Phase 2 baseline. The paper states no licence.
 
-**Corpora.** Native Unicode Meitei Mayek text is scarce: FineWeb-2 `mni_Mtei` has 61,256 words
-(ODC-By), against 2.69M words of Bengali-script Manipuri. Open native sources: Meitei Wikipedia
-(CC BY-SA 4.0), FineWeb-2 (ODC-By), FLORES+ `mni_Mtei` dev (CC BY-SA 4.0, gated), IN22 (CC BY 4.0,
-script to check), printed-dataset transcriptions (Data in Brief 2022, CC BY). ILCI-II (TDIL-DC,
-about 22,000 Meitei Mayek sentences) needs registration. Newspapers need written permission.
-Decision: evaluate the language model and all ꯢ/ꯏ statistics on native text only.
-Transliterated Bengali-script text may be used for training, flagged, because a transliterator
-bakes its own ꯢ/ꯏ rule into the text. Real-test-set prompts should come from a CC BY source.
+**Corpora (measured, `results/corpus_stats.json`).** Native Unicode Meitei Mayek text is scarce:
+Wikipedia 1,036,283 running words (72,437 distinct), FineWeb-2 `mni_Mtei` 52,395 (11,141), its
+filtered-out part 365,832 (33,425); together 1.45M words and 77,580 distinct, overlapping.
+Bengali-script Manipuri: 2.69M words in FineWeb-2 alone. Licences: Wikipedia CC BY-SA 4.0,
+FineWeb-2 ODC-By, FLORES+ `mni_Mtei` dev CC BY-SA 4.0 (gated), IN22 CC BY 4.0 (script to check),
+printed-dataset transcriptions CC BY; ILCI-II (TDIL-DC, about 22,000 Meitei Mayek sentences) needs
+registration; newspapers need written permission. Transliterated Bengali-script text is for
+training only, flagged (its ꯢ/ꯏ choices no longer matter; see below). Real-test-set prompts should
+come from a CC BY source, in everyday spelling (ꯏ only).
 
-**TUMMHCD.** About 500 writers, two collection phases (answer sheets and notes; tabular forms).
-Images are mostly 24 × 24 px. Writer IDs: not yet known. Run `notebooks/phase0_data_audit.ipynb`
-on the Drive copy and record the outcome here.
+**ꯢ/ꯏ in typed text (measured, `results/corpus_stats.json`).** Typed text uses ꯢ only after ꯥ,
+ꯣ or ꯨ (97–99% of all ꯢ); after a consonant letter (inherent a), the other vowel signs, vowel
+letters and at word start it writes ꯏ (98% or more in Wikipedia). For the i after ꯥ, ꯣ or ꯨ there
+are two spelling practices, page by page: of 4,523 Wikipedia pages with at least five such i's,
+1,615 write ꯢ for fewer than 30% of them and 2,463 for 70% or more (445 in between); web text
+outside Wikipedia leans to ꯏ (FineWeb-2: 122 pages against 24). Pages writing ꯢ there 90% of the
+time or more (Wikipedia 605 pages, 55,589 words; about 82,000 words over three overlapping
+sources) match the thesis: the rule holds for 95–97% of their i's (92–95% over distinct words;
+thesis 94.7%) and they have 4–6 ꯢ per ꯏ (thesis 3.6); part of this is built in by the selection,
+but ꯏ at word start (1,002 against 14 ꯢ) is not. Over all pages the rule as coded holds for only
+28–45%. The ꯢ-writing pages follow a formal standard, the thesis
+spelling: under the rule "ꯢ after ꯥ, ꯣ or ꯨ, ꯏ elsewhere" the always-ꯢ Wikipedia pages agree for
+95.7% of i's and 94.8% of distinct words (thesis 94.7%), 99.0% without one probably templated
+word (ꯃꯆꯥꯈꯥꯏꯕ), with no clear lexical exception (`results/i_exception_summary.json`).
+**Owner's note (native writer, 24 September 2026):** "we barely use the lonsum version of i. Its
+always ꯑꯥꯏ." **Decision:** transcribe in everyday spelling, one letter ꯏ for every i. The
+language-model text is all typed text with ꯢ mapped to ꯏ; the recogniser treats TUMMHCD 044 and
+025 as one class; real-test-set prompts and ground truth use ꯏ only. The standard spelling is an
+optional rendering of the output by the rule, evaluated on text (the expert review sheet
+`results/i_exception_candidates.csv` matters only for that). The word-level motivation now rests
+on reading whole words, the other confusable pairs and the real test set, not on ꯢ/ꯏ.
+
+**TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
+side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are
+unrelated in style; file times mark scan batches, not writers. All 85,124 images are 24 × 24 px
+with the ink filling the frame, so size, aspect ratio and zone are lost. 1,741 groups of
+pixel-identical images, almost all pairs (duplicated files, not look-alike glyphs); about a third
+of the images of ꯩ, ꯥ, ꯤ, ꯭ and ꯧ sit in such pairs. 469 test images (3.7%) have an identical
+train image, 456 with the same label. 24 groups carry conflicting labels, mostly ꯲/꯳ (16) and
+꯲/꯹ (4); none ꯢ/ꯏ, so label noise does not explain that pair. Phase 1 therefore uses
+style-matched characters instead of one writer per word, a per-class size and zone model (stroke
+width in the frame may estimate relative size), and TUMMHCD's own train/test split for the
+characters, without the test images that have a train twin; writer-disjoint evaluation comes only
+from the Phase 3 real set.
+
+**Checks for the first paper (under review).** (1) Image and ink-box size are (nearly) constant,
+so the size probe's separation of 046/009 (86.5%) and 011/047 (84.1%) must come mostly from ink
+fraction: a small glyph scaled up to 24 px gets thicker strokes. If the paper says the features
+see a character's zone or size directly, correct that at revision. (2) Score the final system
+without the 469 test images that have a train twin (`results/tummhcd_audit_duplicates.csv`); if
+none of the 241 errors is among them, accuracy would be 98.04% instead of 98.12%. Earlier TUMMHCD
+results share the test set, so the comparison stands; reporting both pre-empts a reviewer.
+(3) Everyday writing does not distinguish ꯢ from ꯏ: the paper could say that 044/025 is a
+spelling convention, under which its ensemble's accuracy is its own figure of 98.73%
+(163 errors).
 
 ## Working rules
 

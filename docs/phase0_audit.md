@@ -1,9 +1,8 @@
 # Phase 0: literature and data audit
 
 Started 24 September 2026. Status: literature search and corpus licence audit done (first
-pass); the IIIT Hyderabad question is settled (section 2); TUMMHCD writer check and corpus word
-counts are scripted but need to be run on Colab (`notebooks/phase0_data_audit.ipynb`), because
-this session could not reach the data.
+pass); the IIIT Hyderabad question is settled (section 2); the first Colab run of the data audit
+is done (section 10), and a second run with more detail is pending (section 11).
 
 **How this was done, and what that means for citing.** The search ran in a cloud session whose
 network allowed a web search engine and GitHub, but not publisher sites, arXiv, Hugging Face,
@@ -34,14 +33,21 @@ has been checked against the full text (CLAUDE.md rule).
    Manipuri in Bengali script in IIIT-Indic-HW-UC.
 4. **No handwriting generation model for Meitei Mayek was found.** Indic diffusion work covers
    isolated Bangla characters and an unpublished Devanagari repository.
-5. **Native Unicode Meitei Mayek text is scarce.** FineWeb-2 holds 61,256 words of it (its
-   `wiki_ratio` is 0.556), against 2.69M words of Manipuri in Bengali script (F). The MADLAD-400 authors report
-   that most Meitei Mayek text on the web uses non-Unicode fonts (A). A text corpus large enough
-   for a language model will likely need transliterated Bengali-script text, with the ꯢ/ꯏ caveat
-   in section 8.
-6. **TUMMHCD writer IDs: unknown yet.** The dataset paper reports about 500 writers and two
-   collection phases (A). The audit script tests folders, file names, side files and hidden writer
-   grouping; it needs your Drive copy.
+5. **Native Unicode Meitei Mayek text is scarce.** Wikipedia and FineWeb-2 together hold about
+   1.45 million running words and 78,000 distinct words, with much overlap (section 10); FineWeb-2
+   has 2.69M words of Manipuri in Bengali script (F). The MADLAD-400 authors report that most
+   Meitei Mayek text on the web uses non-Unicode fonts (A).
+6. **TUMMHCD carries no writer information, and its images carry no size or position**
+   (section 10). File names are a class number and a running index; neighbouring and
+   same-numbered files are unrelated in style; all 85,124 images are 24 × 24 with the ink filling
+   the frame. 469 test images (3.7%) have a pixel-identical train image.
+7. **ꯢ versus ꯏ is a spelling convention, not a visual distinction.** Everyday writing uses ꯏ
+   for every i: the owner, a native writer, writes ꯑꯥꯏ, and web text outside Wikipedia writes the
+   i after ꯥ, ꯣ and ꯨ as ꯏ 90% of the time. A formal standard (the thesis spelling), followed by
+   about half of the Wikipedia pages that can show it, writes ꯢ after ꯥ, ꯣ and ꯨ, by a rule that
+   holds for 95–99% of words there (section 10). So the pair that no isolated-character model can
+   separate is two spellings of one letter. The project transcribes in everyday spelling and can
+   render the standard one by rule.
 
 ## 2. Handwritten Meitei Mayek beyond isolated characters
 
@@ -158,14 +164,20 @@ machine with open internet.
 > visual encoders with a CTC or attention head and a character language model; (2) zone-aware
 > synthetic word images composed from TUMMHCD characters at scale; (3) a public, consented,
 > writer-disjoint set of real handwritten words from 50 or more writers, with a fixed protocol
-> (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how much word context resolves ꯢ
-> versus ꯏ, which isolated-character models cannot separate (68.2% against a 67.1% majority
-> baseline); and later (5) the first diffusion model for Meitei Mayek handwriting, judged by
-> whether it improves recognition of real handwriting.
+> (CER, WER, accuracy on the confusable pairs); (4) evidence that ꯢ versus ꯏ, the largest error
+> source of isolated-character recognition (78 of 241 errors in our previous work), is a spelling
+> convention, not a visual distinction: everyday writing uses ꯏ throughout, and the standard
+> spelling puts ꯢ after ꯥ, ꯣ and ꯨ by a rule that holds for 95–99% of words, so a recogniser
+> should read one letter and render either spelling; and later (5) the first diffusion model for
+> Meitei Mayek handwriting, judged by whether it improves recognition of real handwriting.
+
+Contributions (3) and (4) were revised on 24 September 2026 after the owner's note on everyday
+spelling (section 10). Word context still matters for the other confusable pairs, ꯦ/꯰, ꯨ/ꯁ and
+ꯗ/ꯘ (70 of the 241 errors), where the position in the word and the lexicon decide.
 
 **Distinct from Hijam's thesis:** public benchmark and protocol instead of a private word set;
 segmentation-free sequence model instead of per-character CNN plus LSTM correction; synthetic
-words at scale; writer-disjoint real test set; the ꯢ/ꯏ question measured directly.
+words at scale; writer-disjoint real test set; the ꯢ/ꯏ question settled as one of spelling.
 
 **IIIT Hyderabad check: done (24 September 2026).** Its Manipuri handwriting is in Bengali
 script (IIIT-Indic-HW-UC, Table 1 and Fig. 3), so the statement holds as written.
@@ -210,15 +222,21 @@ native Meitei Mayek word counts for everything it can download (`results/corpus_
    words.
 4. *Prompts for the real test set (Phase 3).* Take sentences from a CC BY source (IN22, if its
    Manipuri is Meitei script) so the released set can itself be CC BY; CC BY-SA prompts (FLORES+,
-   Wikipedia) would force share-alike. Add designed words that stress ꯢ/ꯏ and the other three
-   confusable pairs.
+   Wikipedia) would force share-alike. Write the prompts in everyday spelling (ꯏ only), and add
+   designed words that stress the confusable pairs ꯦ/꯰, ꯨ/ꯁ and ꯗ/ꯘ.
 5. *Replicate the rule figure.* `corpus_stats.py` reports how often the rule holds on each
    corpus, over running and distinct words. The thesis figure (94.7% on about 26,000 expert-checked
    words) and the frequency ratio (ꯢ about 3.6 times ꯏ) can be checked on open data this way.
 
+*Revised (section 10):* typed text mixes two spellings of the i after ꯥ, ꯣ and ꯨ. The project uses
+everyday spelling (ꯏ only) and maps ꯢ to ꯏ in all text, so recommendation 1 holds with that
+mapping, and the ꯢ/ꯏ concern in recommendation 2 no longer applies.
+
 ## 9. TUMMHCD writer information
 
-**What is known.** 85,124 images, 55 classes, 72,330 train and 12,794 test (the first paper). About
+**Outcome of the first run: no writer information (section 10).**
+
+**What was known before.** 85,124 images, 55 classes, 72,330 train and 12,794 test (the first paper). About
 500 writers, collected in two phases: unconstrained writing (answer sheets, classroom notes) and
 tabular forms (dataset paper abstract, A). The archive holds `TUMMHCDtrain/train_NNN` and
 `TUMMHCDtest/test_NNN` folders (`mayek/split.py` in the first project). Images are small scans,
@@ -256,19 +274,235 @@ tabular forms they are clearly positive (`tests/test_audit_tummhcd.py`).
   from the Phase 3 real test set only, which is writer-disjoint from TUMMHCD by construction.
   Also ask Hijam and Saharia whether writer IDs exist for the form-based part.
 
-## 10. To do (needs access this session did not have)
+## 10. Results of the Colab runs (24 September 2026)
 
-1. Run `notebooks/phase0_data_audit.ipynb` on Colab with the TUMMHCD archive on Drive; commit
-   `results/tummhcd_audit.json` and `results/corpus_stats.json`; then fill the TUMMHCD outcome
-   and the native word counts into CLAUDE.md.
-2. IIIT Hyderabad: done for handwriting (Bengali script, section 2). Still open: the licence on
-   the IIIT-Indic-HW-UC download page, and the script of Manipuri in the printed Mozhi dataset.
-3. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
-   (2020): is the MM page dataset available?
-4. Read Hijam's thesis chapter on the CNN + LSTM word model (test set, size, results).
-5. Check the Manipuri script and size in IN22, BPCC and Sangraha; register on TDIL-DC for ILCI-II
-   and read its terms; download the printed dataset's text files from Mendeley Data.
-6. From the TUMMHCD paper: is the official test split writer-disjoint?
+Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…) and
+`results/tummhcd_audit_duplicates.csv` from the second run, which repeats the first and adds image
+sizes per class, the labels of duplicate groups and ꯢ/ꯏ counts by preceding character;
+`results/corpus_stats.json` from the third run, which adds the count by document. Every number
+below comes from these files.
+
+### TUMMHCD: no writer information
+
+| Where we looked | What we found |
+|---|---|
+| Folders and side files | no folder below the class folders, no other files; all 85,124 files are `.tif` |
+| File names | one template, `mmhc<k>_<n>`. k runs 1–55 and is the class number plus one (each value sits in one class, in its train and test folders); n runs from 1 to the class size, fills that range and never repeats within a class: a running index, not a writer |
+| Same n in different classes | style correlation 0.002 over 83,110 pairs, against 0.000 shuffled: the n-th files of two classes are not linked, so no tabular-form grouping survives |
+| Neighbours in name order | 0.012 at lag 1 and 0.003 at lag 10, against −0.003 in random order: files were not saved writer by writer |
+| Neighbours in file-time order | 0.064 at lag 1, falling slowly (0.025 at lag 100), carried by paper grey level (0.21) and ink grey level (0.11) more than by stroke width (0.06): scan batches, not writers. 682 distinct file times from 23 July to 19 September 2018, a median of 12 per class: each class was written out in about a dozen batches |
+
+**The images carry no size or position.** All 85,124 images are 24 × 24 px (one size in the
+whole archive). Each margin between the ink and the frame is at most one pixel in at least 95% of
+the images, and zero at the top and left. So the characters were cropped to their ink and scaled
+to fill the frame: their original size, aspect ratio and place in the word are gone.
+
+**Duplicates.** 1,741 groups of pixel-identical images hold 3,512 images. Almost all are pairs
+(1,712 pairs, 28 triples, one group of four), so they are duplicated files, not look-alike glyphs
+(those would form large groups). They cluster in five classes, where about a third of all images
+sit in a pair: ꯩ 049 (33.7%), ꯥ 045 (32.7%), ꯤ 048 (32.1%), ꯭ 054 (32.0%) and ꯧ 051 (31.3%);
+then ꯖ 032 (12.9%) and ꯀ 010 (9.9%).
+
+- 469 test images (3.7% of 12,794) have a pixel-identical train image: 456 with the same label,
+  13 only with another label.
+- 24 groups carry conflicting labels: ꯲/꯳ 001/002 (16), ꯲/꯹ 001/008 (4), and one each for
+  ꯸/꯹, ꯆ/ꯇ, ꯗ/ꯘ and ꯙ/ꯚ. None is ꯢ/ꯏ (044/025), so label noise does not explain why that
+  pair cannot be separated.
+- The first run's `groups_spanning_classes` (479) counted a class's train and test folders as two
+  classes; it was not a count of label conflicts. The fixed count is the 24 above.
+
+**What this means.**
+
+- Phase 1 cannot take a word's characters from one writer, and synthetic data cannot be split by
+  writer. Compose words from characters matched in style (stroke width, ink and paper grey level;
+  file-time batches as a weak session grouping). Keep TUMMHCD's own train/test split for the
+  characters of synthetic training and test words, leaving out the test images that have a train
+  twin, and take writer-disjoint evaluation from the Phase 3 real set only.
+- Zone-aware placement needs a size and position model per class, because the images have none.
+  One handle is the stroke width in the 24-px frame: for the same pen, a small glyph scaled up to
+  fill the frame gets thicker strokes, so the median stroke width per class estimates each
+  class's relative size. Check this in Phase 1.
+- For the first paper (under review), two checks.
+  - *Size features.* Image height and width are the same for every image and the ink box nearly
+    always fills the frame, so of the five size numbers mostly the ink fraction can vary. Its
+    size probe still separates 046/009 (86.5% against a 55.8% majority) and 011/047 (84.1%
+    against 50.7%), so the signal is real, but it reaches the model through stroke thickness:
+    a small glyph scaled up to 24 px gets thicker strokes and more ink. If the paper says the
+    features see where a character sits in the word, or its size directly, correct that at
+    revision.
+  - *Duplicates.* 456 test images (3.6%) have an identical train image with the same label, and
+    13 more one with another label. Score the final system without these 469
+    (`results/tummhcd_audit_duplicates.csv` lists them); if none of the 241 errors is among them,
+    accuracy would be 98.04% instead of 98.12%. The published results use the same test set, so
+    the comparison stands; reporting both numbers pre-empts a reviewer. In the first project's
+    notebook, with `pred` the final system's predicted classes in the row order of its
+    `test.csv`:
+
+    ```python
+    import pandas as pd
+    dup = pd.read_csv("tummhcd_audit_duplicates.csv")
+    with_train = set(dup.loc[dup.split == "train", "group"])
+    twins = set(dup[(dup.split == "test") & dup.group.isin(with_train)].path.str.split("TUMMHCD-TEST-TRAIN/").str[-1])
+    test = pd.read_csv("data/splits/test.csv")
+    keep = ~test.path.str.replace("\\", "/").str.split("TUMMHCD-TEST-TRAIN/").str[-1].isin(twins)
+    print(keep.sum(), (pred == test.label).mean(), (pred[keep] == test.label[keep]).mean())
+    ```
+
+### Corpora: sizes
+
+| Source | Running words | Distinct words | Non-space characters in the Meitei block |
+|---|---:|---:|---:|
+| Meitei Wikipedia dump | 1,036,283 | 72,437 | 19.5% (markup, English templates) |
+| FineWeb-2 `mni_Mtei` | 52,395 | 11,141 | 91.1% |
+| FineWeb-2 `mni_Mtei_removed` | 365,832 | 33,425 | 70.7% |
+| All three (they overlap) | 1,454,510 | 77,580 | 25.0% |
+
+FLORES+ did not download (gated: it needs `HF_TOKEN` after accepting its terms). Words here are
+runs of Meitei Mayek letters, which is why FineWeb-2 counts fewer than its own 61,256. The removed
+part seems to hold much Wikipedia interface text (ꯋꯤꯀꯤꯄꯦꯗꯤꯌꯥ, "Wikipedia", is among its 15 most
+frequent words). Deduplicate before any use.
+
+### ꯢ and ꯏ in typed text
+
+| | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| ꯢ, all occurrences | 30,756 | 517 | 9,719 |
+| ꯏ, all occurrences | 108,124 | 6,120 | 48,515 |
+| ꯢ outside a vowel context | 0.42% | 1.9% | 0.7% |
+| ꯏ among the i's after a vowel | 71.2% | 90.4% | 80.2% |
+| i's after a vowel per other i | 3.29 | 3.98 | 5.15 |
+| rule holds (running words) | 45.3% | 27.6% | 32.7% |
+
+"After a vowel" means after a consonant letter (with its inherent a), a vowel letter or a vowel
+sign; everything else is word start, a lonsum final, nung or apun.
+
+Typed text uses ꯢ almost only after a vowel, as the rule says, but writes most i's after a vowel
+as ꯏ. So the rule holds for only 28–45% of occurrences, and in Wikipedia ꯏ is 3.5 times as
+frequent as ꯢ, the reverse of the thesis figure (ꯢ about 3.6 times ꯏ). The positions agree with
+the thesis: Wikipedia has 3.3 i's after a vowel for every other i, close to its 3.6. The simplest
+reading is that typists write ꯏ where the thesis's corpus (and presumably TUMMHCD's labels) have
+ꯢ: a difference of spelling practice, not of language. The second run counts both letters by the
+preceding character, which checks this context by context, including after consonant letters,
+where our reading of "after a vowel" (the inherent a) could differ from the thesis's.
+
+**By preceding character (second run).** Share of ꯢ among the i's in each context:
+
+| Before the i | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| ꯥ | 31.8% (60,173 i's) | 10.5% (2,985) | 21.4% (32,253) |
+| ꯣ | 26.6% (41,446) | 9.6% (1,877) | 17.3% (14,991) |
+| ꯨ | 34.4% (1,092) | 20.5% (44) | 24.4% (484) |
+| ꯦ, ꯧ, ꯤ or ꯩ | 1.4% (1,641) | 0.9% (212) | 6.3% (410) |
+| a consonant letter (inherent a) | 0.6% (1,399) | 0.0% (121) | 3.5% (113) |
+| a vowel letter | 1.9% (722) | 4.5% (66) | 3.5% (520) |
+| word start | 0.2% (28,804) | 0.6% (1,152) | 0.2% (8,914) |
+| a lonsum final, nung or apun | 1.8% (3,593) | 1.7% (180) | 10.2% (548) |
+
+Of all ꯢ, 99.4% (Wikipedia), 97.1% and 98.8% follow ꯥ, ꯣ or ꯨ. So in typed practice ꯢ belongs
+to the i after ꯥ, ꯣ or ꯨ (the diphthongs āi, oi, ui) and nowhere else, not even after a
+consonant's inherent a; and after ꯥ, ꯣ or ꯨ most typists still write ꯏ. Our coding of the rule
+counts the inherent a as a vowel, which typed text never follows with ꯢ; whether the thesis means
+it must be checked in the thesis itself.
+
+At this point the project needed a transcription convention that says which vowels count; the
+by-document count and the owner's note below settle it.
+
+**By document (third run).** Share of ꯢ among the i's after ꯥ, ꯣ or ꯨ, for documents with at
+least five such i's:
+
+| Share of ꯢ | 0–0.1 | 0.1–0.2 | 0.2–0.3 | 0.3–0.4 | 0.4–0.5 | 0.5–0.6 | 0.6–0.7 | 0.7–0.8 | 0.8–0.9 | 0.9–1 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Wikipedia pages | 1,071 | 392 | 152 | 90 | 71 | 103 | 181 | 399 | 1,459 | 605 |
+| FineWeb-2 documents | 120 | 2 | 0 | 1 | 1 | 2 | 3 | 3 | 5 | 16 |
+| FineWeb-2 removed | 1,109 | 211 | 103 | 51 | 46 | 38 | 93 | 54 | 102 | 286 |
+
+Two spelling practices, not one noisy one: in Wikipedia 1,615 pages write ꯢ for fewer than 30%
+of these i's and 2,463 for 70% or more, with only 445 in between. The web outside Wikipedia leans
+to ꯏ (FineWeb-2: 122 against 24).
+
+| Documents that write ꯢ for 90% or more | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| documents | 605 | 16 | 286 |
+| running words | 55,589 | 2,404 | 23,705 |
+| rule holds, running words | 95.1% (11,982 i's) | 96.9% (318) | 96.0% (4,407) |
+| rule holds, distinct words | 92.7% (1,293) | 94.5% (165) | 92.0% (807) |
+| ꯢ per ꯏ, running words | 5.9 | 4.1 | 4.8 |
+| ꯢ per ꯏ, distinct words | 2.4 | 3.2 | 2.7 |
+
+These pages match the thesis (94.7% on about 26,000 checked words; ꯢ about 3.6 times ꯏ) closely.
+Part of the match is built in, because the pages were chosen for writing ꯢ after ꯥ, ꯣ and ꯨ; but
+the other half of the rule holds on its own there: ꯏ at word start 1,002 times against 14 ꯢ, after
+a lonsum final 164 against 9 (Wikipedia). No i follows a bare consonant letter anywhere in these
+pages. In the Wikipedia pages the rule misses 587 of 11,982 i's: ꯏ after ꯥ (456, 6% of the i's
+there), ꯏ after ꯣ or ꯨ (33), ꯏ after ꯦ, ꯧ, ꯤ or a vowel letter (75; the rule as coded predicts ꯢ
+there, typed practice never writes it), and ꯢ at word start or after a final (23). The first two
+groups and the last are the candidates for genuine exceptions, or typing slips.
+
+**Exception candidates (from the word list of the 605 always-ꯢ Wikipedia pages).**
+`scripts/i_exceptions.py` checks every i in the list against the standard spelling's convention
+(ꯢ after ꯥ, ꯣ or ꯨ, ꯏ elsewhere) and looks up each disagreeing word's twin, the same word with the other i
+(`results/i_exception_summary.json`; review sheet `results/i_exception_candidates.csv`, 67 words
+from the Meitei Wikipedia, CC BY-SA 4.0). The convention holds for 95.7% of the 11,982 i's and
+for 94.8% of distinct words (thesis: 94.7%). Of the 518 misses, 398 are one word, ꯃꯆꯥꯈꯥꯏꯕ,
+among the ten most frequent words of the whole dump (9,514 times) and probably inserted by a
+template; without it the convention holds for 99.0%. The other 120:
+
+- 74 are less frequent variants of words the same pages usually spell by the convention
+  (ꯂꯥꯏꯅꯤꯡ 15 against ꯂꯥꯢꯅꯤꯡ 417; ꯑꯣꯏꯕ 1 against ꯑꯣꯢꯕ 967): slips or other authors;
+- 36 are words seen once or twice in this spelling only: ꯢ at word start in forms that look like
+  faulty conversion from legacy fonts (ꯢꯝ꯭ꯐꯥꯂ for ꯏꯝꯐꯥꯜ), ꯢ for the verb ending after a final
+  consonant (ꯀꯣꯛꯢ; the same pages write ꯈꯨꯠꯏ 76 times), and ꯏ after ꯥ or ꯨ in rare words and
+  loans (ꯄꯤꯑꯥꯏꯑꯦꯟ, ꯑꯥꯏꯑꯦꯁꯇꯤ);
+- 10 have the other spelling about as often, among them the i after ꯧ (ꯀꯧꯢ 3, ꯀꯧꯏ 3), which the
+  convention leaves open.
+
+No word stands out as a genuine lexical exception. Questions for the language expert:
+(1) ꯃꯆꯥꯈꯥꯏꯕ, ꯢ as the convention says? (2) the i after ꯧ and ꯦ; (3) the letter I in loans and
+acronyms (ꯑꯥꯏ or ꯑꯥꯢ); (4) any exceptions the thesis itself lists.
+
+The main ꯢ mode in Wikipedia lies at 80–90%, below the 90% cut: either the thesis spelling keeps ꯏ
+after ꯥ in some words, or pages have several authors. The natural cut between the two practices
+is the valley at 30–70%.
+
+**The owner's note and the decision (24 September 2026).** The owner, a native writer: "we
+barely use the lonsum version of i. Its always ꯑꯥꯏ." This agrees with the web text outside
+Wikipedia (FineWeb-2: 120 of 153 pages write ꯏ after ꯥ, ꯣ and ꯨ, 90% of those i's overall). The
+ꯢ-writing Wikipedia pages follow a formal standard, the thesis spelling, which is almost fully
+rule-governed (above). So:
+
+- *Everyday spelling is the project's convention*: one letter, ꯏ, for every i. The recogniser
+  treats TUMMHCD's 044 and 025 as one class (their images cannot be told apart anyway); the
+  real-test-set prompts and ground truth use ꯏ only.
+- *Language-model text*: all typed text, with ꯢ mapped to ꯏ. No split by spelling practice is
+  needed, and the ꯢ/ꯏ choices a transliterator makes no longer matter for Bengali-script text.
+- *The standard spelling* is an optional rendering of the output by the rule (ꯢ after ꯥ, ꯣ or ꯨ),
+  evaluated on text, not handwriting; the expert's verdicts on
+  `results/i_exception_candidates.csv` are needed only if that rendering is offered.
+- *Metrics*: the Phase 2 metric "accuracy on the ꯢ/ꯏ pair" is replaced by accuracy on the other
+  confusable pairs (ꯦ/꯰, ꯨ/ꯁ, ꯗ/ꯘ) and CER in both spellings.
+- *The motivation shifts*: the word-level project no longer rests on ꯢ/ꯏ, which a rule settles,
+  but on reading whole words (no such system exists), the other confusable pairs, and the real
+  test set.
+
+## 11. To do
+
+1. Confirm the revised contribution (4) and the shift in motivation (section 10), since they
+   change how the paper is framed.
+2. Only if the standard-spelling rendering is offered: give a language expert
+   `results/i_exception_candidates.csv` (67 words, a column for the verdict) and the questions in
+   section 10. Find out how TUMMHCD labelled 044 and 025 (useful for the first paper's discussion).
+3. First paper: check the size-feature explanation, and score the final system without the 469
+   test images that have a train twin.
+4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
+   (Mendeley Data); FLORES+ with `HF_TOKEN`. Check the Manipuri script and size in IN22, BPCC and
+   Sangraha.
+5. IIIT Hyderabad: the licence on the IIIT-Indic-HW-UC page, and the script of Manipuri in Mozhi.
+6. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
+   (2020): is the MM page dataset available? Read Hijam's thesis chapter on the CNN + LSTM word
+   model (test set, size, results), and its exact wording of the ꯢ/ꯏ rule.
+7. TUMMHCD paper: is the official test split meant to be writer-disjoint? 469 test images with an
+   identical train image show that some images, and so some writers, are shared. Ask the authors
+   about the duplicated vowel-sign files.
 
 ## Sources
 

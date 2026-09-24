@@ -20,6 +20,7 @@ Phase 0, the literature and data audit: [`docs/phase0_audit.md`](docs/phase0_aud
 scripts/
   audit_tummhcd.py   writer information in TUMMHCD: folders, file names, side files, hidden grouping
   corpus_stats.py    size of Meitei Mayek text corpora and how often the ꯢ / ꯏ rule holds
+  i_exceptions.py    words that break the ꯢ / ꯏ convention, as a review sheet for a language expert
 notebooks/
   phase0_data_audit.ipynb   runs both on Colab (TUMMHCD from Google Drive, corpora downloaded)
 results/             JSON files written by the code; every reported number comes from here

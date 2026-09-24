@@ -5,6 +5,7 @@ import sys
 import zipfile
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -95,3 +96,35 @@ def test_directory_input_and_json(tmp_path):
     r = audit.to_json(audit.audit(dir_path=tmp_path / "raw", max_per_class=10))
     assert r["style"]["images"] == 2 * CLASSES * 10
     json.dumps(r, allow_nan=False)
+
+
+def test_sizes_and_duplicate_breakdown(tmp_path):
+    rng = np.random.default_rng(0)
+
+    def png(h, w):
+        buf = io.BytesIO()
+        Image.fromarray((rng.random((h, w)) * 200).astype("uint8")).save(buf, "PNG")
+        return buf.getvalue()
+
+    twin_a, twin_b = png(24, 24), png(24, 24)
+    zp = tmp_path / "f.zip"
+    with zipfile.ZipFile(zp, "w") as z:
+        for split in ("train", "test"):
+            for label in range(3):
+                for i in range(40):  # class 002 is stored at another fixed size
+                    z.writestr(f"R/{split}_{label:03d}/{i + 1}.png", png(24, 12) if label == 2 else png(24, 24))
+        z.writestr("R/test_000/41.png", twin_a)  # the same image under two labels
+        z.writestr("R/train_001/41.png", twin_a)
+        z.writestr("R/test_000/42.png", twin_b)  # the same image in test and train, same label
+        z.writestr("R/train_000/42.png", twin_b)
+    csv_path = tmp_path / "dups.csv"
+    r = audit.audit(zip_path=zp, duplicates_csv=csv_path)
+    assert r["sizes"]["most_common"] == "24x24"
+    assert set(r["sizes"]["classes_with_other_sizes"]) == {"train_002", "test_002"}
+    d = r["duplicates"]
+    assert d["groups_of_identical_pixels"] == 2
+    assert d["groups_with_different_labels"] == 1
+    assert d["label_pairs_in_those_groups"] == [{"classes": "000/001", "groups": 1}]
+    t = d["test_images_with_identical_train_image"]
+    assert (t["total"], t["same_label"], t["other_label_only"]) == (2, 1, 1)
+    assert len(csv_path.read_text().splitlines()) == 1 + 4

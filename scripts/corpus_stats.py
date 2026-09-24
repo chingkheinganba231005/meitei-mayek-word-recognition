@@ -19,7 +19,13 @@ final consonant (lonsum, ꯛ ... ꯡ), nung (ꯪ) or apun (꯭); a consonant let
 (inherent a), a vowel letter or a vowel sign counts as a vowel. For every ꯢ
 or ꯏ the rule predicts one of the two from the preceding character, and the
 script reports how often that matches the text, over running words and over
-distinct words.
+distinct words, and counts both letters by what precedes them.
+
+Typed text uses ꯢ almost only after ꯥ, ꯣ or ꯨ, and there often writes ꯏ
+instead. So the script also sorts documents (Wikipedia pages, parquet rows,
+JSON lines, whole text files) by how they spell the i after ꯥ, ꯣ or ꯨ: always
+ꯢ, always ꯏ, or mixed. The documents that always write ꯢ there are candidate
+text in the thesis spelling; their statistics are reported separately.
 """
 
 import argparse
@@ -28,15 +34,19 @@ import gzip
 import json
 import re
 import unicodedata
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
-I_LETTER = "ꯏ"  # ꯏ, TUMMHCD class 025
-I_LONSUM = "ꯢ"  # ꯢ, TUMMHCD class 044
-LONSUM = set("ꯛꯜꯝꯞꯟꯠꯡꯢ")  # ꯛ ꯜ ꯝ ꯞ ꯟ ꯠ ꯡ ꯢ
-NON_VOWEL = LONSUM | {"ꯪ", "꯭"}  # + nung ꯪ, apun ꯭
-WORD = re.compile("[ꯀ-ꯪ꯬꯭ꫠ-꫶]+")
-MEITEI_ANY = re.compile("[ꯀ-꯿ꫠ-꫿]")
+I_LETTER = "\uABCF"  # ꯏ, TUMMHCD class 025
+I_LONSUM = "\uABE2"  # ꯢ, TUMMHCD class 044
+LONSUM = set("\uABDB\uABDC\uABDD\uABDE\uABDF\uABE0\uABE1\uABE2")  # ꯛ ꯜ ꯝ ꯞ ꯟ ꯠ ꯡ ꯢ
+NUNG_APUN = {"\uABEA", "\uABED"}  # nung ꯪ, apun (the vowel killer)
+NON_VOWEL = LONSUM | NUNG_APUN
+VOWEL_SIGNS = set("\uABE3\uABE4\uABE5\uABE6\uABE7\uABE8\uABE9")  # ꯣ ꯤ ꯥ ꯦ ꯧ ꯨ ꯩ
+VOWEL_LETTERS = set("\uABCE\uABCF\uABD1")  # ꯎ ꯏ ꯑ
+AA_O_U = set("\uABE5\uABE3\uABE8")  # ꯥ ꯣ ꯨ: where typed text uses ꯢ at all
+WORD = re.compile("[\uABC0-\uABEA\uABEC\uABED\uAAE0-\uAAF6]+")
+MEITEI_ANY = re.compile("[\uABC0-\uABFF\uAAE0-\uAAFF]")
 TEXT_SUFFIXES = {".txt", ".xml", ".text", ".csv", ".tsv"}
 
 
@@ -50,7 +60,10 @@ def open_text(path):
 
 
 def iter_texts(path):
-    """Yields text chunks (lines or records) from a file or every readable file in a folder."""
+    """Yields (document, text chunk) from a file or every readable file in a folder.
+
+    A document is a parquet row, a JSON line, a <page> of an XML dump, or a whole text file.
+    """
     path = Path(path)
     files = sorted(p for p in path.rglob("*") if p.is_file()) if path.is_dir() else [path]
     for f in files:
@@ -61,12 +74,12 @@ def iter_texts(path):
             df = pd.read_parquet(f)
             cols = ["text"] if "text" in df.columns else [c for c in df.columns if df[c].dtype == object]
             for c in cols:
-                for value in df[c]:
+                for row, value in enumerate(df[c]):
                     if isinstance(value, str):
-                        yield value
+                        yield f"{f.name}#{row}", value
         elif base.endswith(".jsonl") or base.endswith(".json"):
             with open_text(f) as fh:
-                for line in fh:
+                for row, line in enumerate(fh):
                     try:
                         rec = json.loads(line)
                     except json.JSONDecodeError:
@@ -74,10 +87,46 @@ def iter_texts(path):
                     if isinstance(rec, dict):
                         texts = [rec["text"]] if isinstance(rec.get("text"), str) else \
                             [v for v in rec.values() if isinstance(v, str)]
-                        yield from texts
+                        for text in texts:
+                            yield f"{f.name}#{row}", text
         elif Path(base).suffix in TEXT_SUFFIXES or path.is_file():
+            xml = Path(base).suffix == ".xml"
+            page = 0
             with open_text(f) as fh:
-                yield from fh
+                for line in fh:
+                    if xml and "<page>" in line:
+                        page += 1
+                    yield (f"{f.name}#page{page}" if xml else f.name), line
+
+
+def context(prev):
+    """What kind of character precedes a ꯢ or ꯏ (None: the word starts there)."""
+    if prev is None:
+        return "word start"
+    if prev in LONSUM:
+        return "final consonant (lonsum)"
+    if prev in NUNG_APUN:
+        return "nung or apun"
+    if prev in VOWEL_SIGNS:
+        return "vowel sign"
+    if prev in VOWEL_LETTERS:
+        return "vowel letter"
+    if "\uABC0" <= prev <= "\uABDA":
+        return "consonant letter"
+    return "other"
+
+
+def i_after_aa_o_u(words):
+    """(ꯢ, ꯏ) counts right after ꯥ, ꯣ or ꯨ in a word counter."""
+    lonsum = letter = 0
+    for word, n in words.items():
+        for i in range(1, len(word)):
+            if word[i - 1] in AA_O_U:
+                if word[i] == I_LONSUM:
+                    lonsum += n
+                elif word[i] == I_LETTER:
+                    letter += n
+    return lonsum, letter
 
 
 def rule_prediction(word, i):
@@ -91,13 +140,18 @@ class Stats:
         self.nonspace_chars = 0
         self.meitei_chars = 0
         self.chunks = 0
+        self.doc_words = defaultdict(Counter)
+        self.consistent_i_lonsum = Counter()  # words of the documents that always write ꯢ after ꯥ/ꯣ/ꯨ
 
-    def add(self, text):
+    def add(self, text, doc=None):
         text = unicodedata.normalize("NFC", text)
         self.chunks += 1
         self.nonspace_chars += sum(1 for ch in text if not ch.isspace())
         self.meitei_chars += len(MEITEI_ANY.findall(text))
-        self.words.update(WORD.findall(text))
+        words = WORD.findall(text)
+        self.words.update(words)
+        if doc is not None:
+            self.doc_words[doc].update(words)
 
     def rule(self, by_type=False):
         """Confusion counts {actual: {predicted: n}} for ꯢ / ꯏ, over running words or distinct words."""
@@ -114,6 +168,53 @@ class Stats:
                 "actual_i_letter": dict(table[I_LETTER]), "actual_i_lonsum": dict(table[I_LONSUM]),
                 "i_lonsum_per_i_letter": (round(sum(table[I_LONSUM].values()) / sum(table[I_LETTER].values()), 3)
                                           if table[I_LETTER] else None)}
+
+    def contexts(self, top=40):
+        """Counts of ꯢ and ꯏ by what precedes them, over running words: by kind and by character."""
+        kinds, chars = defaultdict(Counter), defaultdict(Counter)
+        for word, n in self.words.items():
+            for i, ch in enumerate(word):
+                if ch in (I_LETTER, I_LONSUM):
+                    prev = word[i - 1] if i > 0 else None
+                    kinds[context(prev)][ch] += n
+                    chars["word start" if prev is None else f"U+{ord(prev):04X} {prev}"][ch] += n
+
+        def rows(table, limit=None):
+            items = sorted(table.items(), key=lambda kv: -sum(kv[1].values()))[:limit]
+            return [{"before": k, "i_lonsum": c[I_LONSUM], "i_letter": c[I_LETTER]} for k, c in items]
+        return {"by_kind": rows(kinds), "by_character": rows(chars, top)}
+
+    def documents(self, min_i=5, bins=10):
+        """Documents sorted by how they spell the i after ꯥ, ꯣ or ꯨ: always ꯢ (90% or more), always ꯏ
+        (10% or less), or mixed; those with fewer than min_i such i's cannot tell."""
+        groups = {"consistent_i_lonsum": [], "consistent_i_letter": [], "mixed": [], "too_few_to_tell": []}
+        hist = Counter()
+        for doc, words in self.doc_words.items():
+            lonsum, letter = i_after_aa_o_u(words)
+            if lonsum + letter < min_i:
+                groups["too_few_to_tell"].append(doc)
+                continue
+            share = lonsum / (lonsum + letter)
+            hist[min(int(share * bins), bins - 1)] += 1
+            groups["consistent_i_lonsum" if share >= 0.9 else "consistent_i_letter" if share <= 0.1 else "mixed"
+                   ].append(doc)
+        out = {"documents": len(self.doc_words), "min_i_after_aa_o_u": min_i,
+               "share_of_i_lonsum_after_aa_o_u": {f"{k / bins:.1f}-{(k + 1) / bins:.1f}": hist[k]
+                                                  for k in range(bins)}}
+        for key, docs in groups.items():
+            out[key] = {"documents": len(docs),
+                        "running_words": sum(sum(self.doc_words[d].values()) for d in docs)}
+        self.consistent_i_lonsum = Counter()
+        for d in groups["consistent_i_lonsum"]:
+            self.consistent_i_lonsum.update(self.doc_words[d])
+        if self.consistent_i_lonsum:
+            subset = Stats()
+            subset.words = self.consistent_i_lonsum
+            out["consistent_i_lonsum_subset"] = {
+                "distinct_words": len(subset.words),
+                "rule_running_words": subset.rule(), "rule_distinct_words": subset.rule(by_type=True),
+                "i_contexts_running_words": subset.contexts(top=20)}
+        return out
 
     def summary(self, top=30):
         chars = Counter()
@@ -133,6 +234,8 @@ class Stats:
             "top_words": [[w, n] for w, n in self.words.most_common(top)],
             "rule_running_words": self.rule(by_type=False),
             "rule_distinct_words": self.rule(by_type=True),
+            "i_contexts_running_words": self.contexts(),
+            **({"by_document": self.documents()} if self.doc_words else {}),
         }
 
 
@@ -151,8 +254,8 @@ def main():
             print(f"{name}: {path} not found, skipped")
             continue
         s = Stats()
-        for text in iter_texts(path):
-            s.add(text)
+        for doc, text in iter_texts(path):
+            s.add(text, doc)
         combined.words.update(s.words)
         combined.chunks += s.chunks
         combined.nonspace_chars += s.nonspace_chars
@@ -162,11 +265,19 @@ def main():
         print(f"{name}: {r['running_words']:,} words, {r['distinct_words']:,} distinct, "
               f"ꯢ/ꯏ rule {r['rule_running_words']['rule_accuracy']} "
               f"(ꯢ per ꯏ {r['rule_running_words']['i_lonsum_per_i_letter']})")
+        d = r.get("by_document")
+        if d:
+            print(f"  documents always writing ꯢ after ꯥ/ꯣ/ꯨ: {d['consistent_i_lonsum']['documents']:,} "
+                  f"({d['consistent_i_lonsum']['running_words']:,} words); always ꯏ: "
+                  f"{d['consistent_i_letter']['documents']:,}; mixed: {d['mixed']['documents']:,}; "
+                  f"too few to tell: {d['too_few_to_tell']['documents']:,}")
         if args.words_out:
             out = Path(args.words_out)
             out.mkdir(parents=True, exist_ok=True)
-            (out / f"{name}.tsv").write_text("".join(f"{w}\t{n}\n" for w, n in s.words.most_common()),
-                                             encoding="utf-8")
+            for suffix, words in (("", s.words), ("_consistent_i_lonsum", s.consistent_i_lonsum)):
+                if words:
+                    (out / f"{name}{suffix}.tsv").write_text(
+                        "".join(f"{w}\t{n}\n" for w, n in words.most_common()), encoding="utf-8")
     report["all_sources_combined"] = {"note": "sources can overlap (FineWeb-2 contains Wikipedia pages)",
                                       **combined.summary()}
     out = Path(args.out)
