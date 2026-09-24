@@ -1,0 +1,179 @@
+{
+ "wordlist": "wikipedia_consistent_i_lonsum.tsv",
+ "words_in_list": 7810,
+ "running_words": 55589,
+ "i_occurrences": 11982,
+ "disagreeing_occurrences": 518,
+ "convention_holds": 0.9568,
+ "convention_holds_distinct_words": 0.9482,
+ "convention_holds_without_top_candidate_word": {
+  "word": "ꯃꯆꯥꯈꯥꯏꯕ",
+  "value": 0.9896
+ },
+ "disagreeing_words": 67,
+ "disagreeing_occurrences_by_hint": {
+  "both spellings": 408,
+  "variant: the twin is more frequent": 74,
+  "only this spelling in the list": 36
+ },
+ "by_where": [
+  {
+   "where": "after aa, o or u",
+   "i_lonsum": 10213,
+   "i_letter": 489,
+   "convention": "ꯢ"
+  },
+  {
+   "where": "word start",
+   "i_lonsum": 14,
+   "i_letter": 1002,
+   "convention": "ꯏ"
+  },
+  {
+   "where": "after a final (lonsum)",
+   "i_lonsum": 9,
+   "i_letter": 164,
+   "convention": "ꯏ"
+  },
+  {
+   "where": "after another vowel sign",
+   "i_lonsum": 6,
+   "i_letter": 35,
+   "convention": "ꯏ"
+  },
+  {
+   "where": "after a vowel letter",
+   "i_lonsum": 0,
+   "i_letter": 40,
+   "convention": "ꯏ"
+  },
+  {
+   "where": "after nung or apun",
+   "i_lonsum": 0,
+   "i_letter": 10,
+   "convention": "ꯏ"
+  }
+ ],
+ "top_candidates": [
+  [
+   "ꯃꯆꯥꯈꯥꯏꯕ",
+   398,
+   "after aa, o or u",
+   2
+  ],
+  [
+   "ꯂꯥꯏꯅꯤꯡ",
+   15,
+   "after aa, o or u",
+   417
+  ],
+  [
+   "ꯏꯃꯣꯏꯅꯨ",
+   8,
+   "after aa, o or u",
+   39
+  ],
+  [
+   "ꯑꯣꯏꯅꯥꯝ",
+   6,
+   "after aa, o or u",
+   123
+  ],
+  [
+   "ꯂꯃꯥꯏ",
+   5,
+   "after aa, o or u",
+   12
+  ],
+  [
+   "ꯂꯥꯏ",
+   4,
+   "after aa, o or u",
+   541
+  ],
+  [
+   "ꯀꯧꯢ",
+   3,
+   "after another vowel sign",
+   3
+  ],
+  [
+   "ꯁꯂꯥꯏ",
+   3,
+   "after aa, o or u",
+   16
+  ],
+  [
+   "ꯂꯥꯏꯔꯦꯝꯕꯤ",
+   3,
+   "after aa, o or u",
+   76
+  ],
+  [
+   "ꯍꯥꯏꯕꯁꯤ",
+   3,
+   "after aa, o or u",
+   17
+  ],
+  [
+   "ꯑꯃꯥꯏꯂꯣꯟ",
+   3,
+   "after aa, o or u",
+   2
+  ],
+  [
+   "ꯢꯔꯥꯕꯇ",
+   3,
+   "word start",
+   0
+  ],
+  [
+   "ꯂꯥꯏꯅꯤꯡꯒꯤ",
+   2,
+   "after aa, o or u",
+   13
+  ],
+  [
+   "ꯂꯥꯏꯒꯤ",
+   2,
+   "after aa, o or u",
+   6
+  ],
+  [
+   "ꯉꯝꯢ",
+   2,
+   "after a final (lonsum)",
+   3
+  ],
+  [
+   "ꯍꯥꯏꯐꯝ",
+   2,
+   "after aa, o or u",
+   0
+  ],
+  [
+   "ꯍꯦꯢꯗꯣꯛꯂꯒꯦ",
+   2,
+   "after another vowel sign",
+   0
+  ],
+  [
+   "ꯏꯂꯥꯏ",
+   2,
+   "after aa, o or u",
+   29
+  ],
+  [
+   "ꯏꯔꯥꯏ",
+   2,
+   "after aa, o or u",
+   5
+  ],
+  [
+   "ꯢꯝ꯭ꯐꯥꯂ",
+   2,
+   "word start",
+   0
+  ]
+ ]
+}

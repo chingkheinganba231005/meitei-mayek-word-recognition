@@ -132,8 +132,11 @@ sources) match the thesis: the rule holds for 95–97% of their i's (92–95% ov
 thesis 94.7%) and they have 4–6 ꯢ per ꯏ (thesis 3.6); part of this is built in by the selection,
 but ꯏ at word start (1,002 against 14 ꯢ) is not. Over all pages the rule as coded holds for only
 28–45%. **Recommended convention (owner to confirm with a language expert):** the thesis spelling,
-ꯢ for the i after ꯥ, ꯣ or ꯨ and ꯏ elsewhere, with an expert-checked exception list taken from the
-ꯢ-writing pages. Text for the language model: ꯢ-writing pages (70% cut) as they are, ꯏ-writing
+ꯢ for the i after ꯥ, ꯣ or ꯨ and ꯏ elsewhere. On the always-ꯢ Wikipedia pages it holds for 95.7%
+of i's and 94.8% of distinct words (thesis 94.7%); 398 of its 518 misses are one probably
+templated word, ꯃꯆꯥꯈꯥꯏꯕ (99.0% without it), and the rest are variants, slips or rare loans: no
+clear lexical exception (`results/i_exception_summary.json`; expert review sheet
+`results/i_exception_candidates.csv`, 67 words). Text for the language model: ꯢ-writing pages (70% cut) as they are, ꯏ-writing
 pages normalised and flagged; ꯢ/ꯏ accuracy measured only on held-out ꯢ-writing pages and on the
 real test set. Also check the thesis's exact wording of the rule and how TUMMHCD labelled 044/025.
 

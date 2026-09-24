@@ -434,6 +434,28 @@ there), ꯏ after ꯣ or ꯨ (33), ꯏ after ꯦ, ꯧ, ꯤ or a vowel letter (75
 there, typed practice never writes it), and ꯢ at word start or after a final (23). The first two
 groups and the last are the candidates for genuine exceptions, or typing slips.
 
+**Exception candidates (from the word list of the 605 always-ꯢ Wikipedia pages).**
+`scripts/i_exceptions.py` checks every i in the list against the recommended convention (ꯢ after
+ꯥ, ꯣ or ꯨ, ꯏ elsewhere) and looks up each disagreeing word's twin, the same word with the other i
+(`results/i_exception_summary.json`; review sheet `results/i_exception_candidates.csv`, 67 words
+from the Meitei Wikipedia, CC BY-SA 4.0). The convention holds for 95.7% of the 11,982 i's and
+for 94.8% of distinct words (thesis: 94.7%). Of the 518 misses, 398 are one word, ꯃꯆꯥꯈꯥꯏꯕ,
+among the ten most frequent words of the whole dump (9,514 times) and probably inserted by a
+template; without it the convention holds for 99.0%. The other 120:
+
+- 74 are less frequent variants of words the same pages usually spell by the convention
+  (ꯂꯥꯏꯅꯤꯡ 15 against ꯂꯥꯢꯅꯤꯡ 417; ꯑꯣꯏꯕ 1 against ꯑꯣꯢꯕ 967): slips or other authors;
+- 36 are words seen once or twice in this spelling only: ꯢ at word start in forms that look like
+  faulty conversion from legacy fonts (ꯢꯝ꯭ꯐꯥꯂ for ꯏꯝꯐꯥꯜ), ꯢ for the verb ending after a final
+  consonant (ꯀꯣꯛꯢ; the same pages write ꯈꯨꯠꯏ 76 times), and ꯏ after ꯥ or ꯨ in rare words and
+  loans (ꯄꯤꯑꯥꯏꯑꯦꯟ, ꯑꯥꯏꯑꯦꯁꯇꯤ);
+- 10 have the other spelling about as often, among them the i after ꯧ (ꯀꯧꯢ 3, ꯀꯧꯏ 3), which the
+  convention leaves open.
+
+No word stands out as a genuine lexical exception. Questions for the language expert:
+(1) ꯃꯆꯥꯈꯥꯏꯕ, ꯢ as the convention says? (2) the i after ꯧ and ꯦ; (3) the letter I in loans and
+acronyms (ꯑꯥꯏ or ꯑꯥꯢ); (4) any exceptions the thesis itself lists.
+
 The main ꯢ mode in Wikipedia lies at 80–90%, below the 90% cut: either the thesis spelling keeps ꯏ
 after ꯥ in some words, or pages have several authors. The natural cut between the two practices
 is the valley at 30–70%.
@@ -455,10 +477,8 @@ is the valley at 30–70%.
 
 ## 11. To do
 
-1. Send the word list of the always-ꯢ Wikipedia pages
-   (`MyDrive/meitei-word-recognition/wordlists/wikipedia_consistent_i_lonsum.tsv`). From it we
-   extract the exception candidates (words with ꯏ after ꯥ, ꯣ or ꯨ; words with ꯢ at word start or
-   after a final) for the language expert.
+1. Give the language expert `results/i_exception_candidates.csv` (67 words, a column for the
+   verdict) and the four questions in section 10.
 2. Confirm the ꯢ/ꯏ convention with a language expert (recommended: the thesis spelling, ꯢ for
    the i after ꯥ, ꯣ or ꯨ), and the exception list; find out how TUMMHCD labelled 044 and 025.
 3. First paper: check the size-feature explanation, and score the final system without the 469
