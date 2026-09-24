@@ -41,11 +41,13 @@ has been checked against the full text (CLAUDE.md rule).
    (section 10). File names are a class number and a running index; neighbouring and
    same-numbered files are unrelated in style; all 85,124 images are 24 × 24 with the ink filling
    the frame. 469 test images (3.7%) have a pixel-identical train image.
-7. **Typed text mixes two spellings of the i after ꯥ, ꯣ and ꯨ.** Web text uses ꯢ only there,
-   and page by page it either writes ꯢ there almost always or almost never (section 10). Pages
-   of the first kind follow the thesis rule for 95–97% of their i's and have 4–6 ꯢ per ꯏ, close
-   to the thesis figures (94.7%, 3.6). So the thesis spelling is a living practice, and about
-   82,000 words of native text in it exist; the rest must be normalised before use.
+7. **ꯢ versus ꯏ is a spelling convention, not a visual distinction.** Everyday writing uses ꯏ
+   for every i: the owner, a native writer, writes ꯑꯥꯏ, and web text outside Wikipedia writes the
+   i after ꯥ, ꯣ and ꯨ as ꯏ 90% of the time. A formal standard (the thesis spelling), followed by
+   about half of the Wikipedia pages that can show it, writes ꯢ after ꯥ, ꯣ and ꯨ, by a rule that
+   holds for 95–99% of words there (section 10). So the pair that no isolated-character model can
+   separate is two spellings of one letter. The project transcribes in everyday spelling and can
+   render the standard one by rule.
 
 ## 2. Handwritten Meitei Mayek beyond isolated characters
 
@@ -162,14 +164,20 @@ machine with open internet.
 > visual encoders with a CTC or attention head and a character language model; (2) zone-aware
 > synthetic word images composed from TUMMHCD characters at scale; (3) a public, consented,
 > writer-disjoint set of real handwritten words from 50 or more writers, with a fixed protocol
-> (CER, WER, ꯢ/ꯏ accuracy); (4) a controlled measurement of how much word context resolves ꯢ
-> versus ꯏ, which isolated-character models cannot separate (68.2% against a 67.1% majority
-> baseline); and later (5) the first diffusion model for Meitei Mayek handwriting, judged by
-> whether it improves recognition of real handwriting.
+> (CER, WER, accuracy on the confusable pairs); (4) evidence that ꯢ versus ꯏ, the largest error
+> source of isolated-character recognition (78 of 241 errors in our previous work), is a spelling
+> convention, not a visual distinction: everyday writing uses ꯏ throughout, and the standard
+> spelling puts ꯢ after ꯥ, ꯣ and ꯨ by a rule that holds for 95–99% of words, so a recogniser
+> should read one letter and render either spelling; and later (5) the first diffusion model for
+> Meitei Mayek handwriting, judged by whether it improves recognition of real handwriting.
+
+Contributions (3) and (4) were revised on 24 September 2026 after the owner's note on everyday
+spelling (section 10). Word context still matters for the other confusable pairs, ꯦ/꯰, ꯨ/ꯁ and
+ꯗ/ꯘ (70 of the 241 errors), where the position in the word and the lexicon decide.
 
 **Distinct from Hijam's thesis:** public benchmark and protocol instead of a private word set;
 segmentation-free sequence model instead of per-character CNN plus LSTM correction; synthetic
-words at scale; writer-disjoint real test set; the ꯢ/ꯏ question measured directly.
+words at scale; writer-disjoint real test set; the ꯢ/ꯏ question settled as one of spelling.
 
 **IIIT Hyderabad check: done (24 September 2026).** Its Manipuri handwriting is in Bengali
 script (IIIT-Indic-HW-UC, Table 1 and Fig. 3), so the statement holds as written.
@@ -214,14 +222,15 @@ native Meitei Mayek word counts for everything it can download (`results/corpus_
    words.
 4. *Prompts for the real test set (Phase 3).* Take sentences from a CC BY source (IN22, if its
    Manipuri is Meitei script) so the released set can itself be CC BY; CC BY-SA prompts (FLORES+,
-   Wikipedia) would force share-alike. Add designed words that stress ꯢ/ꯏ and the other three
-   confusable pairs.
+   Wikipedia) would force share-alike. Write the prompts in everyday spelling (ꯏ only), and add
+   designed words that stress the confusable pairs ꯦ/꯰, ꯨ/ꯁ and ꯗ/ꯘ.
 5. *Replicate the rule figure.* `corpus_stats.py` reports how often the rule holds on each
    corpus, over running and distinct words. The thesis figure (94.7% on about 26,000 expert-checked
    words) and the frequency ratio (ꯢ about 3.6 times ꯏ) can be checked on open data this way.
 
-*Revised after the first run (section 10):* native typed text is not reliable for the ꯢ/ꯏ pair,
-so recommendation 1 no longer covers ꯢ/ꯏ statistics; those need text with checked spelling.
+*Revised (section 10):* typed text mixes two spellings of the i after ꯥ, ꯣ and ꯨ. The project uses
+everyday spelling (ꯏ only) and maps ꯢ to ꯏ in all text, so recommendation 1 holds with that
+mapping, and the ꯢ/ꯏ concern in recommendation 2 no longer applies.
 
 ## 9. TUMMHCD writer information
 
@@ -395,14 +404,9 @@ consonant's inherent a; and after ꯥ, ꯣ or ꯨ most typists still write ꯏ. 
 counts the inherent a as a vowel, which typed text never follows with ꯢ; whether the thesis means
 it must be checked in the thesis itself.
 
-**What this means.**
+At this point the project needed a transcription convention that says which vowels count; the
+by-document count and the owner's note below settle it.
 
-- Typed corpora cannot teach or test the ꯢ/ꯏ distinction as they stand: a language model trained
-  on them would prefer ꯏ after vowels, against the thesis orthography.
-- The project needs a transcription convention, fixed and written down before Phase 1, and it has
-  to say which vowels count. Standard orthography as in the thesis is the natural choice if
-  TUMMHCD's labels follow it: check with a language expert, and check what the TUMMHCD paper says
-  about labelling 044 and 025.
 **By document (third run).** Share of ꯢ among the i's after ꯥ, ꯣ or ꯨ, for documents with at
 least five such i's:
 
@@ -460,27 +464,33 @@ The main ꯢ mode in Wikipedia lies at 80–90%, below the 90% cut: either the t
 after ꯥ in some words, or pages have several authors. The natural cut between the two practices
 is the valley at 30–70%.
 
-- The thesis spelling is a living practice, and about 82,000 running words of native text in it
-  exist at the strict 90% cut (sources overlap), more at a 70% cut. That is the best text we have
-  for training the language model on this pair and for testing it.
-- Recommended convention (owner to confirm with a language expert): the thesis spelling, with ꯢ
-  for the i after ꯥ, ꯣ or ꯨ and ꯏ everywhere else, plus a short list of exceptions taken from
-  the ꯢ-writing pages and checked by the expert.
-- Text preparation for Phase 1: the ꯢ-writing pages (70% or more) as they are; the ꯏ-writing pages
-  normalised by the rule and the exception list, and flagged; ꯢ/ꯏ accuracy measured only on held-out
-  ꯢ-writing pages and, later, on the real test set.
-- Under that convention, normalise typed text before training (ꯏ after a vowel becomes ꯢ). This
-  also erases the genuine exceptions (5.3% of the thesis's checked words), so what context adds
-  beyond the rule can only be measured on text with checked spelling: the thesis's TDIL corpus,
-  ILCI-II, the printed dataset's transcriptions, or our own test-set transcriptions made under the
-  convention.
+**The owner's note and the decision (24 September 2026).** The owner, a native writer: "we
+barely use the lonsum version of i. Its always ꯑꯥꯏ." This agrees with the web text outside
+Wikipedia (FineWeb-2: 120 of 153 pages write ꯏ after ꯥ, ꯣ and ꯨ, 90% of those i's overall). The
+ꯢ-writing Wikipedia pages follow a formal standard, the thesis spelling, which is almost fully
+rule-governed (above). So:
+
+- *Everyday spelling is the project's convention*: one letter, ꯏ, for every i. The recogniser
+  treats TUMMHCD's 044 and 025 as one class (their images cannot be told apart anyway); the
+  real-test-set prompts and ground truth use ꯏ only.
+- *Language-model text*: all typed text, with ꯢ mapped to ꯏ. No split by spelling practice is
+  needed, and the ꯢ/ꯏ choices a transliterator makes no longer matter for Bengali-script text.
+- *The standard spelling* is an optional rendering of the output by the rule (ꯢ after ꯥ, ꯣ or ꯨ),
+  evaluated on text, not handwriting; the expert's verdicts on
+  `results/i_exception_candidates.csv` are needed only if that rendering is offered.
+- *Metrics*: the Phase 2 metric "accuracy on the ꯢ/ꯏ pair" is replaced by accuracy on the other
+  confusable pairs (ꯦ/꯰, ꯨ/ꯁ, ꯗ/ꯘ) and CER in both spellings.
+- *The motivation shifts*: the word-level project no longer rests on ꯢ/ꯏ, which a rule settles,
+  but on reading whole words (no such system exists), the other confusable pairs, and the real
+  test set.
 
 ## 11. To do
 
-1. Give the language expert `results/i_exception_candidates.csv` (67 words, a column for the
-   verdict) and the four questions in section 10.
-2. Confirm the ꯢ/ꯏ convention with a language expert (recommended: the thesis spelling, ꯢ for
-   the i after ꯥ, ꯣ or ꯨ), and the exception list; find out how TUMMHCD labelled 044 and 025.
+1. Confirm the revised contribution (4) and the shift in motivation (section 10), since they
+   change how the paper is framed.
+2. Only if the standard-spelling rendering is offered: give a language expert
+   `results/i_exception_candidates.csv` (67 words, a column for the verdict) and the questions in
+   section 10. Find out how TUMMHCD labelled 044 and 025 (useful for the first paper's discussion).
 3. First paper: check the size-feature explanation, and score the final system without the 469
    test images that have a train twin.
 4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
