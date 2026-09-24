@@ -6,7 +6,7 @@ import pytest
 from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
 from mayek_words.glyphs import GlyphStore
 from mayek_words.lexicon import Lexicon
-from mayek_words.synth import Config, Words, WordSynth, load_priors, set_pen, stroke_width
+from mayek_words.synth import Config, Words, WordSynth, line_gaps, load_priors, set_pen, stroke_width
 
 K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
@@ -56,6 +56,18 @@ def test_boxes_inside_image(store):
         H, W = r.image.shape
         for _, x0, y0, x1, y1 in r.boxes:
             assert 0 <= x0 < x1 <= W and 0 <= y0 < y1 <= H
+
+
+def test_letters_closer_than_in_print(store):
+    """Handwritten Meitei Mayek sets letters closer together than print (the owner's
+    observation); the default spacing must stay tighter than the font's."""
+    words = [K + LAI + chr(0xABC3) + chr(0xABC4), LAI + INAP + K + chr(0xABC5)] * 150
+    def median_gap(cfg):
+        s = WordSynth(store, config=cfg)
+        layouts = [s.render(w, np.random.default_rng(i)).layout for i, w in enumerate(words)]
+        return float(np.median(line_gaps(layouts, s.prior)["letter to letter"]))
+    printed = median_gap(Config(gap=(0, 0), gap_jitter=0, width=(1, 1), glyph_width_jitter=0))
+    assert median_gap(Config()) < printed
 
 
 def test_pen_width():

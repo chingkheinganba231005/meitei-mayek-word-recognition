@@ -95,7 +95,7 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 |---|---|
 | letter height L | 32 px, log-normal jitter sd 0.1 |
 | letter width factor | 0.8–1.25 (log-uniform) |
-| gap between characters | 0.02–0.3 L, sd 0.05 L per gap |
+| gap between characters, added to the font's side bearings | −0.12 to +0.04 L, sd 0.03 L per gap |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.07–0.12 L (TUMMHCD letters: 2.2 px in 24, about 0.09) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -106,6 +106,15 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 
 These are guesses to be checked on the contact sheets and, later, against the real set.
 Stronger augmentation (backgrounds, lighting, perspective) belongs in Phase 2, on the GPU.
+
+**Spacing.** The owner, a native writer, observed that handwritten Meitei Mayek sets its
+letters closer together than the first previews did. Measured on the layout (the ink gap
+between neighbours on the line, in units of L; `synth.line_gaps`): the font spaces letters
+0.12 L apart (median; 10–90%: 0.08–0.16), the first default 0.28 L (0.15–0.41), more than
+twice as far. The default is now tighter than print: 0.08 L (0.01–0.16), with 5% of
+neighbouring letters touching. Every rendered set records these gaps in its `config.json`
+(`ink_gaps_in_L`), and a test keeps the default spacing tighter than the font's. The
+ranges should be set from real handwriting once some is measured.
 
 ## 3. Lexicon
 
@@ -132,7 +141,7 @@ Real-test-set prompts (Phase 3) can be kept out of training with `--exclude`.
 - The whole notebook on a fake archive (font characters, distorted, in TUMMHCD's layout)
   with Colab stubbed out: the split rule (15% of every class, seed 42), the duplicate
   exclusion, the size check, lexicon, contact sheets, fixed sets.
-- 32 tests (`pytest -q`), among them positions of every kind of sign, pen width, the split
+- 33 tests (`pytest -q`), among them positions of every kind of sign, spacing, pen width, the split
   and its stability, duplicate exclusion, and that the committed priors are exactly what
   `scripts/glyph_priors.py` writes.
 

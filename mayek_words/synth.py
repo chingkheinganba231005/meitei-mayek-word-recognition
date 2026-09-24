@@ -39,8 +39,8 @@ class Config:
     width: tuple = (0.8, 1.25)          # letter width factor per word
     glyph_width_jitter: float = 0.08    # per character, sd of log
     glyph_height_jitter: float = 0.06
-    gap: tuple = (0.02, 0.3)            # mean gap between characters per word, in L
-    gap_jitter: float = 0.05            # per gap, in L
+    gap: tuple = (-0.12, 0.04)          # per word, added to the font's side bearings, in L:
+    gap_jitter: float = 0.03            # letters closer than in print, as in handwriting (owner)
     baseline_jitter: float = 0.04       # drift of the baseline, in L
     mark_scale: tuple = (0.85, 1.3)     # size of the signs relative to print, per word
     mark_size_jitter: float = 0.1       # per sign, sd of log
@@ -62,6 +62,7 @@ class Sample(NamedTuple):
     boxes: list              # (character, x0, y0, x1, y1): each character's box in the image, clipped to it
     glyphs: list             # index of each character's image in the store
     style: dict              # the word-level parameters
+    layout: list             # (character, x0, x1, bottom, top) in units of L, before slant and rotation
 
 
 def load_priors(path=None, sizes=None, clip=(0.5, 2.0)):
@@ -85,6 +86,21 @@ def load_priors(path=None, sizes=None, clip=(0.5, 2.0)):
                 else:
                     p["top"] = p["bottom"] + h
     return prior
+
+
+def line_gaps(layouts, prior):
+    """Gaps between the ink of neighbours on the line, in units of L, from Sample.layout:
+    letters, lonsum letters, digits and the signs written beside them (not above or below).
+    -> {"letter to letter": [...], "letter to sign beside it": [...], "sign to next letter": [...]}"""
+    out = {"letter to letter": [], "letter to sign beside it": [], "sign to next letter": []}
+    for boxes in layouts:
+        line = [b for b in boxes if prior[b[0]]["kind"] == "base" or prior[b[0]]["adv"] > 0.1]
+        for b1, b2 in zip(line, line[1:]):
+            k1, k2 = prior[b1[0]]["kind"], prior[b2[0]]["kind"]
+            key = ("letter to letter" if k1 == k2 == "base" else
+                   "letter to sign beside it" if k2 == "mark" else "sign to next letter")
+            out[key].append(b2[1] - b1[2])
+    return out
 
 
 def stroke_width(mask):
@@ -233,7 +249,7 @@ class WordSynth:
         if c.noise:
             img = img + rng.normal(0, c.noise, img.shape)
         st["ink"] = ink_level
-        return Sample(np.clip(np.round(img), 0, 255).astype(np.uint8), word, placed, glyphs, st)
+        return Sample(np.clip(np.round(img), 0, 255).astype(np.uint8), word, placed, glyphs, st, boxes)
 
     @staticmethod
     def transform(canvas, placed, st, baseline):

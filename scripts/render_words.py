@@ -24,7 +24,7 @@ from PIL import Image, ImageDraw, ImageFont
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mayek_words.glyphs import ASSETS, GlyphStore  # noqa: E402
 from mayek_words.lexicon import Lexicon  # noqa: E402
-from mayek_words.synth import Config, Words, WordSynth, load_priors  # noqa: E402
+from mayek_words.synth import Config, Words, WordSynth, line_gaps, load_priors  # noqa: E402
 
 
 def contact_sheet(samples, path, cols=4, cell=(300, 120)):
@@ -69,13 +69,14 @@ def main():
     words = Words(synth, Lexicon.load(args.lexicon, args.alpha), args.seed, args.numbers, args.stop)
 
     t0 = time.time()
-    samples, shapes, lines = [], [], []
+    samples, shapes, lines, layouts = [], [], [], []
     out = Path(args.out_dir) if args.out_dir else None
     if out:
         (out / "images").mkdir(parents=True, exist_ok=True)
     for i in range(args.n):
         s = words[i]
         shapes.append(s.image.shape)
+        layouts.append(s.layout)
         if i < args.sheet_n:
             samples.append(s)
         if out:
@@ -89,7 +90,12 @@ def main():
                "alpha": args.alpha, "config": dataclasses.asdict(cfg),
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
                "width_px": {"mean": round(float(shapes[:, 1].mean()), 1), "max": int(shapes[:, 1].max())},
-               "ms_per_word": round(1000 * seconds / max(args.n, 1), 2)}
+               "ms_per_word": round(1000 * seconds / max(args.n, 1), 2),
+               "ink_gaps_in_L": {k: {"n": len(v), "p10": round(float(np.percentile(v, 10)), 3),
+                                     "median": round(float(np.median(v)), 3),
+                                     "p90": round(float(np.percentile(v, 90)), 3),
+                                     "touching": round(float(np.mean(np.array(v) <= 0)), 3)}
+                                 for k, v in line_gaps(layouts, synth.prior).items() if v}}
     if out:
         (out / "labels.tsv").write_text("".join(lines), encoding="utf-8")
         (out / "config.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False), encoding="utf-8")
