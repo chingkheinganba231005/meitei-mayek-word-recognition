@@ -111,18 +111,36 @@ its split (75/10/15% of word images) is not stated to be writer- or text-disjoin
 both and say so; its phone-capture protocol is a template for Phase 3; its CRNN + CTC baseline
 (Gongidi et al.) is a Phase 2 baseline. The paper states no licence.
 
-**Corpora.** Native Unicode Meitei Mayek text is scarce: FineWeb-2 `mni_Mtei` has 61,256 words
-(ODC-By), against 2.69M words of Bengali-script Manipuri. Open native sources: Meitei Wikipedia
-(CC BY-SA 4.0), FineWeb-2 (ODC-By), FLORES+ `mni_Mtei` dev (CC BY-SA 4.0, gated), IN22 (CC BY 4.0,
-script to check), printed-dataset transcriptions (Data in Brief 2022, CC BY). ILCI-II (TDIL-DC,
-about 22,000 Meitei Mayek sentences) needs registration. Newspapers need written permission.
-Decision: evaluate the language model and all ꯢ/ꯏ statistics on native text only.
-Transliterated Bengali-script text may be used for training, flagged, because a transliterator
-bakes its own ꯢ/ꯏ rule into the text. Real-test-set prompts should come from a CC BY source.
+**Corpora (measured, `results/corpus_stats.json`).** Native Unicode Meitei Mayek text is scarce:
+Wikipedia 1,036,283 running words (72,437 distinct), FineWeb-2 `mni_Mtei` 52,395 (11,141), its
+filtered-out part 365,832 (33,425); together 1.45M words and 77,580 distinct, overlapping.
+Bengali-script Manipuri: 2.69M words in FineWeb-2 alone. Licences: Wikipedia CC BY-SA 4.0,
+FineWeb-2 ODC-By, FLORES+ `mni_Mtei` dev CC BY-SA 4.0 (gated), IN22 CC BY 4.0 (script to check),
+printed-dataset transcriptions CC BY; ILCI-II (TDIL-DC, about 22,000 Meitei Mayek sentences) needs
+registration; newspapers need written permission. Transliterated Bengali-script text is for
+training only, flagged. Real-test-set prompts should come from a CC BY source.
 
-**TUMMHCD.** About 500 writers, two collection phases (answer sheets and notes; tabular forms).
-Images are mostly 24 × 24 px. Writer IDs: not yet known. Run `notebooks/phase0_data_audit.ipynb`
-on the Drive copy and record the outcome here.
+**ꯢ/ꯏ in typed text (measured).** Web text uses ꯢ almost only after a vowel (99.6% of ꯢ in
+Wikipedia) but writes 71–90% of the i's after a vowel as ꯏ. So the thesis rule holds for only
+28–45% of occurrences, and ꯏ outnumbers ꯢ 3.5 to 1 in Wikipedia (thesis: ꯢ 3.6 to 1 ꯏ). The
+positions match the thesis (3.3 i's after a vowel per other i); the spelling does not. Decision
+pending (owner, with a language expert): fix a transcription convention before Phase 1, most
+likely the thesis orthography if TUMMHCD's 044/025 labels follow it; normalise typed text to it
+before training; measure ꯢ/ꯏ and the rule's exceptions only on text with checked spelling
+(TDIL/ILCI-II, printed-dataset transcriptions, our own test transcriptions). This replaces the
+earlier plan to take ꯢ/ꯏ statistics from native typed text.
+
+**TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
+side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are
+unrelated in style; file times mark scan batches, not writers. Characters are cropped to their ink
+and scaled to fill a 24 × 24 frame, so size, aspect ratio and zone are lost. 1,741 groups of
+pixel-identical images (3,512 images), 468 of them across train and test. Phase 1 therefore uses
+style-matched characters instead of one writer per word, a per-class size and zone model (the
+stroke width in the frame may estimate relative size), and TUMMHCD's own train/test split for the
+characters; writer-disjoint evaluation comes only from the Phase 3 real set. Pending a second run:
+sizes per class, labels of duplicate groups, test images with an identical train image. For the
+first paper: check the size-feature explanation, and consider scoring without duplicated test
+images.
 
 ## Working rules
 

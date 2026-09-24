@@ -19,7 +19,7 @@ final consonant (lonsum, ꯛ ... ꯡ), nung (ꯪ) or apun (꯭); a consonant let
 (inherent a), a vowel letter or a vowel sign counts as a vowel. For every ꯢ
 or ꯏ the rule predicts one of the two from the preceding character, and the
 script reports how often that matches the text, over running words and over
-distinct words.
+distinct words, and counts both letters by what precedes them.
 """
 
 import argparse
@@ -28,15 +28,18 @@ import gzip
 import json
 import re
 import unicodedata
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
-I_LETTER = "ꯏ"  # ꯏ, TUMMHCD class 025
-I_LONSUM = "ꯢ"  # ꯢ, TUMMHCD class 044
-LONSUM = set("ꯛꯜꯝꯞꯟꯠꯡꯢ")  # ꯛ ꯜ ꯝ ꯞ ꯟ ꯠ ꯡ ꯢ
-NON_VOWEL = LONSUM | {"ꯪ", "꯭"}  # + nung ꯪ, apun ꯭
-WORD = re.compile("[ꯀ-ꯪ꯬꯭ꫠ-꫶]+")
-MEITEI_ANY = re.compile("[ꯀ-꯿ꫠ-꫿]")
+I_LETTER = "\uABCF"  # ꯏ, TUMMHCD class 025
+I_LONSUM = "\uABE2"  # ꯢ, TUMMHCD class 044
+LONSUM = set("\uABDB\uABDC\uABDD\uABDE\uABDF\uABE0\uABE1\uABE2")  # ꯛ ꯜ ꯝ ꯞ ꯟ ꯠ ꯡ ꯢ
+NUNG_APUN = {"\uABEA", "\uABED"}  # nung ꯪ, apun (the vowel killer)
+NON_VOWEL = LONSUM | NUNG_APUN
+VOWEL_SIGNS = set("\uABE3\uABE4\uABE5\uABE6\uABE7\uABE8\uABE9")  # ꯣ ꯤ ꯥ ꯦ ꯧ ꯨ ꯩ
+VOWEL_LETTERS = set("\uABCE\uABCF\uABD1")  # ꯎ ꯏ ꯑ
+WORD = re.compile("[\uABC0-\uABEA\uABEC\uABED\uAAE0-\uAAF6]+")
+MEITEI_ANY = re.compile("[\uABC0-\uABFF\uAAE0-\uAAFF]")
 TEXT_SUFFIXES = {".txt", ".xml", ".text", ".csv", ".tsv"}
 
 
@@ -80,6 +83,23 @@ def iter_texts(path):
                 yield from fh
 
 
+def context(prev):
+    """What kind of character precedes a ꯢ or ꯏ (None: the word starts there)."""
+    if prev is None:
+        return "word start"
+    if prev in LONSUM:
+        return "final consonant (lonsum)"
+    if prev in NUNG_APUN:
+        return "nung or apun"
+    if prev in VOWEL_SIGNS:
+        return "vowel sign"
+    if prev in VOWEL_LETTERS:
+        return "vowel letter"
+    if "\uABC0" <= prev <= "\uABDA":
+        return "consonant letter"
+    return "other"
+
+
 def rule_prediction(word, i):
     prev = word[i - 1] if i > 0 else None
     return I_LETTER if prev is None or prev in NON_VOWEL else I_LONSUM
@@ -115,6 +135,21 @@ class Stats:
                 "i_lonsum_per_i_letter": (round(sum(table[I_LONSUM].values()) / sum(table[I_LETTER].values()), 3)
                                           if table[I_LETTER] else None)}
 
+    def contexts(self, top=40):
+        """Counts of ꯢ and ꯏ by what precedes them, over running words: by kind and by character."""
+        kinds, chars = defaultdict(Counter), defaultdict(Counter)
+        for word, n in self.words.items():
+            for i, ch in enumerate(word):
+                if ch in (I_LETTER, I_LONSUM):
+                    prev = word[i - 1] if i > 0 else None
+                    kinds[context(prev)][ch] += n
+                    chars["word start" if prev is None else f"U+{ord(prev):04X} {prev}"][ch] += n
+
+        def rows(table, limit=None):
+            items = sorted(table.items(), key=lambda kv: -sum(kv[1].values()))[:limit]
+            return [{"before": k, "i_lonsum": c[I_LONSUM], "i_letter": c[I_LETTER]} for k, c in items]
+        return {"by_kind": rows(kinds), "by_character": rows(chars, top)}
+
     def summary(self, top=30):
         chars = Counter()
         for word, n in self.words.items():
@@ -133,6 +168,7 @@ class Stats:
             "top_words": [[w, n] for w, n in self.words.most_common(top)],
             "rule_running_words": self.rule(by_type=False),
             "rule_distinct_words": self.rule(by_type=True),
+            "i_contexts_running_words": self.contexts(),
         }
 
 

@@ -19,11 +19,15 @@ in four places:
    classes correlate. Both are measured against random pairs.
 
 Style features are z-scored within each class first, so the shape of a
-character does not count as style. Everything is written to one JSON file
-(default results/tummhcd_audit.json).
+character does not count as style. It also reports the image sizes per class
+and the groups of pixel-identical images: which labels they carry and how many
+test images have an identical train image. Everything goes to one JSON file
+(default results/tummhcd_audit.json); the duplicate groups are also listed in
+a CSV file next to it (tummhcd_audit_duplicates.csv).
 """
 
 import argparse
+import csv
 import hashlib
 import io
 import json
@@ -31,6 +35,7 @@ import re
 import time
 import zipfile
 from collections import Counter, defaultdict
+from itertools import combinations
 from pathlib import Path, PurePosixPath
 
 import numpy as np
@@ -234,6 +239,57 @@ def same_number_study(Z, rows_by_key, rng):
     return {"same_number": real, "shuffled_numbers": pair_correlation(Z, *pairs(shuffled_groups))}
 
 
+def duplicate_report(images, hashes, csv_path=None):
+    """Groups of pixel-identical images: how many, which labels they carry, and train/test overlap."""
+    by_hash = defaultdict(list)
+    for e, h in zip(images, hashes):
+        by_hash[h].append(e)
+    dup = [(h, g) for h, g in by_hash.items() if len(g) > 1]
+    label_pairs = Counter()
+    for _, g in dup:
+        for a, b in combinations(sorted({e["label"] for e in g}), 2):
+            label_pairs[f"{a:03d}/{b:03d}"] += 1
+    twins, twin_classes = Counter(), Counter()  # test images with a pixel-identical train image
+    for _, g in dup:
+        train_labels = {e["label"] for e in g if e["split"] == "train"}
+        for e in g:
+            if e["split"] == "test" and train_labels:
+                twins["same_label" if e["label"] in train_labels else "other_label_only"] += 1
+                twin_classes[f"{e['label']:03d}"] += 1
+    if csv_path:
+        Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(csv_path, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["group", "pixel_md5", "split", "label", "path"])
+            for k, (h, g) in enumerate(dup):
+                for e in g:
+                    w.writerow([k, h, e["split"], f"{e['label']:03d}", e["path"]])
+    return {
+        "groups_of_identical_pixels": len(dup),
+        "images_in_those_groups": sum(len(g) for _, g in dup),
+        "groups_spanning_train_and_test": sum(1 for _, g in dup if len({e["split"] for e in g}) > 1),
+        "groups_with_different_labels": sum(1 for _, g in dup if len({e["label"] for e in g}) > 1),
+        "label_pairs_in_those_groups": [{"classes": k, "groups": n} for k, n in label_pairs.most_common(40)],
+        "test_images_with_identical_train_image": {
+            "total": sum(twins.values()), "same_label": twins["same_label"],
+            "other_label_only": twins["other_label_only"], "per_test_class": dict(sorted(twin_classes.items()))},
+        "examples": [[e["path"] for e in g[:4]] for _, g in dup[:10]],
+        "csv": str(csv_path) if csv_path else None,
+    }
+
+
+def size_report(images, F):
+    """Image sizes overall, and every class that holds anything but the most common size."""
+    sizes = Counter(f"{int(f[0])}x{int(f[1])}" for f in F)
+    per_class = defaultdict(Counter)
+    for e, f in zip(images, F):
+        per_class[f"{e['split']}_{e['label']:03d}"][f"{int(f[0])}x{int(f[1])}"] += 1
+    common = sizes.most_common(1)[0][0]
+    return {"distinct_sizes": len(sizes), "most_common": common,
+            "overall": dict(sizes.most_common(20)),
+            "classes_with_other_sizes": {c: dict(n) for c, n in sorted(per_class.items()) if set(n) != {common}}}
+
+
 def read_text_file(data, max_lines=20):
     text = data.decode("utf-8", errors="replace")
     return text.splitlines()[:max_lines]
@@ -241,7 +297,7 @@ def read_text_file(data, max_lines=20):
 
 # ---------------------------------------------------------------- main
 
-def audit(zip_path=None, dir_path=None, max_per_class=None, seed=0):
+def audit(zip_path=None, dir_path=None, max_per_class=None, seed=0, duplicates_csv=None):
     rng = np.random.default_rng(seed)
     entries, read = open_source(zip_path, dir_path)
     entries = [describe(e) for e in entries]
@@ -315,6 +371,7 @@ def audit(zip_path=None, dir_path=None, max_per_class=None, seed=0):
                        "feature_p05": dict(zip(FEATURES, np.round(np.nanpercentile(F, 5, 0), 4).tolist())),
                        "feature_p95": dict(zip(FEATURES, np.round(np.nanpercentile(F, 95, 0), 4).tolist())),
                        "orders": {}}
+    report["sizes"] = size_report(chosen, F)
 
     row = {id(e): i for i, e in enumerate(chosen)}
     sequences = {"name": [], "archive": [], "time": []}
@@ -337,17 +394,7 @@ def audit(zip_path=None, dir_path=None, max_per_class=None, seed=0):
                 rows_by_key[(e["split"], e["label"], int(DIGITS.findall(e["stem"])[pos]))] = row[id(e)]
         report["style"]["same_number_across_classes"][f"number_{pos}"] = same_number_study(Z, rows_by_key, rng)
 
-    groups_by_hash = defaultdict(list)
-    for e, h in zip(chosen, hashes):
-        groups_by_hash[h].append(e)
-    dup = [g for g in groups_by_hash.values() if len(g) > 1]
-    report["duplicates"] = {
-        "groups_of_identical_pixels": len(dup),
-        "images_in_those_groups": sum(len(g) for g in dup),
-        "groups_spanning_train_and_test": sum(1 for g in dup if len({e["split"] for e in g}) > 1),
-        "groups_spanning_classes": sum(1 for g in dup if len({(e["split"], e["label"]) for e in g}) > 1),
-        "examples": [[e["path"] for e in g[:4]] for g in dup[:10]],
-    }
+    report["duplicates"] = duplicate_report(chosen, hashes, duplicates_csv)
     report["notes"] = notes(report)
     return report
 
@@ -380,9 +427,18 @@ def notes(r):
         out.append(f"Same {name.replace('_', ' ')} in different classes: style correlation "
                    f"{study['same_number']['mean']} ({study['same_number']['pairs']} pairs); "
                    f"shuffled {study['shuffled_numbers']['mean']}.")
+    z = r["sizes"]
+    out.append(f"Image sizes: {z['distinct_sizes']} distinct, most common {z['most_common']} "
+               f"({z['overall'][z['most_common']]} images); {len(z['classes_with_other_sizes'])} "
+               "classes hold other sizes.")
     d = r["duplicates"]
+    t = d["test_images_with_identical_train_image"]
+    pairs = ", ".join(f"{p['classes']} ({p['groups']})" for p in d["label_pairs_in_those_groups"][:5])
     out.append(f"{d['groups_of_identical_pixels']} groups of pixel-identical images "
-               f"({d['groups_spanning_train_and_test']} span train and test).")
+               f"({d['groups_spanning_train_and_test']} span train and test, "
+               f"{d['groups_with_different_labels']} carry different labels{': ' + pairs if pairs else ''}).")
+    out.append(f"{t['total']} test images have a pixel-identical train image "
+               f"({t['same_label']} with the same label, {t['other_label_only']} only with another label).")
     return out
 
 
@@ -411,8 +467,9 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
-    report = to_json(audit(args.zip, args.dir, args.max_per_class, args.seed))
     out = Path(args.out)
+    report = to_json(audit(args.zip, args.dir, args.max_per_class, args.seed,
+                           duplicates_csv=out.with_name(out.stem + "_duplicates.csv")))
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1, ensure_ascii=False))
     print("\n".join(report["notes"]))

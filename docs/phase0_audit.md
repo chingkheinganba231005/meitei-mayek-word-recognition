@@ -1,9 +1,8 @@
 # Phase 0: literature and data audit
 
 Started 24 September 2026. Status: literature search and corpus licence audit done (first
-pass); the IIIT Hyderabad question is settled (section 2); TUMMHCD writer check and corpus word
-counts are scripted but need to be run on Colab (`notebooks/phase0_data_audit.ipynb`), because
-this session could not reach the data.
+pass); the IIIT Hyderabad question is settled (section 2); the first Colab run of the data audit
+is done (section 10), and a second run with more detail is pending (section 11).
 
 **How this was done, and what that means for citing.** The search ran in a cloud session whose
 network allowed a web search engine and GitHub, but not publisher sites, arXiv, Hugging Face,
@@ -34,14 +33,18 @@ has been checked against the full text (CLAUDE.md rule).
    Manipuri in Bengali script in IIIT-Indic-HW-UC.
 4. **No handwriting generation model for Meitei Mayek was found.** Indic diffusion work covers
    isolated Bangla characters and an unpublished Devanagari repository.
-5. **Native Unicode Meitei Mayek text is scarce.** FineWeb-2 holds 61,256 words of it (its
-   `wiki_ratio` is 0.556), against 2.69M words of Manipuri in Bengali script (F). The MADLAD-400 authors report
-   that most Meitei Mayek text on the web uses non-Unicode fonts (A). A text corpus large enough
-   for a language model will likely need transliterated Bengali-script text, with the ꯢ/ꯏ caveat
-   in section 8.
-6. **TUMMHCD writer IDs: unknown yet.** The dataset paper reports about 500 writers and two
-   collection phases (A). The audit script tests folders, file names, side files and hidden writer
-   grouping; it needs your Drive copy.
+5. **Native Unicode Meitei Mayek text is scarce.** Wikipedia and FineWeb-2 together hold about
+   1.45 million running words and 78,000 distinct words, with much overlap (section 10); FineWeb-2
+   has 2.69M words of Manipuri in Bengali script (F). The MADLAD-400 authors report that most
+   Meitei Mayek text on the web uses non-Unicode fonts (A).
+6. **TUMMHCD carries no writer information, and its images carry no size or position**
+   (section 10). File names are a class number and a running index; neighbouring and
+   same-numbered files are unrelated in style; the characters are scaled to fill a 24 × 24
+   frame. 468 groups of pixel-identical images span train and test.
+7. **Typed text breaks the ꯢ/ꯏ rule.** Web text uses ꯢ almost only after a vowel, as the rule
+   says, but writes 71–90% of the i's after a vowel as ꯏ, so the rule holds for only 28–45% of
+   occurrences. The positions agree with the thesis; the spelling does not. Typed corpora cannot
+   teach or test this pair as they stand (section 10).
 
 ## 2. Handwritten Meitei Mayek beyond isolated characters
 
@@ -216,9 +219,14 @@ native Meitei Mayek word counts for everything it can download (`results/corpus_
    corpus, over running and distinct words. The thesis figure (94.7% on about 26,000 expert-checked
    words) and the frequency ratio (ꯢ about 3.6 times ꯏ) can be checked on open data this way.
 
+*Revised after the first run (section 10):* native typed text is not reliable for the ꯢ/ꯏ pair,
+so recommendation 1 no longer covers ꯢ/ꯏ statistics; those need text with checked spelling.
+
 ## 9. TUMMHCD writer information
 
-**What is known.** 85,124 images, 55 classes, 72,330 train and 12,794 test (the first paper). About
+**Outcome of the first run: no writer information (section 10).**
+
+**What was known before.** 85,124 images, 55 classes, 72,330 train and 12,794 test (the first paper). About
 500 writers, collected in two phases: unconstrained writing (answer sheets, classroom notes) and
 tabular forms (dataset paper abstract, A). The archive holds `TUMMHCDtrain/train_NNN` and
 `TUMMHCDtest/test_NNN` folders (`mayek/split.py` in the first project). Images are small scans,
@@ -256,19 +264,122 @@ tabular forms they are clearly positive (`tests/test_audit_tummhcd.py`).
   from the Phase 3 real test set only, which is writer-disjoint from TUMMHCD by construction.
   Also ask Hijam and Saharia whether writer IDs exist for the form-based part.
 
-## 10. To do (needs access this session did not have)
+## 10. Results of the first Colab run (24 September 2026)
 
-1. Run `notebooks/phase0_data_audit.ipynb` on Colab with the TUMMHCD archive on Drive; commit
-   `results/tummhcd_audit.json` and `results/corpus_stats.json`; then fill the TUMMHCD outcome
-   and the native word counts into CLAUDE.md.
-2. IIIT Hyderabad: done for handwriting (Bengali script, section 2). Still open: the licence on
-   the IIIT-Indic-HW-UC download page, and the script of Manipuri in the printed Mozhi dataset.
-3. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
-   (2020): is the MM page dataset available?
-4. Read Hijam's thesis chapter on the CNN + LSTM word model (test set, size, results).
-5. Check the Manipuri script and size in IN22, BPCC and Sangraha; register on TDIL-DC for ILCI-II
-   and read its terms; download the printed dataset's text files from Mendeley Data.
-6. From the TUMMHCD paper: is the official test split writer-disjoint?
+Files: `results/tummhcd_audit.json` (all 85,124 images; archive sha256 7637cb9e…) and
+`results/corpus_stats.json`. Every number below comes from them. The breakdowns added afterwards
+(image sizes per class, the labels of duplicates, what precedes ꯢ and ꯏ) need a second run.
+
+### TUMMHCD: no writer information
+
+| Where we looked | What we found |
+|---|---|
+| Folders and side files | no folder below the class folders, no other files; all 85,124 files are `.tif` |
+| File names | one template, `mmhc<k>_<n>`. k runs 1–55 and is the class number plus one (each value sits in one class, in its train and test folders); n runs from 1 to the class size, fills that range and never repeats within a class: a running index, not a writer |
+| Same n in different classes | style correlation 0.002 over 83,110 pairs, against 0.000 shuffled: the n-th files of two classes are not linked, so no tabular-form grouping survives |
+| Neighbours in name order | 0.012 at lag 1 and 0.003 at lag 10, against −0.003 in random order: files were not saved writer by writer |
+| Neighbours in file-time order | 0.064 at lag 1, falling slowly (0.025 at lag 100), carried by paper grey level (0.21) and ink grey level (0.11) more than by stroke width (0.06): scan batches, not writers. 682 distinct file times from 23 July to 19 September 2018, a median of 12 per class: each class was written out in about a dozen batches |
+
+**The images carry no size or position.** Height and width never vary within a class, and the
+5th and 95th percentiles over all images are both 24 px. Each margin between the ink and the
+frame is at most one pixel in at least 95% of the images, and zero at the top and left. So the
+characters were cropped to their ink and scaled to fill a 24 × 24 frame: its original size, aspect ratio and place in the word are gone. The second run
+lists any class stored at another fixed size.
+
+**Duplicates.** 1,741 groups of pixel-identical images hold 3,512 images; 468 of the groups span
+train and test. How many groups carry different labels, and how many test images have an
+identical train image, needs the second run: the first run's `groups_spanning_classes` (479)
+counted the train and test folders of one class as two classes, so it is not a count of label
+conflicts.
+
+**What this means.**
+
+- Phase 1 cannot take a word's characters from one writer, and synthetic data cannot be split by
+  writer. Compose words from characters matched in style (stroke width, ink and paper grey level;
+  file-time batches as a weak session grouping). Keep TUMMHCD's own train/test split for the
+  characters of synthetic training and test words, and take writer-disjoint evaluation from the
+  Phase 3 real set only.
+- Zone-aware placement needs a size and position model per class, because the images have none.
+  One handle is the stroke width in the 24-px frame: for the same pen, a small glyph scaled up to
+  fill the frame gets thicker strokes, so the median stroke width per class estimates each
+  class's relative size. Check this in Phase 1.
+- For the first paper (under review), two checks. If it explains the gain from the size features
+  by glyph size or zone, compare that with the above: image height and width are constant within
+  classes and the ink fills the frame, so those features can carry little beyond ink fraction
+  (or a class-specific frame size, if the second run finds one). And test images with an
+  identical train image can flatter every TUMMHCD result, the published ones included; once the
+  second run counts them, report accuracy with and without them.
+
+### Corpora: sizes
+
+| Source | Running words | Distinct words | Non-space characters in the Meitei block |
+|---|---:|---:|---:|
+| Meitei Wikipedia dump | 1,036,283 | 72,437 | 19.5% (markup, English templates) |
+| FineWeb-2 `mni_Mtei` | 52,395 | 11,141 | 91.1% |
+| FineWeb-2 `mni_Mtei_removed` | 365,832 | 33,425 | 70.7% |
+| All three (they overlap) | 1,454,510 | 77,580 | 25.0% |
+
+FLORES+ did not download (gated: it needs `HF_TOKEN` after accepting its terms). Words here are
+runs of Meitei Mayek letters, which is why FineWeb-2 counts fewer than its own 61,256. The removed
+part seems to hold much Wikipedia interface text (ꯋꯤꯀꯤꯄꯦꯗꯤꯌꯥ, "Wikipedia", is among its 15 most
+frequent words). Deduplicate before any use.
+
+### ꯢ and ꯏ in typed text
+
+| | Wikipedia | FineWeb-2 | FineWeb-2 removed |
+|---|---:|---:|---:|
+| ꯢ, all occurrences | 30,756 | 517 | 9,719 |
+| ꯏ, all occurrences | 108,124 | 6,120 | 48,515 |
+| ꯢ outside a vowel context | 0.42% | 1.9% | 0.7% |
+| ꯏ among the i's after a vowel | 71.2% | 90.4% | 80.2% |
+| i's after a vowel per other i | 3.29 | 3.98 | 5.15 |
+| rule holds (running words) | 45.3% | 27.6% | 32.7% |
+
+"After a vowel" means after a consonant letter (with its inherent a), a vowel letter or a vowel
+sign; everything else is word start, a lonsum final, nung or apun.
+
+Typed text uses ꯢ almost only after a vowel, as the rule says, but writes most i's after a vowel
+as ꯏ. So the rule holds for only 28–45% of occurrences, and in Wikipedia ꯏ is 3.5 times as
+frequent as ꯢ, the reverse of the thesis figure (ꯢ about 3.6 times ꯏ). The positions agree with
+the thesis: Wikipedia has 3.3 i's after a vowel for every other i, close to its 3.6. The simplest
+reading is that typists write ꯏ where the thesis's corpus (and presumably TUMMHCD's labels) have
+ꯢ: a difference of spelling practice, not of language. The second run counts both letters by the
+preceding character, which checks this context by context, including after consonant letters,
+where our reading of "after a vowel" (the inherent a) could differ from the thesis's.
+
+**What this means.**
+
+- Typed corpora cannot teach or test the ꯢ/ꯏ distinction as they stand: a language model trained
+  on them would prefer ꯏ after vowels, against the thesis orthography.
+- The project needs a transcription convention, fixed and written down before Phase 1. Standard
+  orthography as in the thesis (ꯢ after a vowel) is the natural choice if TUMMHCD's labels follow
+  it: check with a language expert, and check what the TUMMHCD paper says about labelling 044
+  and 025.
+- Under that convention, normalise typed text before training (ꯏ after a vowel becomes ꯢ). This
+  also erases the genuine exceptions (5.3% of the thesis's checked words), so what context adds
+  beyond the rule can only be measured on text with checked spelling: the thesis's TDIL corpus,
+  ILCI-II, the printed dataset's transcriptions, or our own test-set transcriptions made under the
+  convention.
+
+## 11. To do
+
+1. Rerun `notebooks/phase0_data_audit.ipynb`: it now takes the scripts from the working branch
+   and adds image sizes per class, the labels of duplicate groups, the test images with an
+   identical train image (listed in `results/tummhcd_audit_duplicates.csv`), and ꯢ/ꯏ counts by
+   preceding character. Commit the new result files.
+2. Fix the ꯢ/ꯏ transcription convention with a language expert; find out how TUMMHCD labelled
+   044 and 025.
+3. First paper: check the size-feature explanation, and score the test set without the images
+   that have an identical train image (after item 1).
+4. Get text with checked spelling: ILCI-II (register on TDIL-DC), the printed dataset's text files
+   (Mendeley Data); FLORES+ with `HF_TOKEN`. Check the Manipuri script and size in IN22, BPCC and
+   Sangraha.
+5. IIIT Hyderabad: the licence on the IIIT-Indic-HW-UC page, and the script of Manipuri in Mozhi.
+6. Read the full texts of the entries marked A that we will cite, starting with Inunganbi et al.
+   (2020): is the MM page dataset available? Read Hijam's thesis chapter on the CNN + LSTM word
+   model (test set, size, results).
+7. TUMMHCD paper: is the official test split meant to be writer-disjoint? Pixel-identical images in
+   both halves show that at least some images, and so some writers, are shared.
 
 ## Sources
 

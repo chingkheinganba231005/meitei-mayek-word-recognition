@@ -34,6 +34,14 @@ def test_stats_words_and_rule():
     assert r["rule_distinct_words"]["occurrences"] == 3
 
 
+def test_contexts():
+    s = cs.Stats()
+    s.add("ꯀꯥ" + I + " ꯀꯥ" + IL + " " + I + "ꯃ ꯀꯛ" + I)  # after a vowel sign twice, word start, after a lonsum
+    kinds = {r["before"]: (r["i_lonsum"], r["i_letter"])
+             for r in s.summary()["i_contexts_running_words"]["by_kind"]}
+    assert kinds == {"vowel sign": (1, 1), "word start": (0, 1), "final consonant (lonsum)": (0, 1)}
+
+
 def test_cli_reads_folders_and_bz2(tmp_path):
     (tmp_path / "a").mkdir()
     (tmp_path / "a" / "x.txt").write_text("ꯃꯤꯇꯩ ꯂꯣꯟ\n", encoding="utf-8")
