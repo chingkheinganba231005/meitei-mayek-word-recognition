@@ -1,15 +1,16 @@
 # Phase 1: synthetic words
 
 Started 24 September 2026. Status (25 September): the code, tests and Colab notebook are
-ready; the owner ran the notebook on TUMMHCD (section 5), and the syllable rule (section 2.7)
-and the draws for rare letters and the words built from syllables (section 3) followed from
-it; the owner chose the sizes measured on TUMMHCD and a wider pen range; a bug that erased
-pale writing is fixed (section 2.8). Next: the notebook is run again, to re-measure the sizes
-and regenerate the fixed synthetic sets.
+ready; the owner ran the notebook on TUMMHCD twice (section 5). The first run led to the
+syllable rule (section 2.7), the draws for rare letters and the words built from syllables
+(section 3), the sizes measured on TUMMHCD, a wider pen range and a fix for pale writing
+(section 2.8). After the second run the owner still saw ꯤ nearer the next letter: signs are
+now placed against their letter on the ink (section 2.7, proposed, awaiting the owner's
+confirmation). Next: the notebook is run again to regenerate the fixed synthetic sets.
 
 ## 1. What the synthesiser does
 
-Package `mayek_words`; one word image takes 5–7 ms on one CPU core.
+Package `mayek_words`; one word image takes 4–11 ms on one CPU core.
 
 1. **Text.** A word in everyday spelling (ꯢ written ꯏ), drawn from the lexicon (section 3),
    or a number in Meitei Mayek digits (3%); a full stop (cheikhei) follows 2% of words.
@@ -22,8 +23,9 @@ Package `mayek_words`; one word image takes 5–7 ms on one CPU core.
    positions and the baseline are jittered.
 4. **Drawing.** Each 24 x 24 image is resized into its box, which gives back the
    proportions TUMMHCD lost, and its strokes are thickened or thinned to the word's pen
-   width (resizing scales strokes with the box). The word is slanted, rotated a little,
-   blurred a little, and drawn in ink on paper.
+   width (resizing scales strokes with the box). A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
+   slid against that letter, and the next syllable keeps further away (section 2.7). The
+   word is slanted, rotated a little, blurred a little, and drawn in ink on paper.
 
 A seed fixes an image: item i of a set is always the same word and the same image.
 
@@ -102,6 +104,8 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
 | chance that a character joins the one before it (ink touching), inside a syllable | 2–50%; between syllables half that |
 | words spaced unevenly by syllable (inside narrower, between wider) | 1 in 5, by 0–0.12 L |
+| sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), on the ink | touching with the chance above, else 0–0.04 L from the letter; lead-in at most 0.1 L past it |
+| next letter after such a sign, on the ink | never touching; 0.04–0.08 L further than the sign is from its letter, plus the word's uneven spacing |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -128,8 +132,7 @@ So letters either join or keep a small gap. The synthesiser now does the same: e
 has a chance of 5–65% that a letter joins the letter before it, and a joined letter is slid
 left until its ink meets the ink before it (touching, not overlapping). The other letters
 keep the font's side bearings plus −0.10 to +0.05 L. Measured the same way on 30 pages of
-synthetic words written with the font's characters (`results/spacing_synthetic_font.json`):
-33% touching, visible gaps 0.086 L (at these resolutions one pixel is about 0.03 L). The
+synthetic words written with the font's characters: 33% touching, visible gaps 0.086 L (at these resolutions one pixel is about 0.03 L). The
 first default (gaps of 0.02–0.3 L on top of the side bearings) spaced letters 0.28 L apart
 by the layout, more than twice the font's 0.12 L. The notebook repeats the check with
 TUMMHCD characters (`results/spacing_synthetic_tummhcd.json`): how readily two letters
@@ -154,9 +157,34 @@ between syllables, and a join between syllables joins their insides too. The ꯤ
 drop to 0%. The rule covers every sign beside a letter (ꯤ, ꯦ, ꯣ, ꯧ) and lonsum codas
 (confirmed by the owner, 25 September 2026). Letters stay as close as before. The wider pen
 made them touch more often (41%), so the chance of joining is now 2–50% per word; measured
-like for like on 30 synthetic pages with the final settings
-(`results/spacing_synthetic_font.json`; built words included), 35% of neighbouring letters
-touch and the others are 0.084 L apart (the owner's screenshots: 33.5% and 0.097 L).
+like for like on 30 synthetic pages with these settings (built words included), 35% of
+neighbouring letters touched and the others were 0.084 L apart (the owner's screenshots: 33.5% and 0.097 L).
+
+*Signs on the ink (after the second run, 25 September 2026).* The owner still saw ꯤ closer
+to the letter after it. The rule above works on boxes: it kept ꯤ from being nearer the next
+letter than its own, so with even spacing ꯤ sat halfway; and a handwritten ꯤ is not its box.
+TUMMHCD's ꯤ starts with a long lead-in stroke from the left, and its stem, which the eye
+reads as the sign, stands in the middle of the image (ꯧ has a lead-in too). Measured on the
+ink (`scripts/check_signs.py`; the owner's validation characters and the development word
+list, words where the sign is followed by another syllable; `results/sign_placement_dev_val.json`),
+the body of ꯤ (the sign without its lead-in, `synth.sign_body`) was nearer the next letter
+than its own in 73% of cases, and its centre of ink in 58%; for ꯦ, ꯣ and ꯧ the body was
+nearer the next letter in 42–47%.
+
+So each sign beside a letter is now drawn against that letter: it is slid left until its
+body touches the letter (with the word's chance of joining) or is 0–0.04 L from it, while no
+part of it (the lead-in) reaches more than 0.1 L past the letter's ink in the same row; a
+lead-in may touch the letter, not cross it. The next letter never joins the sign, and its
+ink is set 0.04–0.08 L further from the sign than the sign is from its letter (plus the
+word's syllable spacing in uneven words). Distances are the shortest between the pieces of
+ink, in any direction. Result on the same words: the body of every sign is nearer its own
+letter (0% nearer the next, from 73% for ꯤ and 42–47% for the others); by the cruder
+centre of ink, 11% of ꯤ (from 58%), 8% of ꯦ, 20% of ꯣ and 21% of ꯧ (from 14–36%), where
+a letter's far edge sits right of the sign's centre. Letters stay as close as before:
+33% touching, visible gaps 0.057 L with the validation characters (before: 33%, 0.060 L);
+with the font's characters 35% and 0.059 L (`results/spacing_synthetic_font.json`). A test
+checks the rule on the font's characters and fails on the previous synthesiser. The notebook
+writes the check on the full lexicon (`results/sign_placement_tummhcd.json`).
 
 **2.8 Pale writing.** On previews with real characters the owner saw a few characters
 disappearing. The cause was the pen step: it redraws each character from the pixels of its
@@ -223,8 +251,8 @@ records the mix with and without it (`structure_train`).
 - The whole notebook on a fake archive (font characters, distorted, in TUMMHCD's layout)
   with Colab stubbed out: the split rule (15% of every class, seed 42), the duplicate
   exclusion, the size check, lexicon, contact sheets, fixed sets.
-- 37 tests (`pytest -q`), among them positions of every kind of sign, spacing and joining, the
-  spacing tool on synthetic pages, pen width, the split
+- 44 tests (`pytest -q`), among them positions of every kind of sign, spacing and joining,
+  signs nearer their own letter on the ink, the spacing tool on synthetic pages, pen width, the split
   and its stability, duplicate exclusion, and that the committed priors are exactly what
   `scripts/glyph_priors.py` writes.
 
@@ -257,6 +285,29 @@ by blur). The owner then noted that some characters in the development previews 
 typed: those previews used the font's characters. With the owner's real validation
 characters (`val.npz`) the words look handwritten, as the owner's contact sheets did. Next:
 run the notebook again (sizes re-measured with the fixed ink maps, fixed sets regenerated).
+
+**Second run (owner, 25 September 2026)**, with the fixed ink maps, measured sizes, wider pen,
+syllable rule, rare-letter draws and built words:
+
+- **Character stores**: as in the first run.
+- **Sizes** (`results/glyph_sizes_tummhcd.json`, now also the packaged default): over all
+  classes, median width 0.95 and height 1.02 times the font's; signs a little larger than in
+  the first run (height over the font's: ꯨ 2.45, ꯩ 1.59, ꯧ 1.49, ꯦ 1.35, ꯪ 1.34, ꯥ 1.25;
+  ꯤ 1.50 times as wide); strokes 0.084 L across (0.07 before: pale strokes are no longer
+  thinned). The check on the font's characters: heights within 3%, median width 0.94.
+- **Spacing** with TUMMHCD characters and the syllable layout
+  (`results/spacing_synthetic_tummhcd.json`): 32.9% of neighbouring letters touch, visible
+  gaps 0.061 L (real handwriting 33.5%, 0.097 L).
+- **Lexicon** (`results/lexicon_stats.json`): as in the first run. Rare characters (under
+  0.5%): ꯉ ꯓ ꯘ ꯙ ꯚ ꯞ ꯪ; with the rare draws ꯘ goes from 0.017% to 0.23% of drawn
+  characters, ꯓ from 0.055% to 0.28%, ꯙ from 0.05% to 0.26%. Word structure of drawn
+  training words, text alone and with 15% built words: one syllable 3.9% and 5.8%, six
+  4.4% and 6.2%, seven or more 2.0% and 1.7%; CC syllables 7.8% and 10.4%. The syllable
+  bank holds 178 C, 604 CV, 2,209 CVC and 452 CC syllables.
+- **Fixed sets**: 5,000 words each, about 10 ms per word; made before signs were placed on
+  the ink, so they are regenerated in the next run.
+- **Contact sheet**: the owner found it good except that ꯤ still sat nearer the next letter
+  (section 2.7, signs on the ink).
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

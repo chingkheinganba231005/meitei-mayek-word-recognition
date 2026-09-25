@@ -1,0 +1,107 @@
+{
+ "note": "Development check, 25 September 2026: scripts/check_signs.py with the owner's TUMMHCD validation characters (val.npz, 10,820 images) and the development word list (6,998 training words), sizes results/glyph_sizes_tummhcd.json. 'before': the same check on the synthesiser of commit 7aec5f1 (syllable rule on boxes only); 'after': sign drawn against its letter on the ink. The notebook writes results/sign_placement_tummhcd.json on the full lexicon.",
+ "glyphs": "val.npz",
+ "lexicon": "development train.tsv",
+ "words_per_sign": 300,
+ "seed": 1000,
+ "before": {
+  "ꯤ": {
+   "cases": 332,
+   "body_nearer_next_letter": 0.7289,
+   "next_letter_touching_sign": 0.0452,
+   "centre_nearer_next_letter": 0.5753,
+   "median_in_L": {
+    "body_to_letter": 0.284,
+    "sign_to_next_letter": 0.158,
+    "centre_to_letter": 0.406,
+    "centre_to_next_letter": 0.397
+   }
+  },
+  "ꯦ": {
+   "cases": 327,
+   "body_nearer_next_letter": 0.419,
+   "next_letter_touching_sign": 0.0336,
+   "centre_nearer_next_letter": 0.1376,
+   "median_in_L": {
+    "body_to_letter": 0.03,
+    "sign_to_next_letter": 0.112,
+    "centre_to_letter": 0.229,
+    "centre_to_next_letter": 0.336
+   }
+  },
+  "ꯣ": {
+   "cases": 329,
+   "body_nearer_next_letter": 0.4468,
+   "next_letter_touching_sign": 0.0365,
+   "centre_nearer_next_letter": 0.3556,
+   "median_in_L": {
+    "body_to_letter": 0.075,
+    "sign_to_next_letter": 0.14,
+    "centre_to_letter": 0.279,
+    "centre_to_next_letter": 0.331
+   }
+  },
+  "ꯧ": {
+   "cases": 270,
+   "body_nearer_next_letter": 0.4667,
+   "next_letter_touching_sign": 0.0259,
+   "centre_nearer_next_letter": 0.3556,
+   "median_in_L": {
+    "body_to_letter": 0.11,
+    "sign_to_next_letter": 0.152,
+    "centre_to_letter": 0.318,
+    "centre_to_next_letter": 0.373
+   }
+  }
+ },
+ "after": {
+  "ꯤ": {
+   "cases": 332,
+   "body_nearer_next_letter": 0.0,
+   "next_letter_touching_sign": 0.0,
+   "centre_nearer_next_letter": 0.1054,
+   "median_in_L": {
+    "body_to_letter": 0.055,
+    "sign_to_next_letter": 0.147,
+    "centre_to_letter": 0.205,
+    "centre_to_next_letter": 0.392
+   }
+  },
+  "ꯦ": {
+   "cases": 327,
+   "body_nearer_next_letter": 0.0,
+   "next_letter_touching_sign": 0.0,
+   "centre_nearer_next_letter": 0.0795,
+   "median_in_L": {
+    "body_to_letter": 0.024,
+    "sign_to_next_letter": 0.102,
+    "centre_to_letter": 0.182,
+    "centre_to_next_letter": 0.337
+   }
+  },
+  "ꯣ": {
+   "cases": 329,
+   "body_nearer_next_letter": 0.0,
+   "next_letter_touching_sign": 0.0,
+   "centre_nearer_next_letter": 0.1976,
+   "median_in_L": {
+    "body_to_letter": 0.029,
+    "sign_to_next_letter": 0.104,
+    "centre_to_letter": 0.163,
+    "centre_to_next_letter": 0.297
+   }
+  },
+  "ꯧ": {
+   "cases": 270,
+   "body_nearer_next_letter": 0.0,
+   "next_letter_touching_sign": 0.0,
+   "centre_nearer_next_letter": 0.2074,
+   "median_in_L": {
+    "body_to_letter": 0.034,
+    "sign_to_next_letter": 0.117,
+    "centre_to_letter": 0.23,
+    "centre_to_next_letter": 0.341
+   }
+  }
+ }
+}

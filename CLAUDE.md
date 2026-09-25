@@ -181,10 +181,11 @@ spelling convention, under which its ensemble's accuracy is its own figure of 98
 
 ## Phase 1: synthetic words (details in `docs/phase1_synthetic_words.md`)
 
-Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. First run on TUMMHCD
-done by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`).
-Next: rerun the notebook. It re-measures the sizes with the fixed ink maps (pale writing,
-below) and regenerates the fixed sets; then the packaged sizes are updated from that run.
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. Two runs on TUMMHCD
+by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`,
+`results/spacing_synthetic_tummhcd.json`); the packaged sizes are those of the second run.
+Next: the owner confirms the placement of signs on the ink (below), then reruns the notebook
+to regenerate the fixed sets and write `results/sign_placement_tummhcd.json`.
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
   Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
@@ -219,6 +220,14 @@ below) and regenerates the fixed sets; then the packaged sizes are updated from 
   ꯣ, ꯧ and a lonsum are never closer to the next letter than to their own; in 1 word in 5
   the syllables stand apart. Before this, ꯤ looked attached to the next letter in 87% of
   cases; now in none.
+- **Signs on the ink (proposed after the second run, 25 September 2026; awaiting the owner's
+  confirmation):** the owner still saw ꯤ nearer the next letter. TUMMHCD's ꯤ (and ꯧ) starts
+  with a long lead-in from the left and its stem stands mid-image, so the box rule left the
+  stem nearer the next letter in 73% of cases. Now ꯤ, ꯦ, ꯣ, ꯧ are slid against their
+  letter on the ink (body touching with the word's chance, else 0–0.04 L; lead-in at most
+  0.1 L past the letter), and the next letter never joins the sign and sits 0.04–0.08 L
+  further from it: 0% nearer the next letter (`scripts/check_signs.py`,
+  `results/sign_placement_dev_val.json`); letter spacing unchanged (33% touching).
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
@@ -236,8 +245,9 @@ below) and regenerates the fixed sets; then the packaged sizes are updated from 
   the ink, so pale scans lost their strokes: 11.4% of characters lost more than 30% of their
   ink (1.3% more than half). The map is now anchored to the Otsu threshold (what the scan shows
   as ink stays ink): none loses more than 30%. The measured sizes move a little with it
-  (median width 1.03 times, height 1.01; single classes up to 13%), so the next run re-measures.
-- **Sets:** training words are rendered on the fly (5–7 ms per word per core); fixed
+  (median width 1.03 times, height 1.01; single classes up to 13%); re-measured in the second
+  run (strokes 0.084 L; signs a little larger).
+- **Sets:** training words are rendered on the fly (4–11 ms per word per core); fixed
   synthetic validation and test sets of 5,000 words each, for model selection and a check.
   The main evaluation stays the Phase 3 real set.
 

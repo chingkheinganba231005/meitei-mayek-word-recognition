@@ -7,8 +7,8 @@ import pytest
 from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
 from mayek_words.glyphs import GlyphStore
 from mayek_words.lexicon import Lexicon
-from mayek_words.synth import (Config, Words, WordSynth, contact, line_gaps, load_priors, set_pen,
-                               stroke_width)
+from mayek_words.synth import (Config, Words, WordSynth, contact, ink_distance, line_gaps, load_priors,
+                               reach_past, set_pen, sign_body, stroke_width)
 
 K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
@@ -82,6 +82,44 @@ def test_contact():
     assert contact(canvas, ink, 20, 2, 5) == 0   # nothing within reach
 
 
+def test_ink_distance_and_reach():
+    canvas = np.zeros((20, 40), np.float32)
+    canvas[2:18, 10:13] = 1                      # a stroke ending at column 12
+    ink = np.zeros((16, 6), np.float32)
+    ink[:, 1:3] = 1                              # pasted at column 20: its ink starts at 21
+    assert ink_distance(canvas, ink, 20, 2, 20) == 21 - 12 - 1
+    assert reach_past(canvas, ink, 20, 2, 20) == 12 - 21 + 1
+    assert ink_distance(canvas, ink, 11, 2, 20) == -1                  # overlapping
+    assert ink_distance(canvas, ink, 30, 2, 5) is None                 # nothing within reach
+    lead = np.zeros((10, 10), np.float32)
+    lead[1, 0:6] = 1                             # a thin lead-in stroke into ...
+    lead[1:10, 6:8] = 1                          # ... a stem
+    assert sign_body(lead)[:, :6].max() == 0 and sign_body(lead)[:, 6:].sum() == lead[:, 6:].sum()
+
+
+def test_sign_nearer_its_own_letter(store):
+    """A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is drawn nearer that letter than the next letter
+    (owner, 25 September 2026), on the ink as drawn, and the next letter never joins it."""
+    from scipy import ndimage
+
+    def dist(a, b):
+        (_, ax, ay, ai), (_, bx, by, bi) = a, b
+        H, W = max(ay + ai.shape[0], by + bi.shape[0]), max(ax + ai.shape[1], bx + bi.shape[1])
+        A, B = np.zeros((H, W), bool), np.zeros((H, W), bool)
+        A[ay:ay + ai.shape[0], ax:ax + ai.shape[1]] = ai > 0.5
+        B[by:by + bi.shape[0], bx:bx + bi.shape[1]] = bi > 0.5
+        return -1.0 if (A & B).any() else float(ndimage.distance_transform_edt(~A)[B].min()) - 1
+
+    s = WordSynth(store, config=Config(touch=(0.5, 0.5)))
+    for sign in (INAP, chr(0xABE6), chr(0xABE3), chr(0xABE7)):
+        for i in range(15):
+            trace = []
+            s.render(K + sign + LAI + K, np.random.default_rng(i), trace)
+            letter, (_, x, y, ink), nxt = trace[0], trace[1], trace[2]
+            assert dist(letter, (None, x, y, sign_body(ink))) < dist(trace[1], nxt)
+            assert dist(trace[1], nxt) >= 0
+
+
 def test_joined_letters_share_ink(store):
     """With every letter joined, a word is one piece of ink more often than with none joined."""
     from scipy import ndimage
@@ -119,7 +157,7 @@ def test_measured_sizes_are_the_default():
     root = Path(__file__).resolve().parents[1]
     packaged = json.loads((root / "mayek_words" / "assets" / "glyph_sizes_tummhcd.json").read_text(encoding="utf-8"))
     result = json.loads((root / "results" / "glyph_sizes_tummhcd.json").read_text(encoding="utf-8"))
-    assert packaged["classes"] == result["classes"]                 # the copy is the first run's result
+    assert packaged["classes"] == result["classes"]                 # the copy is the latest run's result
     default, measured = load_priors(), load_priors(sizes=root / "results" / "glyph_sizes_tummhcd.json")
     assert default == measured and default != load_priors(sizes=None)
 

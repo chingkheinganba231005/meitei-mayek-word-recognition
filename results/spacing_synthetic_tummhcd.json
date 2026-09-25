@@ -1,7 +1,7 @@
 {
  "synthetic": {
   "pages": 30,
-  "glyphs": "font",
+  "glyphs": "train.npz",
   "lexicon": "train.tsv",
   "gap": [
    -0.1,
@@ -12,8 +12,8 @@
    0.02,
    0.5
   ],
-  "touching_median": 0.35,
-  "visible_gap_median_in_L": 0.059,
+  "touching_median": 0.329,
+  "visible_gap_median_in_L": 0.061,
   "letter_height_px_median": 34.0
  }
 }
