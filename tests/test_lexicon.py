@@ -69,7 +69,8 @@ def test_words_built_from_syllables():
     rng = np.random.default_rng(0)
     words = [bank.word(rng) for _ in range(4000)]
     s = lx.structure(words)
-    assert all(v > 0.08 for v in s["syllables_per_word"].values())       # 1 to 8 syllables, all present
+    per = s["syllables_per_word"]
+    assert all(abs(per[k] - 1 / 6) < 0.03 for k in "123456") and per["7+"] == 0   # 1 to 6 syllables, evenly
     assert all(abs(v - 0.25) < 0.03 for v in s["syllable_kinds"].values())  # each kind about a quarter
     assert lx.structure([K + AA, K])["syllables_per_word"]["1"] == 1.0
 

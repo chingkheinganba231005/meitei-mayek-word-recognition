@@ -144,7 +144,8 @@ class SyllableBank:
     """The syllables of the lexicon's words, by kind (C, CV, CVC, CC; ``charset.syllable_type``),
     weighted as the words are. ``word`` composes a word of real syllables: its number of
     syllables and the kind of each drawn evenly, so that short and long words and every
-    kind of syllable are well represented, whatever the text's own mix."""
+    kind of syllable are well represented, whatever the text's own mix. At most 6 syllables:
+    longer words are rare in writing (the owner, 25 September 2026)."""
 
     def __init__(self, lexicon):
         weights = np.diff(np.concatenate([[0.0], lexicon.cum]))
@@ -158,7 +159,7 @@ class SyllableBank:
         self.bank = {t: (list(bank[t]), np.cumsum(np.array(list(bank[t].values())) / sum(bank[t].values())))
                      for t in self.kinds}
 
-    def word(self, rng, syllables=(1, 8)):
+    def word(self, rng, syllables=(1, 6)):
         out = []
         for _ in range(int(rng.integers(syllables[0], syllables[1] + 1))):
             names, cum = self.bank[self.kinds[int(rng.integers(len(self.kinds)))]]

@@ -375,7 +375,7 @@ class Words:
     """Word images on demand. Item i is always the same image: its random numbers come from
     the seed sequence (seed, i). A word is drawn from the lexicon; with probability `numbers`
     it is a number in Meitei Mayek digits instead, and with probability `built` a word
-    composed of real syllables (``lexicon.SyllableBank``: 1 to 8 syllables, every kind of
+    composed of real syllables (``lexicon.SyllableBank``: 1 to 6 syllables, every kind of
     syllable); with probability `stop` a full stop (cheikhei) follows it."""
 
     def __init__(self, synth, lexicon, seed=0, numbers=0.03, stop=0.02, built=0.0):

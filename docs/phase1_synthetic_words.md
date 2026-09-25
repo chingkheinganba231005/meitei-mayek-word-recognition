@@ -193,9 +193,12 @@ letter and final (CC, ꯀꯝ) (`charset.split_syllables`, `charset.syllable_type
 drawn from text have all of them, unevenly: on the development word list, 7.7% of drawn
 words have one syllable, 1.4% six and 0.4% seven or more; 7.7% of syllables are CC. The
 proposal: 15% of training words are composed of real syllables from the lexicon
-(`lexicon.SyllableBank`), with 1 to 8 syllables and the kind of each syllable drawn
-evenly. On the development list this gives 8.4% one-syllable words, 3.0% six and 4.1%
-seven or more, and 11.5% CC syllables. It is in the code (`--built`, `Words(built=...)`)
+(`lexicon.SyllableBank`), with 1 to 6 syllables and the kind of each syllable drawn
+evenly (at most 6: longer words are rare in writing, the owner's judgement; in text, the
+words of 7 or more syllables are mostly loanwords with endings, such as ꯑꯥꯔꯀꯦꯌꯣꯂꯣꯖꯤꯀꯦꯜ,
+and long verb forms). On the development list this gives 9.1% one-syllable words and 3.6%
+six-syllable words; words of 7 or more syllables stay at their share in text (0.4%);
+CC syllables rise to 10.8%. It is in the code (`--built`, `Words(built=...)`)
 but off until the owner confirms; the next lexicon run records the mix with and without
 it (`structure_train`).
 

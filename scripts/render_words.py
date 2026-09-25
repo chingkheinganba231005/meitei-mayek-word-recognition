@@ -62,7 +62,7 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.5, help="sampling weight = count ** alpha")
     ap.add_argument("--rare-share", type=float, default=0.1, help="share of draws for rare characters")
     ap.add_argument("--built", type=float, default=0.0,
-                    help="share of words composed of real syllables (1-8 syllables, every kind)")
+                    help="share of words composed of real syllables (1-6 syllables, every kind)")
     ap.add_argument("--sheet", help="contact sheet .png")
     ap.add_argument("--sheet-n", type=int, default=48)
     args = ap.parse_args()

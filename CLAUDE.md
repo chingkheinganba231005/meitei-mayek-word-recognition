@@ -226,9 +226,10 @@ regenerate the fixed sets.
   owner, 25 September 2026). First run: 76,066 words kept; 68,450 / 3,855 / 3,761.
 - **Variety of words (proposal, 25 September 2026, pending the owner):** training should
   cover short and long words and the four kinds of syllable (C ꯀ, CV ꯀꯥ, CVC ꯀꯥꯡ, CC ꯀꯝ;
-  `charset.syllable_type`). Text alone gives few long words (0.4% with 7+ syllables) and
-  few CC syllables (7.7%); 15% of words built from real syllables (1-8, kinds even) would
-  raise these to 4.1% and 11.5%. Coded (`--built`), off until confirmed. Apun must join two consonants, lonsum letters included (typed loanwords:
+  `charset.syllable_type`). Text alone gives few long words (1.4% with 6 syllables) and
+  few CC syllables (7.7%); 15% of words built from real syllables (1-6 syllables, the owner's
+  maximum; kinds even) would give 3.6% six-syllable words and 10.8% CC syllables. Coded
+  (`--built`), off until confirmed. Apun must join two consonants, lonsum letters included (typed loanwords:
   ꯑꯦꯟ꯭ꯗ "and").
 - **Sets:** training words are rendered on the fly (5–7 ms per word per core); fixed
   synthetic validation and test sets of 5,000 words each, for model selection and a check.
