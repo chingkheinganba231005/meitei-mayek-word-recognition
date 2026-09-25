@@ -12,7 +12,7 @@
    0.02,
    0.5
   ],
-  "touching_median": 0.35,
+  "touching_median": 0.295,
   "visible_gap_median_in_L": 0.059,
   "letter_height_px_median": 34.0
  }

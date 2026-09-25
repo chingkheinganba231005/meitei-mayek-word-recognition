@@ -4,14 +4,16 @@
         --out results/sign_placement_tummhcd.json [--sizes measured|font|file.json] [--words 300]
 
 For each sign, words from the lexicon in which the sign is followed by the letter of another
-syllable are rendered (default settings, no rotation), and two things are measured on the
-ink as drawn, in letter heights L:
+syllable are rendered (default settings, no rotation), and measured on the ink as drawn, in
+letter heights L, separately for evenly and unevenly spaced words:
 - body: the shortest distance from the sign's body (its lead-in stroke cleared,
   ``synth.sign_body``) to its own letter, against the shortest distance from the sign to
-  the next letter. This is the rule the synthesiser enforces.
+  the next letter. The synthesiser never puts the sign nearer the next letter.
 - centre: the horizontal distance from the sign's centre of ink to the rightmost ink of its
   letter, against that to the leftmost ink of the next letter. A cruder check that does not
   depend on the rule's own definitions.
+- touching: the sign's body touches its letter; almost stuck: under 0.03 L from it;
+  crossing: in some row the sign's ink reaches into the columns of its letter's ink.
 """
 
 import argparse
@@ -46,16 +48,41 @@ def distance(a, b):
     return -1.0 if (A & B).any() else float(ndimage.distance_transform_edt(~A)[B].min()) - 1
 
 
+def crossing(a, b):
+    """True if, in some row, the ink of b (x, y, ink) starts at or left of the rightmost ink of a."""
+    (ax, ay, ai), (bx, by, bi) = a, b
+    for r in range(max(ay, by), min(ay + ai.shape[0], by + bi.shape[0])):
+        ra, rb = np.flatnonzero(ai[r - ay] > 0.5), np.flatnonzero(bi[r - by] > 0.5)
+        if len(ra) and len(rb) and bx + rb[0] <= ax + ra[-1]:
+            return True
+    return False
+
+
+def summary(r):
+    """r: rows of (body to letter, sign to next, centre to letter, centre to next, crossing)."""
+    return {"cases": len(r),
+            "body_nearer_next_letter": round(float(np.mean(r[:, 1] <= r[:, 0])), 4),
+            "centre_nearer_next_letter": round(float(np.mean(r[:, 3] <= r[:, 2])), 4),
+            "touching_letter": round(float(np.mean(r[:, 0] <= 0)), 4),
+            "almost_stuck_under_0.03": round(float(np.mean(r[:, 0] < 0.03)), 4),
+            "crossing_letter": round(float(np.mean(r[:, 4])), 4),
+            "next_letter_touching_sign": round(float(np.mean(r[:, 1] <= 0)), 4),
+            "median_in_L": {"body_to_letter": round(float(np.median(r[:, 0])), 3),
+                            "sign_to_next_letter": round(float(np.median(r[:, 1])), 3),
+                            "centre_to_letter": round(float(np.median(r[:, 2])), 3),
+                            "centre_to_next_letter": round(float(np.median(r[:, 3])), 3)}}
+
+
 def columns(g):
     x, _, ink = g
     return x + np.nonzero(ink > 0.5)[1]
 
 
 def check(synth, words, seed=0):
-    """-> {sign: summary} over the words (lists per sign)."""
+    """-> {sign: {"all": summary, "even": summary, "uneven": summary}} over the words (lists per sign)."""
     out = {}
     for sign, ws in words.items():
-        rows = []
+        rows, uneven = [], []
         for i, w in enumerate(ws):
             trace = []
             smp = synth.render(w, np.random.default_rng(seed + i), trace)
@@ -71,18 +98,16 @@ def check(synth, words, seed=0):
                 cx = x + float(weight @ np.arange(ink.shape[1]) / max(weight.sum(), 1e-6))
                 rows.append((distance(placed[a], (x, y, sign_body(ink))) / L,
                              distance(placed[k], placed[b]) / L,
-                             (cx - columns(placed[a]).max()) / L, (columns(placed[b]).min() - cx) / L))
-        r = np.array(rows)
+                             (cx - columns(placed[a]).max()) / L, (columns(placed[b]).min() - cx) / L,
+                             crossing(placed[a], placed[k])))
+                uneven.append(smp.style.get("uneven", 0.0) > 0)
+        r, u = np.array(rows, float), np.array(uneven, bool)
         if not len(r):
             continue
-        out[sign] = {"cases": len(r),
-                     "body_nearer_next_letter": round(float(np.mean(r[:, 1] <= r[:, 0])), 4),
-                     "next_letter_touching_sign": round(float(np.mean(r[:, 1] < 0)), 4),
-                     "centre_nearer_next_letter": round(float(np.mean(r[:, 3] <= r[:, 2])), 4),
-                     "median_in_L": {"body_to_letter": round(float(np.median(r[:, 0])), 3),
-                                     "sign_to_next_letter": round(float(np.median(r[:, 1])), 3),
-                                     "centre_to_letter": round(float(np.median(r[:, 2])), 3),
-                                     "centre_to_next_letter": round(float(np.median(r[:, 3])), 3)}}
+        out[sign] = {"all": summary(r)}
+        for name, m in (("even", ~u), ("uneven", u)):
+            if m.any():
+                out[sign][name] = summary(r[m])
     return out
 
 
@@ -117,9 +142,13 @@ def main():
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
-    for s, v in report["signs"].items():
-        print(f"{s}: {v['cases']} cases; body nearer the next letter {v['body_nearer_next_letter']:.0%}, "
-              f"centre nearer the next letter {v['centre_nearer_next_letter']:.0%}; medians {v['median_in_L']}")
+    for s, parts in report["signs"].items():
+        for name, v in parts.items():
+            m = v["median_in_L"]
+            print(f"{s} {name:6s} {v['cases']:4d} cases: body nearer the next letter {v['body_nearer_next_letter']:.0%}, "
+                  f"centre {v['centre_nearer_next_letter']:.0%}; touching {v['touching_letter']:.0%}, "
+                  f"almost stuck {v['almost_stuck_under_0.03']:.0%}, crossing {v['crossing_letter']:.0%}; "
+                  f"median body-letter {m['body_to_letter']} L, sign-next {m['sign_to_next_letter']} L")
 
 
 if __name__ == "__main__":

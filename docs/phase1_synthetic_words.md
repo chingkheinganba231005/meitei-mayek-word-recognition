@@ -5,8 +5,8 @@ ready; the owner ran the notebook on TUMMHCD twice (section 5). The first run le
 syllable rule (section 2.7), the draws for rare letters and the words built from syllables
 (section 3), the sizes measured on TUMMHCD, a wider pen range and a fix for pale writing
 (section 2.8). After the second run the owner still saw ꯤ nearer the next letter: signs are
-now placed against their letter on the ink (section 2.7, proposed, awaiting the owner's
-confirmation). Next: the notebook is run again to regenerate the fixed synthetic sets.
+now placed on the ink (section 2.7; the rule is the owner's, the result to be confirmed on
+the next contact sheet). Next: the notebook is run again to regenerate the fixed synthetic sets.
 
 ## 1. What the synthesiser does
 
@@ -24,7 +24,8 @@ Package `mayek_words`; one word image takes 4–11 ms on one CPU core.
 4. **Drawing.** Each 24 x 24 image is resized into its box, which gives back the
    proportions TUMMHCD lost, and its strokes are thickened or thinned to the word's pen
    width (resizing scales strokes with the box). A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
-   slid against that letter, and the next syllable keeps further away (section 2.7). The
+   placed on the ink: evenly spaced, or closer to its letter in unevenly spaced words, never
+   nearer the next letter (section 2.7). The
    word is slanted, rotated a little, blurred a little, and drawn in ink on paper.
 
 A seed fixes an image: item i of a set is always the same word and the same image.
@@ -104,8 +105,8 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
 | chance that a character joins the one before it (ink touching), inside a syllable | 2–50%; between syllables half that |
 | words spaced unevenly by syllable (inside narrower, between wider) | 1 in 5, by 0–0.12 L |
-| sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), on the ink | touching with the chance above, else 0–0.04 L from the letter; lead-in at most 0.1 L past it |
-| next letter after such a sign, on the ink | never touching; 0.04–0.08 L further than the sign is from its letter, plus the word's uneven spacing |
+| sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), on the ink | even words: the layout's gap; uneven words: 0.02–0.06 L, touching in 1 in 10; never cutting into the letter |
+| next letter after such a sign, on the ink | never touching it, never nearer it than the sign is to its letter; uneven words: 0.04–0.08 L further, plus the syllable spacing |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -171,20 +172,46 @@ the body of ꯤ (the sign without its lead-in, `synth.sign_body`) was nearer the
 than its own in 73% of cases, and its centre of ink in 58%; for ꯦ, ꯣ and ꯧ the body was
 nearer the next letter in 42–47%.
 
-So each sign beside a letter is now drawn against that letter: it is slid left until its
-body touches the letter (with the word's chance of joining) or is 0–0.04 L from it, while no
-part of it (the lead-in) reaches more than 0.1 L past the letter's ink in the same row; a
-lead-in may touch the letter, not cross it. The next letter never joins the sign, and its
-ink is set 0.04–0.08 L further from the sign than the sign is from its letter (plus the
-word's syllable spacing in uneven words). Distances are the shortest between the pieces of
-ink, in any direction. Result on the same words: the body of every sign is nearer its own
-letter (0% nearer the next, from 73% for ꯤ and 42–47% for the others); by the cruder
-centre of ink, 11% of ꯤ (from 58%), 8% of ꯦ, 20% of ꯣ and 21% of ꯧ (from 14–36%), where
-a letter's far edge sits right of the sign's centre. Letters stay as close as before:
-33% touching, visible gaps 0.057 L with the validation characters (before: 33%, 0.060 L);
-with the font's characters 35% and 0.059 L (`results/spacing_synthetic_font.json`). A test
-checks the rule on the font's characters and fails on the previous synthesiser. The notebook
-writes the check on the full lexicon (`results/sign_placement_tummhcd.json`).
+A first fix drew every sign against its letter. The owner confirmed the direction and
+corrected the rule (25 September 2026): writing close to the left is what happens when
+spacing is uneven, not in most writing, which is even; touching or very close signs are rare;
+and a sign stuck to the letter on its right never happens: it is always closer to its own
+letter, or even. The same holds for ꯦ, ꯣ and ꯧ, as long as they do not merge with the letter.
+
+So a sign beside a letter is now placed on the ink, by its body; distances are the shortest
+between pieces of ink, in any direction:
+
+- *Evenly spaced words (4 in 5):* the sign's body keeps the gap the layout gives the pair
+  (the word's even spacing), at least a pixel of paper. The next letter keeps the layout's
+  gap too, but is never nearer the sign than the sign is to its own letter, and never touches it.
+- *Unevenly spaced words (1 in 5):* the sign's body is 0.02–0.06 L from its letter
+  (almost stuck); it touches the letter in 1 of these words in 10. The next letter is
+  0.04–0.08 L further from the sign than the sign is from its letter, plus the word's
+  syllable spacing.
+- *Never cutting into the letter:* a lead-in may meet the letter's ink in the same row, not
+  cross it (a touching sign may reach 0.1 L past it); and no part of a sign starts more than
+  0.15 L left of the letter's rightmost ink (0.3 L in uneven words, where the sign hugs its
+  letter), so a lead-in over the top of the letter stays short.
+
+Result on the same words (`results/sign_placement_dev_val.json`), before and after:
+
+| | before | after, even words | after, uneven words |
+|---|---|---|---|
+| sign's body nearer the next letter (ꯤ; ꯦ, ꯣ, ꯧ) | 73%; 42–47% | 0% | 0% |
+| next letter touching the sign | 16–19% | 0% | 0% |
+| sign touching its letter | | 0% | 3–12% |
+| sign crossing into its letter's columns | | 0% | 6–12% |
+| ꯤ: body to its letter, sign to the next letter (medians) | 0.28 L, 0.16 L | 0.19 L, 0.24 L | 0.10 L, 0.25 L |
+
+Over all words, 1–2% of signs touch their letter. By the cruder centre of ink, ꯤ is nearer
+the next letter in 16% of even words (from 75%) and 7% of uneven ones: with even spacing the
+centre sits near the middle, and a letter's far edge can reach past it. Letter spacing stays
+close to real handwriting: with the validation characters 31% of neighbouring letters touch
+and visible gaps are 0.059 L; with the font's characters 30% and 0.059 L
+(`results/spacing_synthetic_font.json`; real samples 33.5% and 0.097 L). Signs no longer join
+the letter after them, which is why touching dropped from 33%. A test checks the rule in
+even and uneven words and fails on the previous synthesiser; the notebook writes the check on
+the full lexicon (`results/sign_placement_tummhcd.json`).
 
 **2.8 Pale writing.** On previews with real characters the owner saw a few characters
 disappearing. The cause was the pen step: it redraws each character from the pixels of its

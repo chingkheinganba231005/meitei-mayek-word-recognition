@@ -50,14 +50,20 @@ class Config:
     #                                     character is slid left until its ink meets the ink before it
     #                                     (handwriting joins about a third of neighbouring letters:
     #                                     results/spacing_web_samples.json)
-    attach_gap: float = 0.04            # a sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is slid against it: its
-    #                                     body (sign_body: the lead-in stroke of ꯤ and ꯧ may reach onto
-    #                                     the letter) touches (chance as above) or is 0 to this from it
-    lead_in: float = 0.1                # no part of the sign reaches further than this past the letter's
-    #                                     ink in the same row (a lead-in may touch the letter, not cross it)
-    sign_margin: float = 0.04           # the next letter never joins such a sign; its ink is this to twice
-    #                                     this further from the sign than the sign is from its letter
-    #                                     (owner, 25 September 2026: a sign belongs to its consonant); in L
+    # A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), placed on the ink (owner, 25 September 2026): never
+    # nearer the next letter than its own, and the next letter never joins it. In evenly spaced
+    # words (most) it keeps the layout's gap from its letter; in unevenly spaced words it is
+    # almost stuck to its letter and the next syllable keeps further away. Distances are
+    # measured from the sign's body (sign_body: the lead-in stroke of ꯤ and ꯧ is left out).
+    attach_gap: tuple = (0.02, 0.06)    # uneven words: the sign's body this far from its letter, in L
+    sign_touch: float = 0.1             # uneven words: chance that the sign touches its letter instead
+    lead_in: float = 0.1                # a touching sign may reach this far past its letter's ink in the
+    #                                     same row, in L; otherwise a lead-in may meet the letter, not cross it
+    overhang: tuple = (0.15, 0.3)       # no part of the sign starts further than this left of its letter's
+    #                                     rightmost ink (a lead-in over the letter), in L: in even words,
+    #                                     in uneven words (where the sign hugs its letter)
+    sign_margin: float = 0.04           # uneven words: the next letter this to twice this further from
+    #                                     the sign than the sign is from its letter, in L
     baseline_jitter: float = 0.04       # drift of the baseline, in L
     mark_scale: tuple = (0.85, 1.3)     # size of the signs relative to print, per word
     mark_size_jitter: float = 0.1       # per sign, sd of log
@@ -252,9 +258,11 @@ class WordSynth:
 
     def layout(self, word, rng, st):
         """-> ([(character, x0, x1, bottom, top)] in units of L (y up, baseline at 0),
-               [per character: "join" to be slid left until its ink meets the ink before it,
-                "attach" or "attach touching" for a sign beside its own letter, "after sign" for
-                the first letter of the syllable after such a sign, or None]).
+               [per character: "join" to be slid left until its ink meets the ink before it;
+                "sign", "sign close" or "sign touching" for a sign beside its own letter (evenly
+                spaced word; unevenly spaced word; the rare touching case); "after sign" for the
+                first letter of the syllable after such a sign; or None],
+               [per character on the line: the gap before it, in L; None for the others]).
 
         1. Every character is placed as the font places it, with its size jittered.
         2. The gaps between neighbours on the line (letters, lonsum letters, digits and the
@@ -265,10 +273,9 @@ class WordSynth:
            (st["uneven"]) the syllables stand visibly apart.
         3. Joins: a character joins the one before it with chance st["touch"] inside a
            syllable, less often between syllables; when two syllables join, their insides
-           are joined too. A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is drawn against it, touching
-           or up to attach_gap away, and the next syllable never joins onto it and stays at
-           least sign_margin further from it (render): on the ink, the sign is always nearer
-           its own letter.
+           are joined too. A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) and the letter after it are
+           placed on the ink when drawn (render): evenly spaced, the sign never nearer the next
+           letter than its own; in unevenly spaced words almost stuck to its letter.
         """
         c = self.cfg
 
@@ -325,26 +332,31 @@ class WordSynth:
         gaps = [max(min(g, edges.get(syl[a], np.inf)) if k else g, -c.max_overlap)
                 for (a, b), k, g in zip(pairs, inside, gaps)]
 
-        # 3. joins. A sign beside its own letter is attached to it when drawn (render), and the
-        #    next syllable never joins onto such a sign.
-        beside = [self.prior[word[b]]["kind"] == "mark" for a, b in pairs]
+        # 3. joins. A sign beside its own letter is placed against it on the ink when drawn
+        #    (render), and the next syllable never joins onto such a sign.
+        beside = [inside[j] and self.prior[word[b]]["kind"] == "mark" for j, (a, b) in enumerate(pairs)]
         after_sign = [not k and self.prior[word[a]]["kind"] == "mark" for (a, b), k in zip(pairs, inside)]
-        joined = [rng.random() < st["touch"] * (1.0 if k else c.touch_between) and not s
-                  for k, s in zip(inside, after_sign)]
+        joined = [rng.random() < st["touch"] * (1.0 if k else c.touch_between) and not s and not m
+                  for k, s, m in zip(inside, after_sign, beside)]
         linked = {n for (a, b), k, j in zip(pairs, inside, joined) if j and not k for n in (syl[a], syl[b])}
-        joined = [j or (k and syl[a] in linked) for (a, b), k, j in zip(pairs, inside, joined)]
+        joined = [(j or (k and syl[a] in linked)) and not m for (a, b), k, j, m in zip(pairs, inside, joined, beside)]
+        uneven = st.get("uneven", 0.0) > 0
 
-        shift, roles, second = 0.0, [None] * len(word), {b: j for j, (a, b) in enumerate(pairs)}
+        shift, roles, before = 0.0, [None] * len(word), [None] * len(word)
+        second = {b: j for j, (a, b) in enumerate(pairs)}
         for i in range(len(word)):
             if i in second:
                 j = second[i]
                 shift += gaps[j] - natural[j]
-                roles[i] = ("attach touching" if inside[j] and beside[j] and joined[j] else
-                            "attach" if inside[j] and beside[j] else "after sign" if after_sign[j]
-                            else "join" if joined[j] else None)
+                before[i] = gaps[j]
+                if beside[j]:
+                    roles[i] = ("sign" if not uneven else
+                                "sign touching" if rng.random() < c.sign_touch else "sign close")
+                else:
+                    roles[i] = "after sign" if after_sign[j] else "join" if joined[j] else None
             boxes[i][1] += shift
             boxes[i][2] += shift
-        return [tuple(b) for b in boxes], roles
+        return [tuple(b) for b in boxes], roles, before
 
     # ------------------------------------------------------------------ drawing
 
@@ -358,19 +370,20 @@ class WordSynth:
         L = st["L"]
         anchor = self.store.anchor(rng) if c.style_k else None
         glyphs = [self.store.pick(ch, rng, anchor, c.style_k) for ch in word]
-        boxes, roles = self.layout(word, rng, st)
+        boxes, roles, before = self.layout(word, rng, st)
+        uneven = st.get("uneven", 0.0) > 0
 
         xmin = min(b[1] for b in boxes)
         xmax = max(b[2] for b in boxes)
         ymin = min(b[3] for b in boxes)
         ymax = max(b[4] for b in boxes)
         pad = 1.0 + 2.5 * c.slant + 0.5  # room for slant and rotation; cropped away below
-        pushes = sum(r == "after sign" for r in roles)  # each may move the rest right (render)
+        pushes = sum(r is not None and r != "join" for r in roles)  # each may move the rest right
         W = int(math.ceil((xmax - xmin + 2 * pad + 0.4 * pushes) * L))
         H = int(math.ceil((ymax - ymin + 2 * pad) * L))
         canvas = np.zeros((H, W), np.float32)
-        placed, shift, final, sign_gap = [], 0, [], 0
-        for (ch, x0, x1, bottom, top), g, role in zip(boxes, glyphs, roles):
+        placed, shift, final, sign_gap, letter_right = [], 0, [], 0, None
+        for (ch, x0, x1, bottom, top), g, role, gap in zip(boxes, glyphs, roles, before):
             w = max(int(round((x1 - x0) * L)), 1)
             h = max(int(round((top - bottom) * L)), 1)
             ink = resize(self.store.alpha[g], w, h)
@@ -382,25 +395,39 @@ class WordSynth:
             if role == "join":  # slide left until the ink meets the ink before it; what follows moves too
                 d = contact(canvas, ink, px - border, py - border, int(0.4 * L))
                 px, shift = px - d, shift - d
-            elif role in ("attach", "attach touching"):  # slid against its own letter
-                want = -1.0 if role == "attach touching" else rng.uniform(0, c.attach_gap) * L
-                sign_gap = want
-                body, lead = sign_body(ink), c.lead_in * L
-                for _ in range(6):  # a step never brings the body closer than `want`, nor the
-                    d = ink_distance(canvas, body, px - border, py - border, reach)  # lead-in past `lead`
+            elif role in ("sign", "sign close", "sign touching"):  # placed by its body, from its letter
+                if role == "sign touching":
+                    want, low, lead = -1.0, -1.0, c.lead_in * L
+                else:   # at least a pixel of paper between; a lead-in may meet the letter, not cross it
+                    want = max((gap if role == "sign" else rng.uniform(*c.attach_gap)) * L, 1.0)
+                    low, lead = 1.0, 0.0
+                body, first = sign_body(ink), int(np.argmax((ink > 0.5).any(0)))
+                for _ in range(8):
+                    d = ink_distance(canvas, body, px - border, py - border, reach)
                     if d is None:
                         break
-                    sign_gap = d
                     past = reach_past(canvas, ink, px - border, py - border, reach)
-                    m = min(d - want, lead - past if past is not None else np.inf)
-                    if m < 1:
+                    past = past if past is not None else -np.inf
+                    over = letter_right - (px - border + first) if letter_right is not None else -np.inf
+                    limit = c.overhang[uneven] * L
+                    room = min(d - want, lead - past, limit - over)  # a step left of `room` keeps all limits
+                    if room >= 1:
+                        step = -int(room)
+                    elif d < low or past > lead or over > limit:     # too close: back off
+                        step = int(math.ceil(max(low - d, past - lead, over - limit)))
+                    else:
                         break
-                    step = int(m)
-                    px, shift = px - step, shift - step
-            elif role == "after sign":  # further from the sign than the sign is from its own letter:
-                need = max(sign_gap, 0) + c.sign_margin * L  # by sign_margin to twice that, plus the
-                target = need + (rng.uniform(0, c.sign_margin) + st.get("uneven", 0.0)) * L  # word's
-                for _ in range(6):                                                  # syllable spacing
+                    px, shift = px + step, shift + step
+                d = ink_distance(canvas, body, px - border, py - border, reach)
+                sign_gap = d if d is not None else want
+            elif role == "after sign":  # never nearer the sign than the sign is to its own letter
+                if uneven:              # the syllables apart: sign_margin to twice that further
+                    need = max(sign_gap, 0) + c.sign_margin * L
+                    target = need + (rng.uniform(0, c.sign_margin) + st["uneven"]) * L
+                else:                   # evenly spaced: the layout's gap, but no nearer than the sign's
+                    need = max(sign_gap, 0) + 1
+                    target = max(gap * L, need)
+                for _ in range(8):
                     d = ink_distance(canvas, ink, px - border, py - border, reach)
                     if d is None:
                         break
@@ -419,6 +446,9 @@ class WordSynth:
             np.maximum(region, ink, out=region)
             if trace is not None:
                 trace.append((ch, qx, qy, ink))
+            if gap is not None or len(placed) == 1:  # on the line: its right edge, for a sign after it
+                cols = np.flatnonzero((ink > 0.5).any(0))
+                letter_right = qx + int(cols[-1]) if len(cols) else letter_right
         boxes = final
 
         baseline = (ymax + pad) * L

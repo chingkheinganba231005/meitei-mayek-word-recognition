@@ -98,8 +98,9 @@ def test_ink_distance_and_reach():
 
 
 def test_sign_nearer_its_own_letter(store):
-    """A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is drawn nearer that letter than the next letter
-    (owner, 25 September 2026), on the ink as drawn, and the next letter never joins it."""
+    """A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is never nearer the next letter than its own, on the
+    ink as drawn, and the next letter never touches it: in evenly spaced words the gaps are about
+    even, in unevenly spaced words the sign is closer to its letter (owner, 25 September 2026)."""
     from scipy import ndimage
 
     def dist(a, b):
@@ -110,14 +111,19 @@ def test_sign_nearer_its_own_letter(store):
         B[by:by + bi.shape[0], bx:bx + bi.shape[1]] = bi > 0.5
         return -1.0 if (A & B).any() else float(ndimage.distance_transform_edt(~A)[B].min()) - 1
 
-    s = WordSynth(store, config=Config(touch=(0.5, 0.5)))
-    for sign in (INAP, chr(0xABE6), chr(0xABE3), chr(0xABE7)):
-        for i in range(15):
-            trace = []
-            s.render(K + sign + LAI + K, np.random.default_rng(i), trace)
-            letter, (_, x, y, ink), nxt = trace[0], trace[1], trace[2]
-            assert dist(letter, (None, x, y, sign_body(ink))) < dist(trace[1], nxt)
-            assert dist(trace[1], nxt) >= 0
+    ratios = {}
+    for uneven in (0.0, 1.0):
+        s = WordSynth(store, config=Config(touch=(0.5, 0.5), p_uneven=uneven))
+        ratios[uneven] = []
+        for sign in (INAP, chr(0xABE6), chr(0xABE3), chr(0xABE7)):
+            for i in range(15):
+                trace = []
+                s.render(K + sign + LAI + K, np.random.default_rng(i), trace)
+                letter, (_, x, y, ink), nxt = trace[0], trace[1], trace[2]
+                own, after = dist(letter, (None, x, y, sign_body(ink))), dist(trace[1], nxt)
+                assert own < after and after >= 1
+                ratios[uneven].append((max(own, 0) + 1) / (after + 1))
+    assert np.median(ratios[1.0]) < np.median(ratios[0.0])      # closer to its letter when uneven
 
 
 def test_joined_letters_share_ink(store):

@@ -1,106 +1,386 @@
 {
- "note": "Development check, 25 September 2026: scripts/check_signs.py with the owner's TUMMHCD validation characters (val.npz, 10,820 images) and the development word list (6,998 training words), sizes results/glyph_sizes_tummhcd.json. 'before': the same check on the synthesiser of commit 7aec5f1 (syllable rule on boxes only); 'after': sign drawn against its letter on the ink. The notebook writes results/sign_placement_tummhcd.json on the full lexicon.",
+ "note": "Development check, 25 September 2026: scripts/check_signs.py with the owner's TUMMHCD validation characters (val.npz, 10,820 images) and the development word list (6,998 training words), sizes results/glyph_sizes_tummhcd.json. 'before': the same check on the synthesiser of commit 7aec5f1 (syllable rule on boxes only); 'after': signs placed on the ink (even words: the layout's gap, never nearer the next letter; uneven words: close to their letter). The notebook writes results/sign_placement_tummhcd.json on the full lexicon.",
  "glyphs": "val.npz",
  "lexicon": "development train.tsv",
  "words_per_sign": 300,
  "seed": 1000,
  "before": {
   "ꯤ": {
-   "cases": 332,
-   "body_nearer_next_letter": 0.7289,
-   "next_letter_touching_sign": 0.0452,
-   "centre_nearer_next_letter": 0.5753,
-   "median_in_L": {
-    "body_to_letter": 0.284,
-    "sign_to_next_letter": 0.158,
-    "centre_to_letter": 0.406,
-    "centre_to_next_letter": 0.397
+   "all": {
+    "cases": 332,
+    "body_nearer_next_letter": 0.7289,
+    "centre_nearer_next_letter": 0.5753,
+    "touching_letter": 0.0994,
+    "almost_stuck_under_0.03": 0.1084,
+    "crossing_letter": 0.0512,
+    "next_letter_touching_sign": 0.1928,
+    "median_in_L": {
+     "body_to_letter": 0.284,
+     "sign_to_next_letter": 0.158,
+     "centre_to_letter": 0.406,
+     "centre_to_next_letter": 0.397
+    }
+   },
+   "even": {
+    "cases": 260,
+    "body_nearer_next_letter": 0.7538,
+    "centre_nearer_next_letter": 0.6038,
+    "touching_letter": 0.1077,
+    "almost_stuck_under_0.03": 0.1154,
+    "crossing_letter": 0.0615,
+    "next_letter_touching_sign": 0.2192,
+    "median_in_L": {
+     "body_to_letter": 0.272,
+     "sign_to_next_letter": 0.138,
+     "centre_to_letter": 0.399,
+     "centre_to_next_letter": 0.377
+    }
+   },
+   "uneven": {
+    "cases": 72,
+    "body_nearer_next_letter": 0.6389,
+    "centre_nearer_next_letter": 0.4722,
+    "touching_letter": 0.0694,
+    "almost_stuck_under_0.03": 0.0833,
+    "crossing_letter": 0.0139,
+    "next_letter_touching_sign": 0.0972,
+    "median_in_L": {
+     "body_to_letter": 0.316,
+     "sign_to_next_letter": 0.191,
+     "centre_to_letter": 0.428,
+     "centre_to_next_letter": 0.453
+    }
    }
   },
   "ꯦ": {
-   "cases": 327,
-   "body_nearer_next_letter": 0.419,
-   "next_letter_touching_sign": 0.0336,
-   "centre_nearer_next_letter": 0.1376,
-   "median_in_L": {
-    "body_to_letter": 0.03,
-    "sign_to_next_letter": 0.112,
-    "centre_to_letter": 0.229,
-    "centre_to_next_letter": 0.336
+   "all": {
+    "cases": 327,
+    "body_nearer_next_letter": 0.419,
+    "centre_nearer_next_letter": 0.1376,
+    "touching_letter": 0.4557,
+    "almost_stuck_under_0.03": 0.5015,
+    "crossing_letter": 0.0703,
+    "next_letter_touching_sign": 0.1896,
+    "median_in_L": {
+     "body_to_letter": 0.03,
+     "sign_to_next_letter": 0.112,
+     "centre_to_letter": 0.229,
+     "centre_to_next_letter": 0.336
+    }
+   },
+   "even": {
+    "cases": 262,
+    "body_nearer_next_letter": 0.458,
+    "centre_nearer_next_letter": 0.1603,
+    "touching_letter": 0.4351,
+    "almost_stuck_under_0.03": 0.4809,
+    "crossing_letter": 0.0611,
+    "next_letter_touching_sign": 0.2023,
+    "median_in_L": {
+     "body_to_letter": 0.033,
+     "sign_to_next_letter": 0.102,
+     "centre_to_letter": 0.233,
+     "centre_to_next_letter": 0.327
+    }
+   },
+   "uneven": {
+    "cases": 65,
+    "body_nearer_next_letter": 0.2615,
+    "centre_nearer_next_letter": 0.0462,
+    "touching_letter": 0.5385,
+    "almost_stuck_under_0.03": 0.5846,
+    "crossing_letter": 0.1077,
+    "next_letter_touching_sign": 0.1385,
+    "median_in_L": {
+     "body_to_letter": 0.0,
+     "sign_to_next_letter": 0.182,
+     "centre_to_letter": 0.221,
+     "centre_to_next_letter": 0.408
+    }
    }
   },
   "ꯣ": {
-   "cases": 329,
-   "body_nearer_next_letter": 0.4468,
-   "next_letter_touching_sign": 0.0365,
-   "centre_nearer_next_letter": 0.3556,
-   "median_in_L": {
-    "body_to_letter": 0.075,
-    "sign_to_next_letter": 0.14,
-    "centre_to_letter": 0.279,
-    "centre_to_next_letter": 0.331
+   "all": {
+    "cases": 329,
+    "body_nearer_next_letter": 0.4468,
+    "centre_nearer_next_letter": 0.3556,
+    "touching_letter": 0.3343,
+    "almost_stuck_under_0.03": 0.3799,
+    "crossing_letter": 0.076,
+    "next_letter_touching_sign": 0.1733,
+    "median_in_L": {
+     "body_to_letter": 0.075,
+     "sign_to_next_letter": 0.14,
+     "centre_to_letter": 0.279,
+     "centre_to_next_letter": 0.331
+    }
+   },
+   "even": {
+    "cases": 261,
+    "body_nearer_next_letter": 0.4828,
+    "centre_nearer_next_letter": 0.3985,
+    "touching_letter": 0.2989,
+    "almost_stuck_under_0.03": 0.3487,
+    "crossing_letter": 0.046,
+    "next_letter_touching_sign": 0.1801,
+    "median_in_L": {
+     "body_to_letter": 0.094,
+     "sign_to_next_letter": 0.121,
+     "centre_to_letter": 0.287,
+     "centre_to_next_letter": 0.322
+    }
+   },
+   "uneven": {
+    "cases": 68,
+    "body_nearer_next_letter": 0.3088,
+    "centre_nearer_next_letter": 0.1912,
+    "touching_letter": 0.4706,
+    "almost_stuck_under_0.03": 0.5,
+    "crossing_letter": 0.1912,
+    "next_letter_touching_sign": 0.1471,
+    "median_in_L": {
+     "body_to_letter": 0.03,
+     "sign_to_next_letter": 0.204,
+     "centre_to_letter": 0.239,
+     "centre_to_next_letter": 0.368
+    }
    }
   },
   "ꯧ": {
-   "cases": 270,
-   "body_nearer_next_letter": 0.4667,
-   "next_letter_touching_sign": 0.0259,
-   "centre_nearer_next_letter": 0.3556,
-   "median_in_L": {
-    "body_to_letter": 0.11,
-    "sign_to_next_letter": 0.152,
-    "centre_to_letter": 0.318,
-    "centre_to_next_letter": 0.373
+   "all": {
+    "cases": 270,
+    "body_nearer_next_letter": 0.4667,
+    "centre_nearer_next_letter": 0.3556,
+    "touching_letter": 0.3,
+    "almost_stuck_under_0.03": 0.3444,
+    "crossing_letter": 0.1667,
+    "next_letter_touching_sign": 0.1593,
+    "median_in_L": {
+     "body_to_letter": 0.11,
+     "sign_to_next_letter": 0.152,
+     "centre_to_letter": 0.318,
+     "centre_to_next_letter": 0.373
+    }
+   },
+   "even": {
+    "cases": 218,
+    "body_nearer_next_letter": 0.5183,
+    "centre_nearer_next_letter": 0.3991,
+    "touching_letter": 0.2706,
+    "almost_stuck_under_0.03": 0.3165,
+    "crossing_letter": 0.1468,
+    "next_letter_touching_sign": 0.1743,
+    "median_in_L": {
+     "body_to_letter": 0.129,
+     "sign_to_next_letter": 0.125,
+     "centre_to_letter": 0.319,
+     "centre_to_next_letter": 0.359
+    }
+   },
+   "uneven": {
+    "cases": 52,
+    "body_nearer_next_letter": 0.25,
+    "centre_nearer_next_letter": 0.1731,
+    "touching_letter": 0.4231,
+    "almost_stuck_under_0.03": 0.4615,
+    "crossing_letter": 0.25,
+    "next_letter_touching_sign": 0.0962,
+    "median_in_L": {
+     "body_to_letter": 0.05,
+     "sign_to_next_letter": 0.197,
+     "centre_to_letter": 0.316,
+     "centre_to_next_letter": 0.44
+    }
    }
   }
  },
  "after": {
   "ꯤ": {
-   "cases": 332,
-   "body_nearer_next_letter": 0.0,
-   "next_letter_touching_sign": 0.0,
-   "centre_nearer_next_letter": 0.1054,
-   "median_in_L": {
-    "body_to_letter": 0.055,
-    "sign_to_next_letter": 0.147,
-    "centre_to_letter": 0.205,
-    "centre_to_next_letter": 0.392
+   "all": {
+    "cases": 332,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.1386,
+    "touching_letter": 0.006,
+    "almost_stuck_under_0.03": 0.0211,
+    "crossing_letter": 0.0271,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.172,
+     "sign_to_next_letter": 0.237,
+     "centre_to_letter": 0.308,
+     "centre_to_next_letter": 0.476
+    }
+   },
+   "even": {
+    "cases": 260,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.1577,
+    "touching_letter": 0.0,
+    "almost_stuck_under_0.03": 0.0192,
+    "crossing_letter": 0.0,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.188,
+     "sign_to_next_letter": 0.235,
+     "centre_to_letter": 0.318,
+     "centre_to_next_letter": 0.472
+    }
+   },
+   "uneven": {
+    "cases": 72,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.0694,
+    "touching_letter": 0.0278,
+    "almost_stuck_under_0.03": 0.0278,
+    "crossing_letter": 0.125,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.1,
+     "sign_to_next_letter": 0.252,
+     "centre_to_letter": 0.232,
+     "centre_to_next_letter": 0.499
+    }
    }
   },
   "ꯦ": {
-   "cases": 327,
-   "body_nearer_next_letter": 0.0,
-   "next_letter_touching_sign": 0.0,
-   "centre_nearer_next_letter": 0.0795,
-   "median_in_L": {
-    "body_to_letter": 0.024,
-    "sign_to_next_letter": 0.102,
-    "centre_to_letter": 0.182,
-    "centre_to_next_letter": 0.337
+   "all": {
+    "cases": 327,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.159,
+    "touching_letter": 0.0245,
+    "almost_stuck_under_0.03": 0.1315,
+    "crossing_letter": 0.0245,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.053,
+     "sign_to_next_letter": 0.112,
+     "centre_to_letter": 0.237,
+     "centre_to_next_letter": 0.355
+    }
+   },
+   "even": {
+    "cases": 262,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.1794,
+    "touching_letter": 0.0,
+    "almost_stuck_under_0.03": 0.126,
+    "crossing_letter": 0.0,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.055,
+     "sign_to_next_letter": 0.102,
+     "centre_to_letter": 0.238,
+     "centre_to_next_letter": 0.344
+    }
+   },
+   "uneven": {
+    "cases": 65,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.0769,
+    "touching_letter": 0.1231,
+    "almost_stuck_under_0.03": 0.1538,
+    "crossing_letter": 0.1231,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.045,
+     "sign_to_next_letter": 0.17,
+     "centre_to_letter": 0.225,
+     "centre_to_next_letter": 0.414
+    }
    }
   },
   "ꯣ": {
-   "cases": 329,
-   "body_nearer_next_letter": 0.0,
-   "next_letter_touching_sign": 0.0,
-   "centre_nearer_next_letter": 0.1976,
-   "median_in_L": {
-    "body_to_letter": 0.029,
-    "sign_to_next_letter": 0.104,
-    "centre_to_letter": 0.163,
-    "centre_to_next_letter": 0.297
+   "all": {
+    "cases": 329,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2736,
+    "touching_letter": 0.0213,
+    "almost_stuck_under_0.03": 0.0912,
+    "crossing_letter": 0.0213,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.06,
+     "sign_to_next_letter": 0.126,
+     "centre_to_letter": 0.218,
+     "centre_to_next_letter": 0.321
+    }
+   },
+   "even": {
+    "cases": 261,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2912,
+    "touching_letter": 0.0,
+    "almost_stuck_under_0.03": 0.069,
+    "crossing_letter": 0.0,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.061,
+     "sign_to_next_letter": 0.116,
+     "centre_to_letter": 0.224,
+     "centre_to_next_letter": 0.315
+    }
+   },
+   "uneven": {
+    "cases": 68,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2059,
+    "touching_letter": 0.1029,
+    "almost_stuck_under_0.03": 0.1765,
+    "crossing_letter": 0.1029,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.058,
+     "sign_to_next_letter": 0.187,
+     "centre_to_letter": 0.202,
+     "centre_to_next_letter": 0.342
+    }
    }
   },
   "ꯧ": {
-   "cases": 270,
-   "body_nearer_next_letter": 0.0,
-   "next_letter_touching_sign": 0.0,
-   "centre_nearer_next_letter": 0.2074,
-   "median_in_L": {
-    "body_to_letter": 0.034,
-    "sign_to_next_letter": 0.117,
-    "centre_to_letter": 0.23,
-    "centre_to_next_letter": 0.341
+   "all": {
+    "cases": 270,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2741,
+    "touching_letter": 0.0111,
+    "almost_stuck_under_0.03": 0.0741,
+    "crossing_letter": 0.0185,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.068,
+     "sign_to_next_letter": 0.158,
+     "centre_to_letter": 0.303,
+     "centre_to_next_letter": 0.393
+    }
+   },
+   "even": {
+    "cases": 218,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2752,
+    "touching_letter": 0.0,
+    "almost_stuck_under_0.03": 0.055,
+    "crossing_letter": 0.0,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.083,
+     "sign_to_next_letter": 0.148,
+     "centre_to_letter": 0.293,
+     "centre_to_next_letter": 0.388
+    }
+   },
+   "uneven": {
+    "cases": 52,
+    "body_nearer_next_letter": 0.0,
+    "centre_nearer_next_letter": 0.2692,
+    "touching_letter": 0.0577,
+    "almost_stuck_under_0.03": 0.1538,
+    "crossing_letter": 0.0962,
+    "next_letter_touching_sign": 0.0,
+    "median_in_L": {
+     "body_to_letter": 0.055,
+     "sign_to_next_letter": 0.177,
+     "centre_to_letter": 0.319,
+     "centre_to_next_letter": 0.422
+    }
    }
   }
  }
