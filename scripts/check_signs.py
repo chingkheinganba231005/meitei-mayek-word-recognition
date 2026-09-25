@@ -14,6 +14,9 @@ letter heights L, separately for evenly and unevenly spaced words:
   depend on the rule's own definitions.
 - touching: the sign's body touches its letter; almost stuck: under 0.03 L from it;
   crossing: in some row the sign's ink reaches into the columns of its letter's ink.
+
+Signs above and below a letter (ꯥ, ꯩ, ꯪ, ꯨ, apun) are measured too: the shortest distance
+between the sign's ink and the ink of the character before it, in L.
 """
 
 import argparse
@@ -31,6 +34,7 @@ from mayek_words.lexicon import read_counts  # noqa: E402
 from mayek_words.synth import MEASURED, Config, WordSynth, load_priors, sign_body  # noqa: E402
 
 BESIDE = [chr(c) for c in (0xABE4, 0xABE6, 0xABE3, 0xABE7)]  # ꯤ ꯦ ꯣ ꯧ
+ABOVE_BELOW = [chr(c) for c in (0xABE5, 0xABE9, 0xABEA, 0xABE8, 0xABED)]  # ꯥ ꯩ ꯪ ꯨ apun
 
 
 def distance(a, b):
@@ -111,6 +115,27 @@ def check(synth, words, seed=0):
     return out
 
 
+def check_vertical(synth, words, seed=0):
+    """-> {sign: summary of the ink gap between the sign and the character before it}."""
+    out = {}
+    for sign, ws in words.items():
+        gaps = []
+        for i, w in enumerate(ws):
+            trace = []
+            smp = synth.render(w, np.random.default_rng(seed + i), trace)
+            for k in range(1, len(trace)):
+                if trace[k][0] == sign:
+                    gaps.append(distance(trace[k - 1][1:], trace[k][1:]) / smp.style["L"])
+        g = np.array(gaps)
+        if len(g):
+            out[sign] = {"cases": len(g), "median_in_L": round(float(np.median(g)), 3),
+                         "p10_in_L": round(float(np.percentile(g, 10)), 3),
+                         "p90_in_L": round(float(np.percentile(g, 90)), 3),
+                         "touching": round(float(np.mean(g <= 0)), 4),
+                         "over_0.2_L": round(float(np.mean(g > 0.2)), 4)}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--glyphs", required=True, help="glyph store .npz, or 'font'")
@@ -136,12 +161,17 @@ def main():
                 if len(ws) == args.words:
                     break
         words[s] = ws
+    vertical = {s: [w for w in ranked if s in w][:args.words] for s in ABOVE_BELOW}
     report = {"glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
               "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
-              "words_per_sign": args.words, "seed": args.seed, "signs": check(synth, words, args.seed)}
+              "words_per_sign": args.words, "seed": args.seed, "signs": check(synth, words, args.seed),
+              "above_below": check_vertical(synth, vertical, args.seed)}
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+    for s, v in report["above_below"].items():
+        print(f"{s} above/below {v['cases']:4d} cases: gap to its letter median {v['median_in_L']} L "
+              f"(p10 {v['p10_in_L']}, p90 {v['p90_in_L']}); touching {v['touching']:.0%}, over 0.2 L {v['over_0.2_L']:.0%}")
     for s, parts in report["signs"].items():
         for name, v in parts.items():
             m = v["median_in_L"]

@@ -8,7 +8,7 @@ from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
 from mayek_words.glyphs import GlyphStore
 from mayek_words.lexicon import Lexicon
 from mayek_words.synth import (Config, Words, WordSynth, column_span, contact, enclosed, ink_distance, line_gaps,
-                               load_priors, reach_past, set_pen, sign_body, stroke_width)
+                               load_priors, nests, reach_past, set_pen, sign_body, stroke_width, strokes)
 
 K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
@@ -104,6 +104,45 @@ def test_enclosed():
     assert enclosed(span, np.array([8]), np.array([9]))          # in its open side: into the letter
     assert not enclosed(span, np.array([8]), np.array([1]))      # over it
     assert not enclosed(span, np.array([14]), np.array([9]))     # beside it
+
+
+def test_nests():
+    canvas = np.zeros((30, 20), np.float32)
+    canvas[10:25, 3] = canvas[10:25, 15] = canvas[24, 3:16] = 1  # a letter shaped like a cup
+    sign = np.zeros((6, 6), np.float32)
+    sign[4, :] = 1                                                # its lowest stroke
+    assert nests(canvas, sign, 6, 12, 1)                         # dropped into the cup
+    assert not nests(canvas, sign, 6, 2, 1)                      # above it
+    assert not nests(canvas, sign, 6, 26, -1)                    # below it
+
+
+def test_faint_strokes_kept():
+    alpha = np.zeros((20, 20), np.float32)
+    alpha[3:17, 4:6] = alpha[3:17, 14:16] = 1                     # two dark strokes
+    alpha[3, 6:14] = 0.3                                         # a faint bar joining them
+    alpha[10, 9] = 0.3                                           # a faint speck on its own
+    m = strokes(alpha)
+    assert m[3, 6:14].all() and not m[10, 9]
+    assert not strokes(np.pad(np.ones((5, 5), np.float32), 1, constant_values=0.3))[0].any()  # no rim
+
+
+def test_signs_above_and_below_near_their_letter(store):
+    """A sign above or below its letter keeps about the distance it has in print from the
+    letter's ink: never touching, never floating (owner, 25 September 2026)."""
+    from scipy import ndimage
+    s = WordSynth(store)
+    for sign in (ANAP, chr(0xABE9), NUNG, UNAP):
+        for word in (K + sign, chr(0xABC7) + sign, LAI + sign):
+            for i in range(5):
+                trace = []
+                smp = s.render(word, np.random.default_rng(i), trace)
+                (_, ax, ay, ai), (_, bx, by, bi) = trace[0], trace[1]
+                H, W = max(ay + ai.shape[0], by + bi.shape[0]), max(ax + ai.shape[1], bx + bi.shape[1])
+                A, B = np.zeros((H, W), bool), np.zeros((H, W), bool)
+                A[ay:ay + ai.shape[0], ax:ax + ai.shape[1]] = ai > 0.5
+                B[by:by + bi.shape[0], bx:bx + bi.shape[1]] = bi > 0.5
+                d = float(ndimage.distance_transform_edt(~A)[B].min()) - 1
+                assert 0 <= d / smp.style["L"] <= 0.3
 
 
 def test_sign_nearer_its_own_letter(store):

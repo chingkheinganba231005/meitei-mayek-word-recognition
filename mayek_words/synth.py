@@ -69,6 +69,8 @@ class Config:
     #                                     A sign may pass over or under its letter, never into it: no ink
     #                                     of the sign with the letter's ink above and below it (enclosed;
     #                                     ꯤ in the open side of ꯅ looked merged)
+    mark_gap: float = 0.02              # a sign above or below its letter: at least this far from its
+    #                                     ink (in print: about 0.08 L above, 0.09 L below), in L
     sign_margin: float = 0.04           # uneven words: the next letter this to twice this further from
     #                                     a hugging sign than the sign is from its letter, in L
     baseline_jitter: float = 0.04       # drift of the baseline, in L
@@ -153,14 +155,35 @@ def stroke_width(mask):
     return 2.0 * n / max(n - int(interior.sum()), 1)
 
 
+def strokes(alpha, low=0.2, high=0.5, min_size=3):
+    """The strokes of an ink map: pixels over `high`, and faint strokes (over `low`) that reach
+    them. A faint stroke of a scan (the pale top and bottom bars of some ꯡ) stays; a faint speck
+    on its own, and the soft rim around every stroke, do not."""
+    strong = alpha > high
+    ring = ndimage.binary_dilation(strong) & ~strong           # the rim, one pixel wide
+    faint = (alpha > low) & ~strong & ~ring
+    lab, n = ndimage.label(faint, structure=np.ones((3, 3)))
+    if not n:
+        return strong
+    sizes = np.bincount(lab.ravel(), minlength=n + 1)
+    near = ndimage.binary_dilation(strong, iterations=2) & faint  # reaches a stroke across the rim
+    keep = np.zeros(n + 1, bool)
+    keep[np.unique(lab[near])] = True
+    keep &= sizes >= min_size
+    keep[0] = False
+    kept = keep[lab]
+    bridge = ring & (alpha > low) & ndimage.binary_dilation(kept)
+    return strong | kept | bridge
+
+
 def set_pen(alpha, pen):
     """Grow or shrink the strokes of an ink map to about `pen` pixels.
 
     Returns (ink map, border): the map is re-drawn from the signed distance to the stroke
-    edge, moved by half the difference in width, and has grown by `border` pixels on each
-    side to make room for thicker strokes.
+    edge (``strokes``), moved by half the difference in width, and has grown by `border`
+    pixels on each side to make room for thicker strokes.
     """
-    mask = alpha > 0.5
+    mask = strokes(alpha)
     if pen is None or mask.sum() < 3:
         return alpha, 0
     have = stroke_width(mask)
@@ -238,6 +261,33 @@ def enclosed(span, xs, ys):
     return bool(((top[xs] < ys) & (ys < bottom[xs])).any())
 
 
+def nests(letter, ink, qx, qy, toward):
+    """Whether `ink` (a sign, to be pasted at column qx, row qy) would sit in a hollow of its
+    letter or on it. `letter` is a canvas holding only the letter's ink. In some column of
+    the sign, letter ink lies between the sign's top and its lowest pixel (toward=1, a sign
+    above its letter) or between its highest pixel and its bottom (toward=-1, below); or, in
+    some row, letter ink lies both left and right of the sign (inside a cup)."""
+    H, W = ink.shape
+    y0, x0 = max(qy, 0), max(qx, 0)
+    mine = (ink > 0.5)[y0 - qy:, x0 - qx:]
+    sub = letter[y0:y0 + mine.shape[0], x0:x0 + mine.shape[1]] > 0.5
+    mine = mine[:sub.shape[0], :sub.shape[1]]
+    if not mine.any():
+        return False
+    rows = np.arange(mine.shape[0])[:, None]
+    if toward > 0:
+        zone = rows <= (mine.shape[0] - 1 - np.argmax(mine[::-1], 0))[None, :]
+    else:
+        zone = rows >= np.argmax(mine, 0)[None, :]
+    if (sub & zone & mine.any(0)[None, :]).any():
+        return True
+    r = np.flatnonzero(mine.any(1))
+    first, last = x0 + np.argmax(mine[r], 1), x0 + mine.shape[1] - 1 - np.argmax(mine[r, ::-1], 1)
+    band = letter[y0 + r] > 0.5
+    cols = np.arange(letter.shape[1])[None, :]
+    return bool(((band & (cols < first[:, None])).any(1) & (band & (cols > last[:, None])).any(1)).any())
+
+
 def ink_distance(canvas, ink, qx, qy, reach):
     """The shortest distance in pixels, in any direction, between `ink` (to be pasted at column
     qx, row qy) and the ink already on the canvas, looking up to `reach` to the left, above
@@ -287,8 +337,11 @@ class WordSynth:
                [per character: "join" to be slid left until its ink meets the ink before it;
                 "sign steady" for ꯦ, ꯣ, ꯧ beside their letter; "sign", "sign close" or "sign
                 touching" for ꯤ (evenly spaced word; unevenly spaced word; the rare touching case);
-                "after sign" for the first letter of the syllable after such a sign; or None],
-               [per character on the line: the gap before it, in L; None for the others]).
+                "after sign" for the first letter of the syllable after such a sign; "above" or
+                "below" for a sign above or below its letter; or None],
+               [per character on the line: the gap before it, in L; for a sign above or below:
+                its distance from its letter in print, in L; None for the others]).
+
 
         1. Every character is placed as the font places it, with its size jittered.
         2. The gaps between neighbours on the line (letters, lonsum letters, digits and the
@@ -326,6 +379,10 @@ class WordSynth:
                 s = st["mark_scale"] * jitter(c.mark_size_jitter)
                 w, h = p["w"] * s, (p["top"] - p["bottom"]) * s
                 beside = p["adv"] > 0.1
+                tall = beside and abs(p["bottom"]) < 0.05  # ꯤ: sized like a letter, not like a small sign
+                if tall:
+                    w = p["w"] * st["width"] * jitter(c.glyph_width_jitter)
+                    s = w / p["w"]
                 if p.get("span"):  # apun: under the whole letter before it
                     x0 = base[0] + float(rng.normal(0, c.mark_jitter))
                     x1 = base[1] + float(rng.normal(0, c.mark_jitter))
@@ -333,7 +390,14 @@ class WordSynth:
                 else:              # a sign beside the letter gets its spacing in step 2
                     x0 = pen + p["off"] + (0.0 if beside else float(rng.normal(0, c.mark_jitter)))
                 dy = drift + float(rng.normal(0, c.mark_jitter))
-                if p["bottom"] >= 0.9 or abs(p["bottom"]) < 0.05:  # above, or standing on the baseline
+                if tall:           # from its letter's foot to a little above its letter's top
+                    bottom = base[2] + float(rng.normal(0, c.mark_jitter / 2))
+                    top = (base[3] + max(p["top"] - 1.0, 0.0) * jitter(c.glyph_height_jitter)
+                           + float(rng.normal(0, c.mark_jitter / 2)))
+                    h = top - bottom
+                elif p["bottom"] >= 0.9:   # above: over its letter's actual top, as far as in print
+                    bottom = base[3] + (p["bottom"] - 1.0) + float(rng.normal(0, c.mark_jitter))
+                elif abs(p["bottom"]) < 0.05:                      # standing on the baseline
                     bottom = p["bottom"] + dy
                 else:                                              # hanging from its top
                     bottom = p["top"] + dy - h
@@ -383,6 +447,10 @@ class WordSynth:
                                 "sign touching" if rng.random() < c.sign_touch else "sign close")
                 else:
                     roles[i] = "after sign" if after_sign[j] else "join" if joined[j] else None
+            elif i and self.prior[word[i]]["kind"] == "mark" and self.prior[word[i]]["adv"] <= 0.1:
+                q = self.prior[word[i]]   # above or below its letter: placed on the ink when drawn,
+                above = q["bottom"] >= 0.9  # as far from the letter's ink as in print
+                roles[i], before[i] = ("above", q["bottom"] - 1.0) if above else ("below", -q["top"])
             boxes[i][1] += shift
             boxes[i][2] += shift
         return [tuple(b) for b in boxes], roles, before
@@ -411,7 +479,8 @@ class WordSynth:
         H = int(math.ceil((ymax - ymin + 2 * pad) * L))
         canvas = np.zeros((H, W), np.float32)
         placed, shift, final, sign_gap, hugging = [], 0, [], 0, False
-        letter_right = None   # the last letter on the line: its rightmost ink column
+        letter_right, last_letter = None, None   # the last character on the line: its rightmost ink
+        #                                          column; where its ink was pasted
         for (ch, x0, x1, bottom, top), g, role, gap in zip(boxes, glyphs, roles, before):
             w = max(int(round((x1 - x0) * L)), 1)
             h = max(int(round((top - bottom) * L)), 1)
@@ -420,7 +489,7 @@ class WordSynth:
             border = 0
             if st["pen"] is not None and min(w, h) >= 4:
                 ink, border = set_pen(ink, st["pen"] * L * float(np.exp(rng.normal(0, 0.05))))
-            reach = int(0.6 * L)
+            reach, py0 = int(0.6 * L), py
             if role == "join":  # slide left until the ink meets the ink before it; what follows moves too
                 d = contact(canvas, ink, px - border, py - border, int(0.4 * L))
                 px, shift = px - d, shift - d
@@ -458,6 +527,28 @@ class WordSynth:
                 d = ink_distance(canvas, body, px - border, py - border, reach)
                 sign_gap = d if d is not None else (want if np.isfinite(want) else 0)
                 hugging = role in ("sign close", "sign touching")
+            elif role in ("above", "below"):  # up or down until its ink is as far from the letter as in print
+                target = max(gap + float(rng.normal(0, c.mark_jitter)), c.mark_gap) * L
+                letter_ink = np.zeros_like(canvas)            # only its letter's ink, for `nests`
+                if last_letter is not None:
+                    lx, ly, li = last_letter
+                    letter_ink[ly:ly + li.shape[0], lx:lx + li.shape[1]] = li
+                toward = 1 if role == "above" else -1     # image rows grow downwards
+                for _ in range(8):
+                    d = ink_distance(canvas, ink, px - border, py - border, reach)
+                    if d is None:
+                        break
+                    if d > target + 1:                    # closer, but never into a hollow of the letter
+                        step = int(d - target)
+                        while step >= 1 and nests(letter_ink, ink, px - border, py - border + toward * step, toward):
+                            step -= 1
+                        if step < 1:
+                            break
+                        py += toward * step
+                    elif d < target - 1:
+                        py -= toward * int(math.ceil(target - d))
+                    else:
+                        break
             elif role == "after sign":  # never nearer the sign than the sign is to its own letter
                 if hugging:             # the syllables apart: sign_margin to twice that further
                     need = max(sign_gap, 0) + c.sign_margin * L
@@ -477,7 +568,8 @@ class WordSynth:
                         break
                     px, shift = px + step, shift + step
             placed.append((ch, px, py, px + w, py + h))
-            final.append((ch, x0 + (shift / L), x1 + (shift / L), bottom, top))
+            lift = (py0 - py) / L                         # moved up (+) or down (-) on the ink
+            final.append((ch, x0 + (shift / L), x1 + (shift / L), bottom + lift, top + lift))
             qx, qy = px - border, py - border
             assert qx >= 0 and qy >= 0 and qx + ink.shape[1] <= W and qy + ink.shape[0] <= H, "canvas too small"
             region = canvas[qy:qy + ink.shape[0], qx:qx + ink.shape[1]]
@@ -487,6 +579,7 @@ class WordSynth:
             if gap is not None or len(placed) == 1:  # on the line: its right edge, for a sign after it
                 cols = np.flatnonzero((ink > 0.5).any(0))
                 letter_right = qx + int(cols[-1]) if len(cols) else letter_right
+                last_letter = (qx, qy, ink)
         boxes = final
 
         baseline = (ymax + pad) * L

@@ -233,6 +233,14 @@ writes `results/sign_placement_tummhcd.json`; the owner checks the contact sheet
   column; a lead-in may pass over). Result: 0% nearer the next letter, 0% next letter
   touching (`scripts/check_signs.py`, `results/sign_placement_dev_val.json`). Letters now
   join with a chance of 2–60% per word (was 2–50%), keeping 34% of letters touching.
+- **Heights and faint strokes (owner, 25 September 2026):** ꯤ is sized like a letter, from its
+  letter's foot to about 0.1 L above its top (it was scaled like the small signs and could end
+  below its letter's top). Signs above and below (ꯥ, ꯩ, ꯪ, ꯨ, apun) are placed on the ink at
+  their print distance from the letter (about 0.08–0.1 L; was a fixed height, so ꯩ floated
+  over short letters such as ꯇ: 40% of ꯩ more than 0.2 L away, now 1%), never into a hollow
+  of the letter. The pen step keeps faint strokes joined to the dark ones (pale bars of some
+  ꯡ were erased): characters missing over 10% of their strokes 1.5% to 0.5%
+  (`results/sign_placement_dev_val.json`, `results/pen_strokes_dev_val.json`).
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;

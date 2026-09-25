@@ -23,9 +23,10 @@ Package `mayek_words`; one word image takes 4–11 ms on one CPU core.
    positions and the baseline are jittered.
 4. **Drawing.** Each 24 x 24 image is resized into its box, which gives back the
    proportions TUMMHCD lost, and its strokes are thickened or thinned to the word's pen
-   width (resizing scales strokes with the box). A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
-   never nearer the next letter nor touched by it, and never goes into its letter; ꯤ is
-   placed on the ink, close to its letter in unevenly spaced words (section 2.7). The
+   width (resizing scales strokes with the box), faint strokes included. A sign beside its
+   letter (ꯤ, ꯦ, ꯣ, ꯧ) is never nearer the next letter nor touched by it, and never goes into
+   its letter; ꯤ is placed on the ink, close to its letter in unevenly spaced words; signs
+   above and below are placed on the ink at their print distance (section 2.7). The
    word is slanted, rotated a little, blurred a little, and drawn in ink on paper.
 
 A seed fixes an image: item i of a set is always the same word and the same image.
@@ -108,6 +109,8 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | ꯤ beside its letter, on the ink | even words: the layout's gap; uneven words: 0.02–0.06 L, touching in 1 in 10 |
 | ꯦ, ꯣ, ꯧ beside their letter | where the layout puts them |
 | any of these signs | never into its letter; the next letter never touching it, never nearer it than the sign is to its letter (after ꯤ in uneven words: 0.04–0.08 L further, plus the syllable spacing) |
+| ꯤ's height | from its letter's foot to about 0.1 L above its letter's top (sized like a letter) |
+| sign above or below its letter (ꯥ, ꯩ, ꯪ, ꯨ, apun), on the ink | as far from the letter's ink as in print (about 0.08, 0.09, 0.16 L), spread 0.05 L, at least 0.02 L; never into a hollow of the letter |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -220,6 +223,37 @@ word's style draws the uneven spacing whether it is used or not), so the two can
 Tests check the rule in even and uneven words (and fail on the previous synthesiser) and the
 test for going into a letter; the notebook writes the check on the full lexicon
 (`results/sign_placement_tummhcd.json`).
+
+*Heights (owner, 25 September 2026).* On the same sheet the owner saw ꯤ placed too low in
+one word and ꯩ too high above ꯇ in another: the height of a sign matters as much as its
+spacing. Two causes. ꯤ was sized like the small signs (the word's sign scale, 0.85–1.3), so
+with a small scale it ended below the top of its letter (0.71 L against 0.90 L); it is now
+sized like a letter and runs from its letter's foot to a little above its letter's top (as
+in TUMMHCD, 0.1 L). Signs above a letter stood at a fixed height (1.08 L for ꯩ), whatever the
+letter's own height; ꯇ is short (0.92 L in print, 0.82 L in that word), so ꯩ floated 0.28 L
+above it. Signs above and below a letter (ꯥ, ꯩ, ꯪ, ꯨ, apun) are now placed on the ink: moved
+up or down until their ink is as far from the letter's ink as in print (about 0.08 L above,
+0.09 L below, 0.16 L for apun; per sign a spread of 0.05 L, at least 0.02 L), never into a
+hollow or cup of the letter (``synth.nests``: no letter ink between the sign and its far
+side in a column, nor on both sides of it in a row). On the development words, before and
+after (`results/sign_placement_dev_val.json`):
+
+| sign | gap to its letter before: median, p10–p90 | touching | over 0.2 L | after: median, p10–p90 | touching | over 0.2 L |
+|---|---|---|---|---|---|---|
+| ꯥ | 0.14 L, 0.00–0.27 | 10% | 28% | 0.09 L, 0.03–0.15 | 1% | 1% |
+| ꯩ | 0.16 L, 0.03–0.33 | 7% | 40% | 0.10 L, 0.04–0.16 | 0% | 1% |
+| ꯪ | 0.12 L, −0.03–0.28 | 25% | 26% | 0.07 L, 0.03–0.14 | 4% | 3% |
+| ꯨ | 0.14 L, 0.03–0.29 | 5% | 26% | 0.10 L, 0.04–0.17 | 1% | 4% |
+| apun | 0.20 L, 0.11–0.29 | 0% | 50% | 0.18 L, 0.11–0.26 | 0% | 35% |
+
+*Faint strokes (owner, 25 September 2026).* In one word ꯡ was partly missing. That scan has
+dark vertical strokes and pale top and bottom bars (grey 184–220, lighter than its ink
+threshold of 169): the pen step redraws a character from its pixels over 0.5, and the bars
+were under it. The pen step now keeps faint strokes (over 0.2) that reach the dark ones
+across their soft rim, and still drops faint specks on their own and the rim itself
+(``synth.strokes``). On 4,000 validation characters, those with more than 10% of their strokes
+missing after the pen step drop from 1.5% to 0.5%, more than 5% from 4.6% to 2.6%
+(`scripts/check_strokes.py`, `results/pen_strokes_dev_val.json`).
 
 **2.8 Pale writing.** On previews with real characters the owner saw a few characters
 disappearing. The cause was the pen step: it redraws each character from the pixels of its
