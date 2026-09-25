@@ -131,5 +131,6 @@ def test_words_on_demand(store):
     digits = Words(WordSynth(store), lex, seed=3, numbers=1.0, stop=1.0)[0].text
     built = Words(WordSynth(store), lex, seed=3, numbers=0.0, built=1.0)
     assert built.bank is not None and len(built[1].text) >= 1
-    assert Words(WordSynth(store), lex, seed=3).bank is None             # off unless asked for
+    assert Words(WordSynth(store), lex, seed=3).bank is not None         # on by default (15%)
+    assert Words(WordSynth(store), lex, seed=3, built=0.0).bank is None
     assert digits[-1] == CHEIKHEI and all(ch in DIGITS for ch in digits[:-1])

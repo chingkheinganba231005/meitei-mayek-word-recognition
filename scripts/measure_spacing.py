@@ -120,15 +120,16 @@ def synthetic_page(words, rng, rows=8, width=1300, row_h=95, space=38):
     return page
 
 
-def measure_synthetic(n, glyphs, lexicon, seed=0):
+def measure_synthetic(n, glyphs, lexicon, seed=0, sizes="measured"):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from mayek_words.glyphs import GlyphStore
     from mayek_words.lexicon import Lexicon
-    from mayek_words.synth import Config, Words, WordSynth
+    from mayek_words.synth import MEASURED, Config, Words, WordSynth, load_priors
 
     store = GlyphStore.from_font() if glyphs == "font" else GlyphStore.load(glyphs)
     cfg = Config(rotation=0)
-    words = Words(WordSynth(store, config=cfg), Lexicon.load(lexicon), numbers=0, stop=0)
+    priors = load_priors(sizes={"measured": MEASURED, "font": None}.get(sizes, sizes))
+    words = Words(WordSynth(store, priors, cfg), Lexicon.load(lexicon), numbers=0, stop=0)
     rng = np.random.default_rng(seed)
     pages = [measure(pieces(synthetic_page(words, rng).astype(np.float32))) for _ in range(n)]
     return {"pages": n, "glyphs": Path(glyphs).name, "lexicon": Path(lexicon).name,
@@ -149,10 +150,11 @@ def main():
     ap.add_argument("--synthetic", type=int, default=0, help="measure this many pages of synthetic words")
     ap.add_argument("--glyphs", default="font", help="with --synthetic: glyph store .npz, or 'font'")
     ap.add_argument("--lexicon", help="with --synthetic: word<TAB>count list")
+    ap.add_argument("--sizes", default="measured", help="with --synthetic: 'measured', 'font' or a sizes .json")
     args = ap.parse_args()
 
     if args.synthetic:
-        r = measure_synthetic(args.synthetic, args.glyphs, args.lexicon)
+        r = measure_synthetic(args.synthetic, args.glyphs, args.lexicon, sizes=args.sizes)
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps({"synthetic": r}, indent=1, ensure_ascii=False), encoding="utf-8")

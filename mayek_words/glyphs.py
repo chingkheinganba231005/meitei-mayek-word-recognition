@@ -41,22 +41,30 @@ def otsu(gray):
 def ink_map(gray):
     """uint8 greyscale, dark ink on light paper -> (ink map in [0, 1], style features as in STYLE).
 
+    The ink map is 0 on paper, 0.5 at the image's Otsu threshold and 1 for a typical ink
+    pixel, so that pale writing is kept whole (a cut at half the darkest ink erased much of
+    it: 1.3% of characters lost more than half their ink).
     The polarity is fixed, not guessed: every TUMMHCD image is dark on light (Phase 0:
     paper level 247 or more in 95% of them), and a small sign stretched to the frame can
     be mostly ink. An image with (almost) no paper, such as apun, which is a line
     stretched to 24 x 24, counts as white paper under solid ink.
     """
     g = gray.astype(np.float32)
-    ink = gray <= otsu(gray)
+    t = float(otsu(gray))
+    ink = gray <= t
     if (~ink).mean() < 0.05 or float(g.max() - g.min()) < 20:  # no paper to measure
-        ink = g < 128
+        ink, t = g <= 127, 127.0
         paper = 255.0
     else:
         paper = float(np.median(g[~ink]))
     if not ink.any():
         return np.zeros_like(g), [0.0, 0.0, 0.0, 255.0]
-    dark = float(np.percentile(g[ink], 5))
-    alpha = np.clip((paper - g) / max(paper - dark, 1.0), 0, 1)
+    # 0 on paper, 0.5 half-way between the last ink level (the Otsu threshold) and the first
+    # paper level, 1 from a typical ink pixel on: whatever the scan shows as ink stays ink
+    # (alpha > 0.5, the pen step's cut), however pale the writing
+    m, full = t + 0.5, float(np.median(g[ink]))
+    alpha = np.where(g <= t, 0.5 + 0.5 * np.clip((m - g) / max(m - full, 0.5), 0, 1),
+                     0.5 * np.clip((paper - g) / max(paper - m, 0.5), 0, 1)).astype(np.float32)
     ys, xs = np.nonzero(ink)
     dy, dx = ys - ys.mean(), xs - xs.mean()
     slant = float(-(dx * dy).sum() / max((dy * dy).sum(), 1e-6))  # > 0: top leans right

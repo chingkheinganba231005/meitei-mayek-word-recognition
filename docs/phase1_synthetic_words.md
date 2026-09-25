@@ -2,10 +2,10 @@
 
 Started 24 September 2026. Status (25 September): the code, tests and Colab notebook are
 ready; the owner ran the notebook on TUMMHCD (section 5), and the syllable rule (section 2.7)
-and the draws for rare letters (section 3) followed from it, and the owner chose the sizes
-measured on TUMMHCD and a wider pen range. Next: a check that the words look handwritten,
-with real characters (section 5), then the notebook is run again to regenerate the fixed
-synthetic sets.
+and the draws for rare letters and the words built from syllables (section 3) followed from
+it; the owner chose the sizes measured on TUMMHCD and a wider pen range; a bug that erased
+pale writing is fixed (section 2.8). Next: the notebook is run again, to re-measure the sizes
+and regenerate the fixed synthetic sets.
 
 ## 1. What the synthesiser does
 
@@ -155,8 +155,22 @@ drop to 0%. The rule covers every sign beside a letter (ꯤ, ꯦ, ꯣ, ꯧ) and 
 (confirmed by the owner, 25 September 2026). Letters stay as close as before. The wider pen
 made them touch more often (41%), so the chance of joining is now 2–50% per word; measured
 like for like on 30 synthetic pages with the final settings
-(`results/spacing_synthetic_font.json`), 33% of neighbouring letters touch and the others
-are 0.086 L apart (the owner's screenshots: 33.5% and 0.097 L).
+(`results/spacing_synthetic_font.json`; built words included), 35% of neighbouring letters
+touch and the others are 0.084 L apart (the owner's screenshots: 33.5% and 0.097 L).
+
+**2.8 Pale writing.** On previews with real characters the owner saw a few characters
+disappearing. The cause was the pen step: it redraws each character from the pixels of its
+ink map over 0.5, and the map was scaled so that the darkest 5% of the ink was 1. On a pale
+scan with a few dark specks, most of the stroke fell under 0.5 and was erased: on the
+10,820 validation characters, 11.4% lost more than 30% of their ink and 1.3% more than half
+(worst: pale ꯄ, ꯥ, ꯌ, ꯆ, ꯭, ꯪ, ꯲, ꯹). The map is now 0 on paper, 0.5 half-way between the
+last grey level the image's Otsu threshold counts as ink and the first it counts as paper,
+and 1 from a typical ink pixel on, so what the scan shows as ink stays ink: no character
+loses more than 30%.
+TUMMHCD's own pale scans are drawn in the word's ink like any other. The size measurement
+uses the same maps, so the sizes move a little (median width 1.03 times the old
+measurement, height 1.01; single classes up to 13%): the next run re-measures them, the
+contact sheet and fixed sets use the new measurement, and the packaged copy is updated.
 
 ## 3. Lexicon
 
@@ -186,7 +200,7 @@ On the Phase 0 word list available in development (7,810 words) this raises ꯘ 
 next lexicon run records the shares with and without these draws (`sampling_train`).
 Confirmed by the owner, 25 September 2026.
 
-**Variety of words (proposal, 25 September 2026).** The owner asked that training cover
+**Variety of words (the owner, 25 September 2026).** The owner asked that training cover
 short and long words and every kind of syllable: a letter alone with its inherent vowel
 (C, ꯀ), letter and vowel sign (CV, ꯀꯥ), letter, vowel sign and final (CVC, ꯀꯥꯡ), and
 letter and final (CC, ꯀꯝ) (`charset.split_syllables`, `charset.syllable_type`). Words
@@ -198,9 +212,9 @@ evenly (at most 6: longer words are rare in writing, the owner's judgement; in t
 words of 7 or more syllables are mostly loanwords with endings, such as ꯑꯥꯔꯀꯦꯌꯣꯂꯣꯖꯤꯀꯦꯜ,
 and long verb forms). On the development list this gives 9.1% one-syllable words and 3.6%
 six-syllable words; words of 7 or more syllables stay at their share in text (0.4%);
-CC syllables rise to 10.8%. It is in the code (`--built`, `Words(built=...)`)
-but off until the owner confirms; the next lexicon run records the mix with and without
-it (`structure_train`).
+CC syllables rise to 10.8%. The owner confirmed it, and to keep the long words of text; it
+is the default (`Words(built=0.15)`, `render_words.py --built`), and the next lexicon run
+records the mix with and without it (`structure_train`).
 
 ## 4. Checks done so far
 
@@ -239,10 +253,10 @@ it (`structure_train`).
 Decided afterwards (owner, 25 September 2026): sizes measured on TUMMHCD, after a
 side-by-side comparison with the font's; pen width 0.06–0.14 L, after a demonstration from
 0.05 to 0.17 L (TUMMHCD strokes about 0.07 L; the owner's screenshots about 0.17 L, inflated
-by blur). Next: the owner noted that some characters in the development previews look
-typed. Those previews use the font's characters, since TUMMHCD is on the owner's Drive; the
-words must be checked with real characters, including whether redrawing every stroke at an
-even width makes them look machine-made.
+by blur). The owner then noted that some characters in the development previews looked
+typed: those previews used the font's characters. With the owner's real validation
+characters (`val.npz`) the words look handwritten, as the owner's contact sheets did. Next:
+run the notebook again (sizes re-measured with the fixed ink maps, fixed sets regenerated).
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

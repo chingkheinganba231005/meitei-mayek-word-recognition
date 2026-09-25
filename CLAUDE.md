@@ -183,9 +183,8 @@ spelling convention, under which its ensemble's accuracy is its own figure of 98
 
 Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. First run on TUMMHCD
 done by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`).
-Next: check with real characters that the words look handwritten (the owner saw typed-looking
-characters in previews drawn with the font's characters), then rerun the notebook to
-regenerate the fixed sets.
+Next: rerun the notebook. It re-measures the sizes with the fixed ink maps (pale writing,
+below) and regenerates the fixed sets; then the packaged sizes are updated from that run.
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
   Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
@@ -213,7 +212,7 @@ regenerate the fixed sets.
   neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
   synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
   2–50% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
-  the same way with the final settings, 33% touching, gaps 0.086 L (`results/spacing_*.json`).
+  the same way with the final settings, 35% touching, gaps 0.084 L (`results/spacing_*.json`).
 - **Syllables kept together (owner, 25 September 2026):** a syllable is a letter or an
   apun cluster, its vowel sign, and a nung or lonsum coda (`charset.syllables`). Spacing is
   usually even; a gap inside a syllable is never wider than the gaps around it, so ꯤ, ꯦ,
@@ -223,14 +222,21 @@ regenerate the fixed sets.
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
-  owner, 25 September 2026). First run: 76,066 words kept; 68,450 / 3,855 / 3,761.
-- **Variety of words (proposal, 25 September 2026, pending the owner):** training should
-  cover short and long words and the four kinds of syllable (C ꯀ, CV ꯀꯥ, CVC ꯀꯥꯡ, CC ꯀꯝ;
-  `charset.syllable_type`). Text alone gives few long words (1.4% with 6 syllables) and
-  few CC syllables (7.7%); 15% of words built from real syllables (1-6 syllables, the owner's
-  maximum; kinds even) would give 3.6% six-syllable words and 10.8% CC syllables. Coded
-  (`--built`), off until confirmed. Apun must join two consonants, lonsum letters included (typed loanwords:
-  ꯑꯦꯟ꯭ꯗ "and").
+  owner, 25 September 2026). Apun must join two consonants, lonsum letters included (typed
+  loanwords: ꯑꯦꯟ꯭ꯗ "and"). First run: 76,066 words kept; 68,450 / 3,855 / 3,761 distinct
+  words in training / validation / test.
+- **Variety of words (owner, 25 September 2026):** training covers short and long words and
+  the four kinds of syllable (C ꯀ, CV ꯀꯥ, CVC ꯀꯥꯡ, CC ꯀꯝ; `charset.syllable_type`): 15% of
+  training words are built from real syllables (`lexicon.SyllableBank`; 1-6 syllables, the
+  owner's maximum; kinds even). On the development list: 3.6% six-syllable words (text alone
+  1.4%) and 10.8% CC syllables (7.7%). The rare long words of text (7+ syllables, 0.4%, mostly
+  loanwords with endings) are kept.
+- **Pale writing kept whole (25 September 2026):** the owner saw characters disappearing. The
+  pen step keeps the ink map's pixels over 0.5, and the map was scaled to the darkest 5% of
+  the ink, so pale scans lost their strokes: 11.4% of characters lost more than 30% of their
+  ink (1.3% more than half). The map is now anchored to the Otsu threshold (what the scan shows
+  as ink stays ink): none loses more than 30%. The measured sizes move a little with it
+  (median width 1.03 times, height 1.01; single classes up to 13%), so the next run re-measures.
 - **Sets:** training words are rendered on the fly (5–7 ms per word per core); fixed
   synthetic validation and test sets of 5,000 words each, for model selection and a check.
   The main evaluation stays the Phase 3 real set.
