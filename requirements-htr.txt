@@ -1,0 +1,4 @@
+# Phase 2, the recogniser (mayek_htr), besides requirements.txt. PyTorch is preinstalled on
+# Colab; elsewhere install the build for your machine from pytorch.org. The baseline
+# (scripts/oracle_baseline.py) also needs the first project's package, as in the Phase 2 notebook.
+timm
