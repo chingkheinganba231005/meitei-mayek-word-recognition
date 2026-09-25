@@ -7,8 +7,8 @@ import pytest
 from mayek_words.charset import CHEIKHEI, DIGITS, I_LETTER, I_LONSUM
 from mayek_words.glyphs import GlyphStore
 from mayek_words.lexicon import Lexicon
-from mayek_words.synth import (Config, Words, WordSynth, contact, ink_distance, line_gaps, load_priors,
-                               reach_past, set_pen, sign_body, stroke_width)
+from mayek_words.synth import (Config, Words, WordSynth, column_span, contact, enclosed, ink_distance, line_gaps,
+                               load_priors, reach_past, set_pen, sign_body, stroke_width)
 
 K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
@@ -97,10 +97,19 @@ def test_ink_distance_and_reach():
     assert sign_body(lead)[:, :6].max() == 0 and sign_body(lead)[:, 6:].sum() == lead[:, 6:].sum()
 
 
+def test_enclosed():
+    canvas = np.zeros((20, 20), np.float32)
+    canvas[2, 2:12] = canvas[16, 2:12] = canvas[2:17, 2] = 1   # a letter open on the right, like ꯅ
+    span = column_span(canvas, 0, 20)
+    assert enclosed(span, np.array([8]), np.array([9]))          # in its open side: into the letter
+    assert not enclosed(span, np.array([8]), np.array([1]))      # over it
+    assert not enclosed(span, np.array([14]), np.array([9]))     # beside it
+
+
 def test_sign_nearer_its_own_letter(store):
     """A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is never nearer the next letter than its own, on the
-    ink as drawn, and the next letter never touches it: in evenly spaced words the gaps are about
-    even, in unevenly spaced words the sign is closer to its letter (owner, 25 September 2026)."""
+    ink as drawn, and the next letter never touches it. The gaps are about even; only ꯤ, in
+    unevenly spaced words, is closer to its letter (owner, 25 September 2026)."""
     from scipy import ndimage
 
     def dist(a, b):
@@ -114,16 +123,25 @@ def test_sign_nearer_its_own_letter(store):
     ratios = {}
     for uneven in (0.0, 1.0):
         s = WordSynth(store, config=Config(touch=(0.5, 0.5), p_uneven=uneven))
-        ratios[uneven] = []
         for sign in (INAP, chr(0xABE6), chr(0xABE3), chr(0xABE7)):
+            ratios[sign, uneven] = []
             for i in range(15):
                 trace = []
                 s.render(K + sign + LAI + K, np.random.default_rng(i), trace)
                 letter, (_, x, y, ink), nxt = trace[0], trace[1], trace[2]
                 own, after = dist(letter, (None, x, y, sign_body(ink))), dist(trace[1], nxt)
                 assert own < after and after >= 1
-                ratios[uneven].append((max(own, 0) + 1) / (after + 1))
-    assert np.median(ratios[1.0]) < np.median(ratios[0.0])      # closer to its letter when uneven
+                ratios[sign, uneven].append((max(own, 0) + 1) / (after + 1))
+    assert np.median(ratios[INAP, 1.0]) < 0.8 * np.median(ratios[INAP, 0.0])  # ꯤ hugs its letter when uneven
+    own_gap = {u: [] for u in (0.0, 1.0)}                  # the others keep their gap from their letter
+    for uneven in (0.0, 1.0):
+        s = WordSynth(store, config=Config(touch=(0.5, 0.5), p_uneven=uneven))
+        for sign in (chr(0xABE6), chr(0xABE3), chr(0xABE7)):
+            for i in range(15):
+                trace = []
+                s.render(K + sign + LAI + K, np.random.default_rng(i), trace)
+                own_gap[uneven].append(dist(trace[0], (None, *trace[1][1:3], sign_body(trace[1][3]))))
+    assert abs(np.median(own_gap[1.0]) - np.median(own_gap[0.0])) <= 1.5
 
 
 def test_joined_letters_share_ink(store):

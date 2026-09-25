@@ -24,8 +24,8 @@ Package `mayek_words`; one word image takes 4–11 ms on one CPU core.
 4. **Drawing.** Each 24 x 24 image is resized into its box, which gives back the
    proportions TUMMHCD lost, and its strokes are thickened or thinned to the word's pen
    width (resizing scales strokes with the box). A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
-   placed on the ink: evenly spaced, or closer to its letter in unevenly spaced words, never
-   nearer the next letter (section 2.7). The
+   never nearer the next letter nor touched by it, and never goes into its letter; ꯤ is
+   placed on the ink, close to its letter in unevenly spaced words (section 2.7). The
    word is slanted, rotated a little, blurred a little, and drawn in ink on paper.
 
 A seed fixes an image: item i of a set is always the same word and the same image.
@@ -103,10 +103,11 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | letter height L | 32 px, log-normal jitter sd 0.1 |
 | letter width factor | 0.8–1.25 (log-uniform) |
 | gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
-| chance that a character joins the one before it (ink touching), inside a syllable | 2–50%; between syllables half that |
+| chance that a character joins the one before it (ink touching), inside a syllable | 2–60% (2–50% until the signs' rule, section 2.7); between syllables half that |
 | words spaced unevenly by syllable (inside narrower, between wider) | 1 in 5, by 0–0.12 L |
-| sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), on the ink | even words: the layout's gap; uneven words: 0.02–0.06 L, touching in 1 in 10; never cutting into the letter |
-| next letter after such a sign, on the ink | never touching it, never nearer it than the sign is to its letter; uneven words: 0.04–0.08 L further, plus the syllable spacing |
+| ꯤ beside its letter, on the ink | even words: the layout's gap; uneven words: 0.02–0.06 L, touching in 1 in 10 |
+| ꯦ, ꯣ, ꯧ beside their letter | where the layout puts them |
+| any of these signs | never into its letter; the next letter never touching it, never nearer it than the sign is to its letter (after ꯤ in uneven words: 0.04–0.08 L further, plus the syllable spacing) |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -175,23 +176,28 @@ nearer the next letter in 42–47%.
 A first fix drew every sign against its letter. The owner confirmed the direction and
 corrected the rule (25 September 2026): writing close to the left is what happens when
 spacing is uneven, not in most writing, which is even; touching or very close signs are rare;
-and a sign stuck to the letter on its right never happens: it is always closer to its own
-letter, or even. The same holds for ꯦ, ꯣ and ꯧ, as long as they do not merge with the letter.
+a sign stuck to the letter on its right never happens: it is always closer to its own
+letter, or even; signs must not merge with their letter. Looking at a sheet of even against
+uneven words, the owner found ꯤ right in uneven words except one where it nearly merged with
+ꯅ, and asked not to apply the close placement to ꯦ, ꯣ and ꯧ, whose even spacing looked good.
 
-So a sign beside a letter is now placed on the ink, by its body; distances are the shortest
-between pieces of ink, in any direction:
+The rule now, on the ink (distances are the shortest between pieces of ink, from the sign's
+body):
 
-- *Evenly spaced words (4 in 5):* the sign's body keeps the gap the layout gives the pair
-  (the word's even spacing), at least a pixel of paper. The next letter keeps the layout's
-  gap too, but is never nearer the sign than the sign is to its own letter, and never touches it.
-- *Unevenly spaced words (1 in 5):* the sign's body is 0.02–0.06 L from its letter
-  (almost stuck); it touches the letter in 1 of these words in 10. The next letter is
-  0.04–0.08 L further from the sign than the sign is from its letter, plus the word's
-  syllable spacing.
-- *Never cutting into the letter:* a lead-in may meet the letter's ink in the same row, not
-  cross it (a touching sign may reach 0.1 L past it); and no part of a sign starts more than
-  0.15 L left of the letter's rightmost ink (0.3 L in uneven words, where the sign hugs its
-  letter), so a lead-in over the top of the letter stays short.
+- *ꯤ, evenly spaced words (4 in 5):* its body keeps the layout's gap from its letter (at
+  least a pixel of paper).
+- *ꯤ, unevenly spaced words (1 in 5):* its body is 0.02–0.06 L from its letter (almost
+  stuck; touching in 1 of these words in 10), and the next letter is 0.04–0.08 L further
+  from it than it is from its letter, plus the word's syllable spacing.
+- *ꯦ, ꯣ, ꯧ:* where the layout puts them, in every word; moved only to keep the rules below.
+  Slid on the ink like ꯤ, they tucked over the shoulder of their letter.
+- *Every sign:* the next letter keeps the layout's gap but is never nearer the sign than the
+  sign is to its own letter, and never touches it. A sign never goes into its letter: no ink
+  of the sign may have the letter's ink above and below it in the same column (ꯤ inside the
+  open side of ꯅ was the near-merge; passing over the letter is allowed), a lead-in may meet
+  the letter's ink in the same row but not cross it (a touching ꯤ may reach 0.1 L past it),
+  and no part of a sign starts more than 0.15 L left of the letter's rightmost ink (0.3 L for
+  ꯤ in uneven words).
 
 Result on the same words (`results/sign_placement_dev_val.json`), before and after:
 
@@ -199,19 +205,21 @@ Result on the same words (`results/sign_placement_dev_val.json`), before and aft
 |---|---|---|---|
 | sign's body nearer the next letter (ꯤ; ꯦ, ꯣ, ꯧ) | 73%; 42–47% | 0% | 0% |
 | next letter touching the sign | 16–19% | 0% | 0% |
-| sign touching its letter | | 0% | 3–12% |
-| sign crossing into its letter's columns | | 0% | 6–12% |
-| ꯤ: body to its letter, sign to the next letter (medians) | 0.28 L, 0.16 L | 0.19 L, 0.24 L | 0.10 L, 0.25 L |
+| sign touching its letter | | 0% | ꯤ 1%; others 0% |
+| sign crossing into its letter's columns | | 0% | ꯤ 8%; others 0% |
+| ꯤ: body to its letter, sign to the next letter (medians) | 0.28 L, 0.16 L | 0.19 L, 0.23 L | 0.18 L, 0.30 L |
 
-Over all words, 1–2% of signs touch their letter. By the cruder centre of ink, ꯤ is nearer
-the next letter in 16% of even words (from 75%) and 7% of uneven ones: with even spacing the
-centre sits near the middle, and a letter's far edge can reach past it. Letter spacing stays
-close to real handwriting: with the validation characters 31% of neighbouring letters touch
-and visible gaps are 0.059 L; with the font's characters 30% and 0.059 L
-(`results/spacing_synthetic_font.json`; real samples 33.5% and 0.097 L). Signs no longer join
-the letter after them, which is why touching dropped from 33%. A test checks the rule in
-even and uneven words and fails on the previous synthesiser; the notebook writes the check on
-the full lexicon (`results/sign_placement_tummhcd.json`).
+By the cruder centre of ink, ꯤ is nearer the next letter in 16% of even words (from 75%) and
+4% of uneven ones: with even spacing the centre sits near the middle, and a letter's far edge
+can reach past it. Signs no longer join the letter after them, so the chance that a letter
+joins the one before it is raised from 2–50% to 2–60% per word, which keeps a third of
+neighbouring letters touching: 34% with the validation characters, visible gaps 0.059 L; 32%
+and 0.061 L with the font's characters (`results/spacing_synthetic_font.json`; real samples
+33.5% and 0.097 L). A word's even and uneven versions now draw the same characters (the
+word's style draws the uneven spacing whether it is used or not), so the two can be compared.
+Tests check the rule in even and uneven words (and fail on the previous synthesiser) and the
+test for going into a letter; the notebook writes the check on the full lexicon
+(`results/sign_placement_tummhcd.json`).
 
 **2.8 Pale writing.** On previews with real characters the owner saw a few characters
 disappearing. The cause was the pen step: it redraws each character from the pixels of its

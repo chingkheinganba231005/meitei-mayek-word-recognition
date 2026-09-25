@@ -212,8 +212,9 @@ writes `results/sign_placement_tummhcd.json`; the owner checks the contact sheet
   from the owner, measured with `scripts/measure_spacing.py`, images not kept) a third of
   neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
   synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
-  2–50% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
-  the same way with the final settings, 35% touching, gaps 0.084 L (`results/spacing_*.json`).
+  2–60% (2–50% before the signs' rule, below) and otherwise leaves −0.10 to +0.05 L on top of
+  the font's side bearings; measured the same way, 34% touching with TUMMHCD characters, gaps
+  0.059 L (`results/spacing_*.json`).
 - **Syllables kept together (owner, 25 September 2026):** a syllable is a letter or an
   apun cluster, its vowel sign, and a nung or lonsum coda (`charset.syllables`). Spacing is
   usually even; a gap inside a syllable is never wider than the gaps around it, so ꯤ, ꯦ,
@@ -221,16 +222,17 @@ writes `results/sign_placement_tummhcd.json`; the owner checks the contact sheet
   the syllables stand apart. Before this, ꯤ looked attached to the next letter in 87% of
   cases; now in none.
 - **Signs on the ink (owner, 25 September 2026):** a sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
-  always closer to its own letter or even, never stuck to the letter on its right. TUMMHCD's ꯤ
-  (and ꯧ) starts with a long lead-in and its stem stands mid-image, so the box rule had left
-  the stem nearer the next letter in 73% of cases, and the next letter touched the sign in
-  16–19%. Now signs are placed on the ink by their body: in even words (4 in 5) with the
-  layout's gap; in uneven words 0.02–0.06 L from their letter (touching in 1 in 10), the next
-  syllable further; a lead-in never cuts into the letter (overhang at most 0.15 L, 0.3 L when
-  uneven); the next letter never touches the sign or sits nearer it. Result: 0% nearer the
-  next letter, 0% next letter touching, 1–2% of signs touching their letter
-  (`scripts/check_signs.py`, `results/sign_placement_dev_val.json`); 31% of letters touch.
-  To be confirmed on the next contact sheet.
+  always closer to its own letter or even, never stuck to the letter on its right, never
+  merged with its letter. TUMMHCD's ꯤ starts with a long lead-in and its stem stands
+  mid-image, so the box rule had left the stem nearer the next letter in 73% of cases, and
+  the next letter touched a sign in 16–19%. Now ꯤ is placed on the ink by its body: the
+  layout's gap in even words (4 in 5); 0.02–0.06 L from its letter in uneven words (touching
+  in 1 in 10), the next syllable further. ꯦ, ꯣ, ꯧ stay where the layout puts them (the owner:
+  the close placement made them worse). For all: the next letter never touches the sign or
+  sits nearer it; no sign ink goes into its letter (letter ink above and below it in a
+  column; a lead-in may pass over). Result: 0% nearer the next letter, 0% next letter
+  touching (`scripts/check_signs.py`, `results/sign_placement_dev_val.json`). Letters now
+  join with a chance of 2–60% per word (was 2–50%), keeping 34% of letters touching.
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
