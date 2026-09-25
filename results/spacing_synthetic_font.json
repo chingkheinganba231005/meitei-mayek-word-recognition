@@ -1,0 +1,19 @@
+{
+ "synthetic": {
+  "pages": 30,
+  "glyphs": "font",
+  "lexicon": "train.tsv",
+  "gap": [
+   -0.1,
+   0.05
+  ],
+  "gap_jitter": 0.03,
+  "touch": [
+   0.02,
+   0.6
+  ],
+  "touching_median": 0.305,
+  "visible_gap_median_in_L": 0.059,
+  "letter_height_px_median": 34.0
+ }
+}

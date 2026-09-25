@@ -1,0 +1,129 @@
+{
+ "samples": {
+  "page_a.png": {
+   "letter_height_px": 39.0,
+   "letters_found": 122,
+   "lines": 14,
+   "single_letter_width_in_L": 0.897,
+   "visible_gaps_in_L": {
+    "n": 68,
+    "p10": -0.033,
+    "median": 0.077,
+    "p90": 0.238
+   },
+   "joined_letters": 52,
+   "touching": 0.433,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page.",
+   "options": {
+    "invert": false,
+    "drop_coloured": false,
+    "drop_ruled": false
+   }
+  },
+  "page_a_binarised.png": {
+   "letter_height_px": 40.0,
+   "letters_found": 164,
+   "lines": 23,
+   "single_letter_width_in_L": 1.125,
+   "visible_gaps_in_L": {
+    "n": 79,
+    "p10": -0.175,
+    "median": 0.05,
+    "p90": 0.29
+   },
+   "joined_letters": 42,
+   "touching": 0.347,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page.",
+   "options": {
+    "invert": true,
+    "drop_coloured": false,
+    "drop_ruled": false
+   }
+  },
+  "ruled_b.png": {
+   "letter_height_px": 25.0,
+   "letters_found": 55,
+   "lines": 13,
+   "single_letter_width_in_L": 0.6,
+   "visible_gaps_in_L": {
+    "n": 16,
+    "p10": -1.22,
+    "median": 0.1,
+    "p90": 0.46
+   },
+   "joined_letters": 44,
+   "touching": 0.733,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page. ruled_b to ruled_g are four pages with lines drawn over them.",
+   "options": {
+    "invert": false,
+    "drop_coloured": true,
+    "drop_ruled": true
+   }
+  },
+  "ruled_c.png": {
+   "letter_height_px": 35.0,
+   "letters_found": 49,
+   "lines": 14,
+   "single_letter_width_in_L": 0.657,
+   "visible_gaps_in_L": {
+    "n": 27,
+    "p10": -0.011,
+    "median": 0.114,
+    "p90": 0.463
+   },
+   "joined_letters": 6,
+   "touching": 0.182,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page. ruled_b to ruled_g are four pages with lines drawn over them.",
+   "options": {
+    "invert": false,
+    "drop_coloured": true,
+    "drop_ruled": true
+   }
+  },
+  "ruled_f.png": {
+   "letter_height_px": 32.0,
+   "letters_found": 52,
+   "lines": 14,
+   "single_letter_width_in_L": 0.688,
+   "visible_gaps_in_L": {
+    "n": 21,
+    "p10": 0.0,
+    "median": 0.094,
+    "p90": 0.312
+   },
+   "joined_letters": 10,
+   "touching": 0.323,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page. ruled_b to ruled_g are four pages with lines drawn over them.",
+   "options": {
+    "invert": false,
+    "drop_coloured": true,
+    "drop_ruled": true
+   }
+  },
+  "ruled_g.png": {
+   "letter_height_px": 28.0,
+   "letters_found": 58,
+   "lines": 13,
+   "single_letter_width_in_L": 0.821,
+   "visible_gaps_in_L": {
+    "n": 25,
+    "p10": 0.0,
+    "median": 0.179,
+    "p90": 0.286
+   },
+   "joined_letters": 4,
+   "touching": 0.138,
+   "source": "Screenshots of published figures of Meitei Mayek handwriting, found by web image search and supplied by the owner on 24 September 2026; the images are not kept. page_a and page_a_binarised are one page. ruled_b to ruled_g are four pages with lines drawn over them.",
+   "options": {
+    "invert": false,
+    "drop_coloured": true,
+    "drop_ruled": true
+   }
+  }
+ },
+ "median_over_samples": {
+  "touching": 0.335,
+  "visible_gap_median_in_L": 0.097,
+  "samples": 6
+ }
+}

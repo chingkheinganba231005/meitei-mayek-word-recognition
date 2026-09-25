@@ -1,0 +1,1100 @@
+{
+ "sources": {
+  "fineweb2": {
+   "file": "fineweb2.tsv",
+   "distinct_words": 11141,
+   "running_words": 52395
+  },
+  "fineweb2_removed": {
+   "file": "fineweb2_removed.tsv",
+   "distinct_words": 33425,
+   "running_words": 365832
+  },
+  "wikipedia": {
+   "file": "wikipedia.tsv",
+   "distinct_words": 72437,
+   "running_words": 1036283
+  }
+ },
+ "sampling_train": {
+  "note": "share of each character among the characters of 200,000 drawn training words, without and with the draws for rare characters (rare_share 0.1, rare_below 0.005)",
+  "rare_characters": [
+   "ꯉ",
+   "ꯓ",
+   "ꯘ",
+   "ꯙ",
+   "ꯚ",
+   "ꯞ",
+   "ꯪ"
+  ],
+  "shares": {
+   "ꯘ": {
+    "plain": 0.00017,
+    "with_rare_draws": 0.00233
+   },
+   "ꯙ": {
+    "plain": 0.0005,
+    "with_rare_draws": 0.00259
+   },
+   "ꯓ": {
+    "plain": 0.00055,
+    "with_rare_draws": 0.00278
+   },
+   "ꯞ": {
+    "plain": 0.00319,
+    "with_rare_draws": 0.00503
+   },
+   "ꯪ": {
+    "plain": 0.00347,
+    "with_rare_draws": 0.00535
+   },
+   "ꯚ": {
+    "plain": 0.00427,
+    "with_rare_draws": 0.00628
+   },
+   "ꯉ": {
+    "plain": 0.00446,
+    "with_rare_draws": 0.00631
+   },
+   "ꯎ": {
+    "plain": 0.00522,
+    "with_rare_draws": 0.00499
+   },
+   "ꯧ": {
+    "plain": 0.00592,
+    "with_rare_draws": 0.00551
+   },
+   "ꯋ": {
+    "plain": 0.00594,
+    "with_rare_draws": 0.00583
+   },
+   "ꯩ": {
+    "plain": 0.0071,
+    "with_rare_draws": 0.00707
+   },
+   "ꯆ": {
+    "plain": 0.01017,
+    "with_rare_draws": 0.01005
+   },
+   "ꯜ": {
+    "plain": 0.0102,
+    "with_rare_draws": 0.01017
+   },
+   "ꯐ": {
+    "plain": 0.01028,
+    "with_rare_draws": 0.00998
+   },
+   "ꯖ": {
+    "plain": 0.01057,
+    "with_rare_draws": 0.01026
+   },
+   "ꯊ": {
+    "plain": 0.01175,
+    "with_rare_draws": 0.01099
+   },
+   "ꯠ": {
+    "plain": 0.01273,
+    "with_rare_draws": 0.01193
+   },
+   "ꯈ": {
+    "plain": 0.01297,
+    "with_rare_draws": 0.01297
+   },
+   "ꯍ": {
+    "plain": 0.01447,
+    "with_rare_draws": 0.01361
+   },
+   "ꯌ": {
+    "plain": 0.01559,
+    "with_rare_draws": 0.01551
+   },
+   "ꯝ": {
+    "plain": 0.01809,
+    "with_rare_draws": 0.01747
+   },
+   "ꯛ": {
+    "plain": 0.02002,
+    "with_rare_draws": 0.01896
+   },
+   "ꯑ": {
+    "plain": 0.02008,
+    "with_rare_draws": 0.01957
+   },
+   "꯭": {
+    "plain": 0.02012,
+    "with_rare_draws": 0.02089
+   },
+   "ꯏ": {
+    "plain": 0.02233,
+    "with_rare_draws": 0.02182
+   },
+   "ꯄ": {
+    "plain": 0.02322,
+    "with_rare_draws": 0.02215
+   },
+   "ꯀ": {
+    "plain": 0.02498,
+    "with_rare_draws": 0.02461
+   },
+   "ꯇ": {
+    "plain": 0.02775,
+    "with_rare_draws": 0.02733
+   },
+   "ꯟ": {
+    "plain": 0.02818,
+    "with_rare_draws": 0.02829
+   },
+   "ꯒ": {
+    "plain": 0.0297,
+    "with_rare_draws": 0.02942
+   },
+   "ꯡ": {
+    "plain": 0.03045,
+    "with_rare_draws": 0.02894
+   },
+   "ꯨ": {
+    "plain": 0.0318,
+    "with_rare_draws": 0.0318
+   },
+   "ꯂ": {
+    "plain": 0.03291,
+    "with_rare_draws": 0.03286
+   },
+   "ꯃ": {
+    "plain": 0.03292,
+    "with_rare_draws": 0.03241
+   },
+   "ꯗ": {
+    "plain": 0.03385,
+    "with_rare_draws": 0.03371
+   },
+   "ꯕ": {
+    "plain": 0.03725,
+    "with_rare_draws": 0.03639
+   },
+   "ꯣ": {
+    "plain": 0.0393,
+    "with_rare_draws": 0.03821
+   },
+   "ꯦ": {
+    "plain": 0.04154,
+    "with_rare_draws": 0.04112
+   },
+   "ꯅ": {
+    "plain": 0.04476,
+    "with_rare_draws": 0.04393
+   },
+   "ꯔ": {
+    "plain": 0.04631,
+    "with_rare_draws": 0.04681
+   },
+   "ꯁ": {
+    "plain": 0.05737,
+    "with_rare_draws": 0.05565
+   },
+   "ꯥ": {
+    "plain": 0.08205,
+    "with_rare_draws": 0.08366
+   },
+   "ꯤ": {
+    "plain": 0.10548,
+    "with_rare_draws": 0.10448
+   }
+  }
+ },
+ "structure_train": {
+  "note": "100,000 drawn training words: syllables per word, kinds of syllable (C, CV, CVC, CC), without and with 15% of words composed of real syllables",
+  "drawn": {
+   "syllables_per_word": {
+    "1": 0.0385,
+    "2": 0.2232,
+    "3": 0.3198,
+    "4": 0.2397,
+    "5": 0.1157,
+    "6": 0.0435,
+    "7+": 0.0197
+   },
+   "syllable_kinds": {
+    "C": 0.3056,
+    "CV": 0.4201,
+    "CVC": 0.1958,
+    "CC": 0.0784
+   },
+   "words_containing_kind": {
+    "C": 0.6509,
+    "CV": 0.7929,
+    "CVC": 0.5342,
+    "CC": 0.2385
+   }
+  },
+  "with_15pc_built": {
+   "syllables_per_word": {
+    "1": 0.0583,
+    "2": 0.215,
+    "3": 0.2955,
+    "4": 0.2294,
+    "5": 0.1229,
+    "6": 0.0622,
+    "7+": 0.0167
+   },
+   "syllable_kinds": {
+    "C": 0.2974,
+    "CV": 0.3935,
+    "CVC": 0.2048,
+    "CC": 0.1043
+   },
+   "words_containing_kind": {
+    "C": 0.6415,
+    "CV": 0.7609,
+    "CVC": 0.5433,
+    "CC": 0.2901
+   }
+  },
+  "syllable_inventory": {
+   "C": 178,
+   "CV": 604,
+   "CVC": 2209,
+   "CC": 452
+  }
+ },
+ "combined": {
+  "distinct_words": 77580,
+  "running_words": 1151379,
+  "note": "largest count over the sources"
+ },
+ "kept": {
+  "distinct_words": 76066,
+  "running_words": 1149985
+ },
+ "dropped": {
+  "character outside the alphabet": {
+   "distinct_words": 272,
+   "running_words": 405
+  },
+  "apun not between two consonants": {
+   "distinct_words": 98,
+   "running_words": 163
+  },
+  "longer than 24 characters": {
+   "distinct_words": 4,
+   "running_words": 5
+  },
+  "starts with a sign": {
+   "distinct_words": 30,
+   "running_words": 821
+  }
+ },
+ "excluded_from_train": 0,
+ "splits": {
+  "train": {
+   "distinct_words": 68450,
+   "running_words": 1035176,
+   "length_running": {
+    "mean": 5.24,
+    "p50": 5,
+    "p95": 9,
+    "max": 24
+   },
+   "characters_running": {
+    "ꯀ": {
+     "count": 108006,
+     "share": 0.01992
+    },
+    "ꯁ": {
+     "count": 321464,
+     "share": 0.05928
+    },
+    "ꯂ": {
+     "count": 184077,
+     "share": 0.03395
+    },
+    "ꯃ": {
+     "count": 326432,
+     "share": 0.0602
+    },
+    "ꯄ": {
+     "count": 123099,
+     "share": 0.0227
+    },
+    "ꯅ": {
+     "count": 238198,
+     "share": 0.04393
+    },
+    "ꯆ": {
+     "count": 68473,
+     "share": 0.01263
+    },
+    "ꯇ": {
+     "count": 117561,
+     "share": 0.02168
+    },
+    "ꯈ": {
+     "count": 62771,
+     "share": 0.01158
+    },
+    "ꯉ": {
+     "count": 19528,
+     "share": 0.0036
+    },
+    "ꯊ": {
+     "count": 50396,
+     "share": 0.00929
+    },
+    "ꯋ": {
+     "count": 35387,
+     "share": 0.00653
+    },
+    "ꯌ": {
+     "count": 91536,
+     "share": 0.01688
+    },
+    "ꯍ": {
+     "count": 90242,
+     "share": 0.01664
+    },
+    "ꯎ": {
+     "count": 33244,
+     "share": 0.00613
+    },
+    "ꯏ": {
+     "count": 126079,
+     "share": 0.02325
+    },
+    "ꯐ": {
+     "count": 59151,
+     "share": 0.01091
+    },
+    "ꯑ": {
+     "count": 202668,
+     "share": 0.03737
+    },
+    "ꯒ": {
+     "count": 151424,
+     "share": 0.02792
+    },
+    "ꯓ": {
+     "count": 934,
+     "share": 0.00017
+    },
+    "ꯔ": {
+     "count": 173222,
+     "share": 0.03194
+    },
+    "ꯕ": {
+     "count": 184739,
+     "share": 0.03407
+    },
+    "ꯖ": {
+     "count": 30485,
+     "share": 0.00562
+    },
+    "ꯗ": {
+     "count": 153348,
+     "share": 0.02828
+    },
+    "ꯘ": {
+     "count": 478,
+     "share": 9e-05
+    },
+    "ꯙ": {
+     "count": 1243,
+     "share": 0.00023
+    },
+    "ꯚ": {
+     "count": 9756,
+     "share": 0.0018
+    },
+    "ꯛ": {
+     "count": 122719,
+     "share": 0.02263
+    },
+    "ꯜ": {
+     "count": 35996,
+     "share": 0.00664
+    },
+    "ꯝ": {
+     "count": 133367,
+     "share": 0.02459
+    },
+    "ꯞ": {
+     "count": 18784,
+     "share": 0.00346
+    },
+    "ꯟ": {
+     "count": 112722,
+     "share": 0.02079
+    },
+    "ꯠ": {
+     "count": 72945,
+     "share": 0.01345
+    },
+    "ꯡ": {
+     "count": 225816,
+     "share": 0.04164
+    },
+    "ꯥ": {
+     "count": 423464,
+     "share": 0.07809
+    },
+    "ꯦ": {
+     "count": 169526,
+     "share": 0.03126
+    },
+    "ꯨ": {
+     "count": 208584,
+     "share": 0.03846
+    },
+    "ꯤ": {
+     "count": 591983,
+     "share": 0.10917
+    },
+    "ꯩ": {
+     "count": 69482,
+     "share": 0.01281
+    },
+    "ꯣ": {
+     "count": 154069,
+     "share": 0.02841
+    },
+    "ꯧ": {
+     "count": 48458,
+     "share": 0.00894
+    },
+    "ꯪ": {
+     "count": 18611,
+     "share": 0.00343
+    },
+    "꯫": {
+     "count": 0,
+     "share": 0.0
+    },
+    "꯭": {
+     "count": 52263,
+     "share": 0.00964
+    }
+   },
+   "top_words": [
+    [
+     "ꯑꯁꯤ",
+     29793
+    ],
+    [
+     "ꯃꯁꯤꯡ",
+     28804
+    ],
+    [
+     "ꯑꯃꯁꯨꯡ",
+     20724
+    ],
+    [
+     "ꯑꯃꯅꯤ",
+     17694
+    ],
+    [
+     "ꯒꯤ",
+     13651
+    ],
+    [
+     "ꯃꯇꯦꯡ",
+     13348
+    ],
+    [
+     "ꯂꯧꯔꯛꯐꯝ",
+     11288
+    ],
+    [
+     "ꯍꯦꯟꯅ",
+     10412
+    ],
+    [
+     "ꯆꯥꯎꯕ",
+     9932
+    ],
+    [
+     "ꯗꯒꯤ",
+     8040
+    ],
+    [
+     "ꯃꯍꯥꯛꯀꯤ",
+     6923
+    ],
+    [
+     "ꯃꯁꯤꯁꯨ",
+     6401
+    ],
+    [
+     "ꯃꯁꯤ",
+     5305
+    ],
+    [
+     "ꯌꯦꯡꯕꯤꯌꯨ",
+     5252
+    ],
+    [
+     "ꯑꯗꯨ",
+     5120
+    ],
+    [
+     "ꯁꯦꯝꯒꯠꯂꯨ",
+     4766
+    ],
+    [
+     "ꯆꯩꯁꯤꯡ",
+     4679
+    ],
+    [
+     "ꯅꯤ",
+     4638
+    ],
+    [
+     "ꯑꯃꯥ",
+     4253
+    ],
+    [
+     "ꯀꯤ",
+     3756
+    ]
+   ]
+  },
+  "val": {
+   "distinct_words": 3855,
+   "running_words": 46868,
+   "length_running": {
+    "mean": 5.09,
+    "p50": 5,
+    "p95": 9,
+    "max": 23
+   },
+   "characters_running": {
+    "ꯀ": {
+     "count": 3601,
+     "share": 0.01509
+    },
+    "ꯁ": {
+     "count": 12438,
+     "share": 0.05212
+    },
+    "ꯂ": {
+     "count": 8290,
+     "share": 0.03474
+    },
+    "ꯃ": {
+     "count": 13391,
+     "share": 0.05612
+    },
+    "ꯄ": {
+     "count": 9765,
+     "share": 0.04092
+    },
+    "ꯅ": {
+     "count": 11481,
+     "share": 0.04811
+    },
+    "ꯆ": {
+     "count": 2295,
+     "share": 0.00962
+    },
+    "ꯇ": {
+     "count": 6207,
+     "share": 0.02601
+    },
+    "ꯈ": {
+     "count": 3303,
+     "share": 0.01384
+    },
+    "ꯉ": {
+     "count": 1112,
+     "share": 0.00466
+    },
+    "ꯊ": {
+     "count": 4065,
+     "share": 0.01703
+    },
+    "ꯋ": {
+     "count": 721,
+     "share": 0.00302
+    },
+    "ꯌ": {
+     "count": 2395,
+     "share": 0.01004
+    },
+    "ꯍ": {
+     "count": 3313,
+     "share": 0.01388
+    },
+    "ꯎ": {
+     "count": 815,
+     "share": 0.00342
+    },
+    "ꯏ": {
+     "count": 8223,
+     "share": 0.03446
+    },
+    "ꯐ": {
+     "count": 3698,
+     "share": 0.0155
+    },
+    "ꯑ": {
+     "count": 10051,
+     "share": 0.04212
+    },
+    "ꯒ": {
+     "count": 4832,
+     "share": 0.02025
+    },
+    "ꯓ": {
+     "count": 34,
+     "share": 0.00014
+    },
+    "ꯔ": {
+     "count": 6685,
+     "share": 0.02801
+    },
+    "ꯕ": {
+     "count": 9653,
+     "share": 0.04045
+    },
+    "ꯖ": {
+     "count": 1835,
+     "share": 0.00769
+    },
+    "ꯗ": {
+     "count": 7636,
+     "share": 0.032
+    },
+    "ꯘ": {
+     "count": 4,
+     "share": 2e-05
+    },
+    "ꯙ": {
+     "count": 62,
+     "share": 0.00026
+    },
+    "ꯚ": {
+     "count": 1240,
+     "share": 0.0052
+    },
+    "ꯛ": {
+     "count": 5142,
+     "share": 0.02155
+    },
+    "ꯜ": {
+     "count": 1784,
+     "share": 0.00748
+    },
+    "ꯝ": {
+     "count": 7477,
+     "share": 0.03133
+    },
+    "ꯞ": {
+     "count": 1137,
+     "share": 0.00476
+    },
+    "ꯟ": {
+     "count": 5536,
+     "share": 0.0232
+    },
+    "ꯠ": {
+     "count": 1664,
+     "share": 0.00697
+    },
+    "ꯡ": {
+     "count": 6686,
+     "share": 0.02802
+    },
+    "ꯥ": {
+     "count": 18096,
+     "share": 0.07583
+    },
+    "ꯦ": {
+     "count": 7830,
+     "share": 0.03281
+    },
+    "ꯨ": {
+     "count": 7396,
+     "share": 0.03099
+    },
+    "ꯤ": {
+     "count": 22984,
+     "share": 0.09631
+    },
+    "ꯩ": {
+     "count": 1483,
+     "share": 0.00621
+    },
+    "ꯣ": {
+     "count": 8766,
+     "share": 0.03673
+    },
+    "ꯧ": {
+     "count": 1635,
+     "share": 0.00685
+    },
+    "ꯪ": {
+     "count": 1652,
+     "share": 0.00692
+    },
+    "꯫": {
+     "count": 0,
+     "share": 0.0
+    },
+    "꯭": {
+     "count": 2221,
+     "share": 0.00931
+    }
+   },
+   "top_words": [
+    [
+     "ꯑꯃꯗꯤ",
+     3119
+    ],
+    [
+     "ꯄꯅꯥ",
+     2991
+    ],
+    [
+     "ꯃꯐꯝ",
+     2396
+    ],
+    [
+     "ꯃꯂꯨꯑꯣꯏꯄ",
+     1911
+    ],
+    [
+     "ꯁꯛꯇꯝ",
+     1910
+    ],
+    [
+     "ꯍꯥꯏꯕꯁꯤ",
+     1389
+    ],
+    [
+     "ꯕꯦꯡꯒꯂꯤ",
+     1387
+    ],
+    [
+     "ꯊꯪꯕ",
+     1109
+    ],
+    [
+     "ꯑꯦꯚꯤꯁ",
+     957
+    ],
+    [
+     "ꯃꯤ",
+     929
+    ],
+    [
+     "ꯈꯟꯅ",
+     728
+    ],
+    [
+     "ꯑꯗꯨꯅ",
+     709
+    ],
+    [
+     "ꯏꯕ",
+     626
+    ],
+    [
+     "ꯄꯊꯥꯞ",
+     595
+    ],
+    [
+     "ꯁꯤꯖꯤꯟꯅꯩ",
+     520
+    ],
+    [
+     "ꯏꯟ",
+     513
+    ],
+    [
+     "ꯅꯝꯕꯥ",
+     493
+    ],
+    [
+     "ꯆꯣꯡꯉꯨ",
+     457
+    ],
+    [
+     "ꯄꯣꯠꯂꯝ",
+     450
+    ],
+    [
+     "ꯏꯀꯥꯌ",
+     427
+    ]
+   ]
+  },
+  "test": {
+   "distinct_words": 3761,
+   "running_words": 67941,
+   "length_running": {
+    "mean": 5.2,
+    "p50": 5,
+    "p95": 9,
+    "max": 20
+   },
+   "characters_running": {
+    "ꯀ": {
+     "count": 8992,
+     "share": 0.02547
+    },
+    "ꯁ": {
+     "count": 12614,
+     "share": 0.03572
+    },
+    "ꯂ": {
+     "count": 10441,
+     "share": 0.02957
+    },
+    "ꯃ": {
+     "count": 25672,
+     "share": 0.07271
+    },
+    "ꯄ": {
+     "count": 7019,
+     "share": 0.01988
+    },
+    "ꯅ": {
+     "count": 14097,
+     "share": 0.03992
+    },
+    "ꯆ": {
+     "count": 11466,
+     "share": 0.03247
+    },
+    "ꯇ": {
+     "count": 9494,
+     "share": 0.02689
+    },
+    "ꯈ": {
+     "count": 12668,
+     "share": 0.03588
+    },
+    "ꯉ": {
+     "count": 605,
+     "share": 0.00171
+    },
+    "ꯊ": {
+     "count": 1589,
+     "share": 0.0045
+    },
+    "ꯋ": {
+     "count": 1321,
+     "share": 0.00374
+    },
+    "ꯌ": {
+     "count": 4644,
+     "share": 0.01315
+    },
+    "ꯍ": {
+     "count": 4917,
+     "share": 0.01393
+    },
+    "ꯎ": {
+     "count": 835,
+     "share": 0.00236
+    },
+    "ꯏ": {
+     "count": 24404,
+     "share": 0.06912
+    },
+    "ꯐ": {
+     "count": 1707,
+     "share": 0.00483
+    },
+    "ꯑ": {
+     "count": 8226,
+     "share": 0.0233
+    },
+    "ꯒ": {
+     "count": 3920,
+     "share": 0.0111
+    },
+    "ꯓ": {
+     "count": 24,
+     "share": 7e-05
+    },
+    "ꯔ": {
+     "count": 7845,
+     "share": 0.02222
+    },
+    "ꯕ": {
+     "count": 19667,
+     "share": 0.0557
+    },
+    "ꯖ": {
+     "count": 1989,
+     "share": 0.00563
+    },
+    "ꯗ": {
+     "count": 12111,
+     "share": 0.0343
+    },
+    "ꯘ": {
+     "count": 6,
+     "share": 2e-05
+    },
+    "ꯙ": {
+     "count": 120,
+     "share": 0.00034
+    },
+    "ꯚ": {
+     "count": 418,
+     "share": 0.00118
+    },
+    "ꯛ": {
+     "count": 4434,
+     "share": 0.01256
+    },
+    "ꯜ": {
+     "count": 2538,
+     "share": 0.00719
+    },
+    "ꯝ": {
+     "count": 6572,
+     "share": 0.01861
+    },
+    "ꯞ": {
+     "count": 2024,
+     "share": 0.00573
+    },
+    "ꯟ": {
+     "count": 7871,
+     "share": 0.02229
+    },
+    "ꯠ": {
+     "count": 2468,
+     "share": 0.00699
+    },
+    "ꯡ": {
+     "count": 8850,
+     "share": 0.02506
+    },
+    "ꯥ": {
+     "count": 41926,
+     "share": 0.11874
+    },
+    "ꯦ": {
+     "count": 8994,
+     "share": 0.02547
+    },
+    "ꯨ": {
+     "count": 6976,
+     "share": 0.01976
+    },
+    "ꯤ": {
+     "count": 27438,
+     "share": 0.07771
+    },
+    "ꯩ": {
+     "count": 3705,
+     "share": 0.01049
+    },
+    "ꯣ": {
+     "count": 12137,
+     "share": 0.03437
+    },
+    "ꯧ": {
+     "count": 5852,
+     "share": 0.01657
+    },
+    "ꯪ": {
+     "count": 2234,
+     "share": 0.00633
+    },
+    "꯫": {
+     "count": 0,
+     "share": 0.0
+    },
+    "꯭": {
+     "count": 2261,
+     "share": 0.0064
+    }
+   },
+   "top_words": [
+    [
+     "ꯃꯆꯥꯈꯥꯏꯕ",
+     9522
+    ],
+    [
+     "ꯗ",
+     5846
+    ],
+    [
+     "ꯀꯧꯕ",
+     3056
+    ],
+    [
+     "ꯑꯣꯏꯅ",
+     2870
+    ],
+    [
+     "ꯃꯥꯂꯦꯝ",
+     2587
+    ],
+    [
+     "ꯍꯥꯏꯅ",
+     2187
+    ],
+    [
+     "ꯃꯤꯇꯩꯀꯤ",
+     1896
+    ],
+    [
+     "ꯏꯪ",
+     1626
+    ],
+    [
+     "ꯏꯟꯗꯤꯌꯥ",
+     1625
+    ],
+    [
+     "ꯃꯃꯤꯡꯁꯤꯡ",
+     1416
+    ],
+    [
+     "ꯂꯃꯥꯏꯁꯤꯡ",
+     1184
+    ],
+    [
+     "ꯃꯇꯧ",
+     971
+    ],
+    [
+     "ꯄꯨꯟꯁꯤ",
+     906
+    ],
+    [
+     "ꯃꯔꯨ",
+     826
+    ],
+    [
+     "ꯂꯣꯏꯅꯁꯤꯟꯂꯣꯟ",
+     769
+    ],
+    [
+     "ꯑꯇꯣꯞꯄ",
+     721
+    ],
+    [
+     "ꯂꯣꯏꯅꯕꯥ",
+     654
+    ],
+    [
+     "ꯑꯇꯣꯞꯄꯥ",
+     592
+    ],
+    [
+     "ꯄꯨꯝꯅꯃꯛ",
+     520
+    ],
+    [
+     "ꯌꯦꯡꯕ",
+     505
+    ]
+   ]
+  }
+ }
+}

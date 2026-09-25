@@ -35,8 +35,9 @@ Key results (TUMMHCD, 55 classes, official test set of 12,794 images):
   TUMMHCD image is 24 × 24 with the ink filling the frame.
 - 044 (ꯢ, i lonsum, U+ABE2) versus 025 (ꯏ, i, U+ABCF) cannot be separated from isolated images:
   a two-class specialist reaches 68.2% against a 67.1% majority baseline. Reading this pair
-  perfectly would lift the ensemble to 98.73%. **This pair is the reason for the word-level project.**
-  Phase 0 (below) found it is a spelling convention: everyday writing uses ꯏ throughout.
+  perfectly would lift the ensemble to 98.73%. This pair was the original reason for the word-level
+  project; Phase 0 (below) found it is a spelling convention (everyday writing uses ꯏ throughout),
+  and the project now reads it as one letter.
 - Rule from Hijam's thesis: ꯢ follows a vowel; ꯏ begins a word or does not follow a vowel.
   Checked by language experts on about 26,000 words (from a corpus of about 190,000): 94.7%.
   ꯢ is about 3.6 times as frequent as ꯏ.
@@ -92,9 +93,10 @@ metrics.
 Found by web search only (no full-text access in that session): every paper still has to be
 checked against its full text before citing.
 
-**Novelty statement (draft; (3) and (4) revised 24 September 2026).** No published work
-recognises handwritten Meitei Mayek words or lines end to end. Earlier work classifies isolated characters, segments handwritten pages into
-lines and words without recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
+**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026).**
+No published work recognises handwritten Meitei Mayek words or lines end to end. Earlier work
+classifies isolated characters, segments handwritten pages into lines and words without
+recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
 doi 10.1007/s00371-020-01799-4: 189 pages, word segmentation 88.96%), or corrects a character
 classifier on segmented words with zones and the orthographic rule (Hijam and Saharia 2024;
 Hijam's thesis). The only large handwritten Manipuri word dataset, IIIT-Indic-HW-UC (Mondal and
@@ -149,6 +151,7 @@ language-model text is all typed text with ꯢ mapped to ꯏ; the recogniser tre
 optional rendering of the output by the rule, evaluated on text (the expert review sheet
 `results/i_exception_candidates.csv` matters only for that). The word-level motivation now rests
 on reading whole words, the other confusable pairs and the real test set, not on ꯢ/ꯏ.
+The owner confirmed this reframing and contribution (4) on 24 September 2026.
 
 **TUMMHCD (measured, `results/tummhcd_audit.json`).** No writer information: no sub-folders or
 side files; names are `mmhc<class+1>_<running index>`; neighbouring and same-numbered files are
@@ -166,13 +169,112 @@ from the Phase 3 real set.
 **Checks for the first paper (under review).** (1) Image and ink-box size are (nearly) constant,
 so the size probe's separation of 046/009 (86.5%) and 011/047 (84.1%) must come mostly from ink
 fraction: a small glyph scaled up to 24 px gets thicker strokes. If the paper says the features
-see a character's zone or size directly, correct that at revision. (2) Score the final system
+see a character's zone or size directly, correct that at revision; the Phase 1 size
+measurement (`results/glyph_sizes_tummhcd.json`) shows it: ꯦ is written 0.47 L tall, ꯰ 0.87 L, so
+in the 24 px images the strokes of ꯦ are about twice as thick. (2) Score the final system
 without the 469 test images that have a train twin (`results/tummhcd_audit_duplicates.csv`); if
 none of the 241 errors is among them, accuracy would be 98.04% instead of 98.12%. Earlier TUMMHCD
 results share the test set, so the comparison stands; reporting both pre-empts a reviewer.
 (3) Everyday writing does not distinguish ꯢ from ꯏ: the paper could say that 044/025 is a
 spelling convention, under which its ensemble's accuracy is its own figure of 98.73%
 (163 errors).
+
+## Phase 1: synthetic words (details in `docs/phase1_synthetic_words.md`)
+
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. **Done (25 September
+2026):** four runs on TUMMHCD by the owner, who approved the contact sheet of the fourth
+("pretty satisfied"). Results of that run: `results/glyph_*.json`, `results/lexicon_stats.json`,
+`results/spacing_synthetic_tummhcd.json`, `results/sign_placement_tummhcd.json`,
+`results/pen_strokes_tummhcd_val.json`, `results/synth_{val,test}.json`; the fixed sets are on
+Drive (`WORK/synth/{val,test}.tar`). Final checks on the full lexicon: signs beside a letter
+never nearer the next letter nor touched by it (0%); signs above and below a median
+0.085–0.10 L from their letter; 0.6% of words with strokes under 100 grey levels below the
+paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recogniser).
+
+- **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
+  Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
+- **Character images:** the paper's split, made by `mayek.split` (first project, pinned to
+  commit 0d2c6e5). Synthetic training words use train images, validation words our
+  validation part, test words TUMMHCD test without the 469 train twins; the 48 images with
+  conflicting labels are used nowhere.
+- **Proportions and placement** from Noto Sans Meetei Mayek (OFL 1.1, bundled in
+  `mayek_words/assets`, measured with HarfBuzz): ꯥ, ꯩ, ꯪ above the character before them,
+  ꯦ, ꯣ, ꯧ, ꯤ beside it, ꯨ below it, apun under the letter before it; positions relative to
+  the pen, as in the font. With jitter off, the synthesiser reproduces the font's rendering.
+- **Handwritten sizes from TUMMHCD itself:** the stretch to 24 x 24 thickens strokes in
+  proportion, so the thickness of vertical and horizontal strokes gives back each class's
+  lost width and height (checked on the font's characters: heights within 4%, widths
+  within about 15%). Measured (`results/glyph_sizes_tummhcd.json`): letters as printed;
+  signs written larger (height: ꯨ 2.4 times the font's, ꯩ 1.5, ꯧ 1.4, ꯪ 1.3, ꯦ and ꯥ 1.2;
+  ꯤ 1.4 times as wide); strokes 0.07 L. The measured sizes are the default (owner,
+  25 September 2026; packaged as `mayek_words/assets/glyph_sizes_tummhcd.json`); pen width
+  0.06–0.14 L (owner, same day).
+- **No writer IDs, so style matching:** each character is one of the 16 images of its class
+  closest to a random anchor (within-class z-scores of slant, stroke width, ink fraction,
+  ink darkness); the pen width is made equal across the word.
+- **Spacing, from real handwriting:** in six samples of published handwriting (screenshots
+  from the owner, measured with `scripts/measure_spacing.py`, images not kept) a third of
+  neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
+  synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
+  2–60% (2–50% before the signs' rule, below) and otherwise leaves −0.10 to +0.05 L on top of
+  the font's side bearings; measured the same way, 34% touching with TUMMHCD characters, gaps
+  0.059 L (`results/spacing_*.json`).
+- **Syllables kept together (owner, 25 September 2026):** a syllable is a letter or an
+  apun cluster, its vowel sign, and a nung or lonsum coda (`charset.syllables`). Spacing is
+  usually even; a gap inside a syllable is never wider than the gaps around it, so ꯤ, ꯦ,
+  ꯣ, ꯧ and a lonsum are never closer to the next letter than to their own; in 1 word in 5
+  the syllables stand apart. Before this, ꯤ looked attached to the next letter in 87% of
+  cases; now in none.
+- **Signs on the ink (owner, 25 September 2026):** a sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is
+  always closer to its own letter or even, never stuck to the letter on its right, never
+  merged with its letter. TUMMHCD's ꯤ starts with a long lead-in and its stem stands
+  mid-image, so the box rule had left the stem nearer the next letter in 73% of cases, and
+  the next letter touched a sign in 16–19%. Now ꯤ is placed on the ink by its body: the
+  layout's gap in even words (4 in 5); 0.02–0.06 L from its letter in uneven words (touching
+  in 1 in 10), the next syllable further. ꯦ, ꯣ, ꯧ stay where the layout puts them (the owner:
+  the close placement made them worse). For all: the next letter never touches the sign or
+  sits nearer it; no sign ink goes into its letter (letter ink above and below it in a
+  column; a lead-in may pass over). Result: 0% nearer the next letter, 0% next letter
+  touching (`scripts/check_signs.py`, `results/sign_placement_dev_val.json`). Letters now
+  join with a chance of 2–60% per word (was 2–50%), keeping 34% of letters touching.
+- **Heights and faint strokes (owner, 25 September 2026):** ꯤ is sized like a letter, from its
+  letter's foot to about 0.1 L above its top (it was scaled like the small signs and could end
+  below its letter's top). Signs above and below (ꯥ, ꯩ, ꯪ, ꯨ, apun) are placed on the ink at
+  their print distance from the letter (about 0.08–0.1 L; was a fixed height, so ꯩ floated
+  over short letters such as ꯇ: 40% of ꯩ more than 0.2 L away, now 1%), never into a hollow
+  of the letter. The pen step keeps faint strokes joined to the dark ones (pale bars of some
+  ꯡ were erased): characters missing over 10% of their strokes 1.5% to 0.5%
+  (`results/sign_placement_dev_val.json`, `results/pen_strokes_dev_val.json`).
+- **Pale words (owner, third run, 25 September 2026):** placements approved; some characters
+  looked as if disappearing: words in pale ink (palest scans on grey paper, blurred; 10% of
+  words had strokes under 100 grey levels below the paper). A stroke's centre, after blur, is
+  now at least 130 grey levels darker than the paper (`Config.min_contrast`; darkens 20% of
+  words): under 100 grey levels 0.5%. The fixed sets' gap statistics of the third run were
+  wrong for signs (a layout-recording bug, images unaffected); fixed, sets to be regenerated.
+- **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
+  5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
+  2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
+  owner, 25 September 2026). Apun must join two consonants, lonsum letters included (typed
+  loanwords: ꯑꯦꯟ꯭ꯗ "and"). First run: 76,066 words kept; 68,450 / 3,855 / 3,761 distinct
+  words in training / validation / test.
+- **Variety of words (owner, 25 September 2026):** training covers short and long words and
+  the four kinds of syllable (C ꯀ, CV ꯀꯥ, CVC ꯀꯥꯡ, CC ꯀꯝ; `charset.syllable_type`): 15% of
+  training words are built from real syllables (`lexicon.SyllableBank`; 1-6 syllables, the
+  owner's maximum; kinds even). On the development list: 3.6% six-syllable words (text alone
+  1.4%) and 10.8% CC syllables (7.7%). The rare long words of text (7+ syllables, 0.4%, mostly
+  loanwords with endings) are kept.
+- **Pale writing kept whole (25 September 2026):** the owner saw characters disappearing. The
+  pen step keeps the ink map's pixels over 0.5, and the map was scaled to the darkest 5% of
+  the ink, so pale scans lost their strokes: 11.4% of characters lost more than 30% of their
+  ink (1.3% more than half). The map is now anchored to the Otsu threshold (what the scan shows
+  as ink stays ink): none loses more than 30%. The measured sizes move a little with it
+  (median width 1.03 times, height 1.01; single classes up to 13%); re-measured in the second
+  run (strokes 0.084 L; signs a little larger).
+- **Sets:** training words are rendered on the fly (4–11 ms per word per core); fixed
+  synthetic validation and test sets of 5,000 words each, for model selection and a check.
+  The main evaluation stays the Phase 3 real set. The gap figures in `synth_*.json` are
+  between character boxes, not ink (`ink_gaps_in_L` in the fourth run's files, renamed
+  `box_gaps_in_L`); for signs, the ink is measured by `scripts/check_signs.py`.
 
 ## Working rules
 
