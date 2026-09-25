@@ -129,14 +129,16 @@ evaluation is the real set of Phase 3.
 | `scripts/oracle_baseline.py` | the baseline → `results/phase2_baseline_{val,test}.json` |
 | `notebooks/phase2_recogniser.ipynb` | all of it on Colab |
 
-## 4. Expected time on the A100
+## 4. Time on the A100
 
-Rendering takes about 7 ms per word per CPU core (measured here, with normalisation), so
-10 worker processes give about 1,400 words per second, 22 steps of 64 words per second:
-60,000 steps then take at least 45 minutes. The notebook measures the rendering and the
-GPU speed before training and prints the hours per run; about 1 to 1.5 hours is expected,
-so the three runs take an afternoon. If the log shows the GPU waiting for data most of the time, the runs are
-bound by rendering.
+Measured on the first run (`convnext_tummhcd`, Colab A100 40 GB, owner, 25 September 2026):
+25,000 steps in 67 minutes, about 6 steps (400 words) per second, so about 2.7 hours per run
+of 60,000 steps and about 8 hours for the three. The estimate made before (1 to 1.5 hours,
+from rendering at about 7 ms per word per CPU core in the cloud session) was too optimistic.
+The log's `waiting for data` share tells whether the CPU rendering the words or the GPU
+sets the pace; an A100 80 GB has the same compute as the 40 GB card (more memory, which
+this model does not need, and about a quarter more memory bandwidth), so it would help
+little either way.
 
 ## 5. Checks done in the cloud session (CPU)
 
@@ -174,7 +176,7 @@ bound by rendering.
 1. Input 64 px high and a column per 8 px (2.2).
 2. The three runs (2.3): ConvNeXt-T from TUMMHCD (main), from ImageNet, and the small CNN
    from scratch.
-3. 60,000 steps of 64 words per run (2.5), about 1 to 1.5 hours each.
+3. 60,000 steps of 64 words per run (2.5), about 2.7 hours each (section 4).
 4. The baseline with perfect segmentation and perfect zones (2.9), in its two forms.
 5. The language model from the training lexicon only, alpha and beta chosen on the
    synthetic validation set, and the synthetic test set used once (2.7, 2.10).
