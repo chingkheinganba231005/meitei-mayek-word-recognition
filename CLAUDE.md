@@ -183,7 +183,8 @@ spelling convention, under which its ensemble's accuracy is its own figure of 98
 
 Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. First run on TUMMHCD
 done by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`).
-Open: sizes from the font or measured, and the pen width; then rerun the notebook to
+Next: check with real characters that the words look handwritten (the owner saw typed-looking
+characters in previews drawn with the font's characters), then rerun the notebook to
 regenerate the fixed sets.
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
@@ -201,7 +202,9 @@ regenerate the fixed sets.
   lost width and height (checked on the font's characters: heights within 4%, widths
   within about 15%). Measured (`results/glyph_sizes_tummhcd.json`): letters as printed;
   signs written larger (height: ꯨ 2.4 times the font's, ꯩ 1.5, ꯧ 1.4, ꯪ 1.3, ꯦ and ꯥ 1.2;
-  ꯤ 1.4 times as wide); strokes 0.07 L. Font or measured sizes: the owner decides.
+  ꯤ 1.4 times as wide); strokes 0.07 L. The measured sizes are the default (owner,
+  25 September 2026; packaged as `mayek_words/assets/glyph_sizes_tummhcd.json`); pen width
+  0.06–0.14 L (owner, same day).
 - **No writer IDs, so style matching:** each character is one of the 16 images of its class
   closest to a random anchor (within-class z-scores of slant, stroke width, ink fraction,
   ink darkness); the pen width is made equal across the word.
@@ -209,8 +212,8 @@ regenerate the fixed sets.
   from the owner, measured with `scripts/measure_spacing.py`, images not kept) a third of
   neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
   synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
-  5–65% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
-  the same way, 36% touching, gaps 0.085 L (`results/spacing_*.json`).
+  2–50% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
+  the same way with the final settings, 33% touching, gaps 0.086 L (`results/spacing_*.json`).
 - **Syllables kept together (owner, 25 September 2026):** a syllable is a letter or an
   apun cluster, its vowel sign, and a nung or lonsum coda (`charset.syllables`). Spacing is
   usually even; a gap inside a syllable is never wider than the gaps around it, so ꯤ, ꯦ,

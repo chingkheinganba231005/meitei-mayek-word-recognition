@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -106,12 +107,21 @@ def test_measured_sizes_replace_the_font(tmp_path):
     sizes = tmp_path / "sizes.json"
     sizes.write_text(json.dumps({"classes": [{"char": ANAP, "w": 0.9, "h": 0.5},
                                              {"char": UNAP, "w": None, "h": 10.0}]}), encoding="utf-8")
-    font, measured = load_priors(), load_priors(sizes=sizes)
+    font, measured = load_priors(sizes=None), load_priors(sizes=sizes)
     assert measured[ANAP]["w"] == 0.9 and measured[ANAP]["bottom"] == font[ANAP]["bottom"]
     assert abs(measured[ANAP]["top"] - measured[ANAP]["bottom"] - 0.5) < 1e-9
     h0 = font[UNAP]["top"] - font[UNAP]["bottom"]           # below the baseline: keeps its top, clipped at 2x
     assert measured[UNAP]["top"] == font[UNAP]["top"]
     assert abs(measured[UNAP]["top"] - measured[UNAP]["bottom"] - 2 * h0) < 1e-9
+
+
+def test_measured_sizes_are_the_default():
+    root = Path(__file__).resolve().parents[1]
+    packaged = json.loads((root / "mayek_words" / "assets" / "glyph_sizes_tummhcd.json").read_text(encoding="utf-8"))
+    result = json.loads((root / "results" / "glyph_sizes_tummhcd.json").read_text(encoding="utf-8"))
+    assert packaged["classes"] == result["classes"]                 # the copy is the first run's result
+    default, measured = load_priors(), load_priors(sizes=root / "results" / "glyph_sizes_tummhcd.json")
+    assert default == measured and default != load_priors(sizes=None)
 
 
 def test_words_on_demand(store):

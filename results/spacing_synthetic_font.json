@@ -9,11 +9,11 @@
   ],
   "gap_jitter": 0.03,
   "touch": [
-   0.05,
-   0.65
+   0.02,
+   0.5
   ],
-  "touching_median": 0.355,
-  "visible_gap_median_in_L": 0.085,
-  "letter_height_px_median": 35.0
+  "touching_median": 0.33,
+  "visible_gap_median_in_L": 0.086,
+  "letter_height_px_median": 34.0
  }
 }

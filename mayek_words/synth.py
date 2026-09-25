@@ -45,7 +45,7 @@ class Config:
     uneven: tuple = (0.0, 0.12)         # most handwriting is evenly spaced; in some words (p_uneven)
     p_uneven: float = 0.2               # syllables stand apart: gaps inside a syllable narrower, between
     #                                     syllables wider, by this, in L (the owner's observation)
-    touch: tuple = (0.05, 0.65)         # per word, the chance that a character joins the one before it
+    touch: tuple = (0.02, 0.5)          # per word, the chance that a character joins the one before it
     touch_between: float = 0.5          # inside a syllable; between syllables times this. A joined
     #                                     character is slid left until its ink meets the ink before it
     #                                     (handwriting joins about a third of neighbouring letters:
@@ -56,7 +56,9 @@ class Config:
     mark_jitter: float = 0.05           # position of a sign, in L
     slant: float = 0.12                 # sd of the shear (tan of the angle), clipped at 2.5 sd
     rotation: float = 1.5               # sd in degrees, clipped at 2.5 sd
-    pen: tuple = (0.07, 0.12)           # pen width per word, in L; None keeps the images' strokes
+    pen: tuple = (0.06, 0.14)           # pen width per word, in L (TUMMHCD's scanned strokes are about
+    #                                     0.07; photos of handwriting look thicker; owner, 25 September
+    #                                     2026); None keeps the images' strokes
     style_k: int = 16                   # choose among the k images closest in style; None: any
     blur: tuple = (0.0, 0.8)            # gaussian sigma in px, per word
     noise: float = 3.0                  # sd of pixel noise in grey levels
@@ -74,11 +76,15 @@ class Sample(NamedTuple):
     layout: list             # (character, x0, x1, bottom, top) in units of L, before slant and rotation
 
 
-def load_priors(path=None, sizes=None, clip=(0.5, 2.0)):
-    """Font priors by character; with `sizes` (``scripts/glyph_sizes.py`` output), the width
-    and height measured on TUMMHCD replace the font's where available, clipped to `clip`
-    times the font's. Positions stay the font's: an above sign keeps its bottom, a sign
-    below keeps its top, a letter or a sign standing on the baseline keeps its bottom."""
+MEASURED = ASSETS / "glyph_sizes_tummhcd.json"  # copy of results/glyph_sizes_tummhcd.json, first run
+
+
+def load_priors(path=None, sizes=MEASURED, clip=(0.5, 2.0)):
+    """Priors by character: the font's positions, and by default the width and height
+    measured on TUMMHCD (``scripts/glyph_sizes.py``; the owner's choice, 25 September 2026),
+    where available, clipped to `clip` times the font's; sizes=None keeps the font's sizes.
+    An above sign keeps its bottom, a sign below keeps its top, a letter or a sign standing
+    on the baseline keeps its bottom."""
     rows = json.loads(Path(path or ASSETS / "glyph_priors.json").read_text(encoding="utf-8"))["classes"]
     prior = {r["char"]: dict(r) for r in rows}
     if sizes:

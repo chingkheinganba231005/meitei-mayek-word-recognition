@@ -2,9 +2,10 @@
 
 Started 24 September 2026. Status (25 September): the code, tests and Colab notebook are
 ready; the owner ran the notebook on TUMMHCD (section 5), and the syllable rule (section 2.7)
-and the draws for rare letters (section 3) followed from it. Two choices are open: sizes
-from the font or measured on TUMMHCD, and the pen width. Then the notebook is run again to
-regenerate the fixed synthetic sets.
+and the draws for rare letters (section 3) followed from it, and the owner chose the sizes
+measured on TUMMHCD and a wider pen range. Next: a check that the words look handwritten,
+with real characters (section 5), then the notebook is run again to regenerate the fixed
+synthetic sets.
 
 ## 1. What the synthesiser does
 
@@ -80,9 +81,10 @@ chords). On the font's own characters, stretched the same way, it recovers the h
 within 4% (median ratio 1.00, 10th–90th percentile 0.96–1.01) and the widths within about
 15% (median 0.95, 0.86–1.07); it gives no estimate where a character has no strokes in a
 direction (apun, cheikhei). `scripts/glyph_sizes.py` runs it on TUMMHCD
-(`results/glyph_sizes_tummhcd.json`); `--sizes` uses the measured sizes instead of the
-font's (clipped to 0.5–2 times the font's), keeping the font's positions. Which to use is
-decided on the contact sheets.
+(`results/glyph_sizes_tummhcd.json`). The measured sizes are used (the owner's choice
+after a side-by-side comparison, 25 September 2026; a copy is packaged as
+`assets/glyph_sizes_tummhcd.json`), clipped to 0.5–2 times the font's, with the font's
+positions; `--sizes font` gives the printed sizes.
 
 **2.5 Style matching instead of writers.** TUMMHCD has no writer information (Phase 0).
 Each image gets four style features, standardised within its class: slant, stroke width in
@@ -98,10 +100,10 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | letter height L | 32 px, log-normal jitter sd 0.1 |
 | letter width factor | 0.8–1.25 (log-uniform) |
 | gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
-| chance that a character joins the one before it (ink touching), inside a syllable | 5–65%; between syllables half that |
+| chance that a character joins the one before it (ink touching), inside a syllable | 2–50%; between syllables half that |
 | words spaced unevenly by syllable (inside narrower, between wider) | 1 in 5, by 0–0.12 L |
 | size of the signs relative to print | 0.85–1.3 |
-| pen width | 0.07–0.12 L (TUMMHCD letters: 2.2 px in 24, about 0.09) |
+| pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
 | rotation | normal, sd 1.5 degrees, clipped at 2.5 sd |
 | baseline drift | 0.04 L per character, smoothed |
@@ -150,10 +152,11 @@ syllable is never wider than the gaps around it. In 1 word in 5 the syllables st
 A character joins the one before it with the word's chance inside a syllable and half that
 between syllables, and a join between syllables joins their insides too. The ꯤ cases above
 drop to 0%. The rule covers every sign beside a letter (ꯤ, ꯦ, ꯣ, ꯧ) and lonsum codas
-(confirmed by the owner, 25 September 2026). Letters stay as close as before: measured
-like for like on 30 synthetic pages (`results/spacing_synthetic_font.json`), 36% of
-neighbouring letters touch and the others are 0.085 L apart (the owner's screenshots: 33.5%
-and 0.097 L).
+(confirmed by the owner, 25 September 2026). Letters stay as close as before. The wider pen
+made them touch more often (41%), so the chance of joining is now 2–50% per word; measured
+like for like on 30 synthetic pages with the final settings
+(`results/spacing_synthetic_font.json`), 33% of neighbouring letters touch and the others
+are 0.086 L apart (the owner's screenshots: 33.5% and 0.097 L).
 
 ## 3. Lexicon
 
@@ -217,9 +220,13 @@ Confirmed by the owner, 25 September 2026.
 - **Fixed sets**: 5,000 words each, 6.2 ms per word, made with the first layout: to be
   regenerated (their files, and the spacing check, are not committed).
 
-Open: sizes from the font or measured on TUMMHCD (a side-by-side comparison was sent to
-the owner), and the pen width (TUMMHCD strokes 0.07 L; the owner's screenshots about
-0.17 L, inflated by blur; the current range is 0.07–0.12 L).
+Decided afterwards (owner, 25 September 2026): sizes measured on TUMMHCD, after a
+side-by-side comparison with the font's; pen width 0.06–0.14 L, after a demonstration from
+0.05 to 0.17 L (TUMMHCD strokes about 0.07 L; the owner's screenshots about 0.17 L, inflated
+by blur). Next: the owner noted that some characters in the development previews look
+typed. Those previews use the font's characters, since TUMMHCD is on the owner's Drive; the
+words must be checked with real characters, including whether redrawing every stroke at an
+even width makes them look machine-made.
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

@@ -52,7 +52,7 @@ def main():
     ap.add_argument("--out", default="results/glyph_sizes_tummhcd.json")
     args = ap.parse_args()
 
-    prior = load_priors()
+    prior = load_priors(sizes=None)  # the font's sizes, to compare with
     font = GlyphStore.from_font()
     _, font_est = estimate_boxes(font.alpha > 0.5, font.labels)
     _, check = compare(font_est, prior)

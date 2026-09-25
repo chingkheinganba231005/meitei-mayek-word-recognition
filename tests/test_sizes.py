@@ -20,7 +20,7 @@ def test_chords():
 def test_sizes_come_back_on_the_font_characters():
     store = GlyphStore.from_font()
     T, est = estimate_boxes(store.alpha > 0.5, store.labels)
-    prior = load_priors()
+    prior = load_priors(sizes=None)
     anap, yenap = est[45], est[46]            # small signs: stretched most
     assert abs(anap["w"] / prior[chr(0xABE5)]["w"] - 1) < 0.15
     assert abs(anap["h"] / (prior[chr(0xABE5)]["top"] - prior[chr(0xABE5)]["bottom"]) - 1) < 0.2

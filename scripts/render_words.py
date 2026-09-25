@@ -1,7 +1,7 @@
 """Render a fixed, seeded set of synthetic word images, and a contact sheet to look at.
 
     python scripts/render_words.py --glyphs work/glyphs/val.npz --lexicon work/lexicon/val.tsv \\
-        --n 5000 --seed 1 --out-dir work/synth/val [--sizes results/glyph_sizes_tummhcd.json]
+        --n 5000 --seed 1 --out-dir work/synth/val [--sizes measured|font|file.json]
 
     python scripts/render_words.py --glyphs font --lexicon words.tsv --n 48 --sheet sheet.png
 
@@ -24,7 +24,7 @@ from PIL import Image, ImageDraw, ImageFont
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mayek_words.glyphs import ASSETS, GlyphStore  # noqa: E402
 from mayek_words.lexicon import Lexicon  # noqa: E402
-from mayek_words.synth import Config, Words, WordSynth, line_gaps, load_priors  # noqa: E402
+from mayek_words.synth import MEASURED, Config, Words, WordSynth, line_gaps, load_priors  # noqa: E402
 
 
 def contact_sheet(samples, path, cols=4, cell=(300, 120)):
@@ -55,7 +55,8 @@ def main():
     ap.add_argument("--n", type=int, required=True)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out-dir", help="write the images and labels here")
-    ap.add_argument("--sizes", help="glyph_sizes_tummhcd.json: sizes measured on TUMMHCD instead of the font's")
+    ap.add_argument("--sizes", default="measured",
+                    help="'measured' (on TUMMHCD, the default), 'font', or a glyph_sizes_*.json file")
     ap.add_argument("--numbers", type=float, default=0.03)
     ap.add_argument("--stop", type=float, default=0.02)
     ap.add_argument("--alpha", type=float, default=0.5, help="sampling weight = count ** alpha")
@@ -66,7 +67,8 @@ def main():
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
     cfg = Config()
-    synth = WordSynth(store, load_priors(sizes=args.sizes), cfg)
+    sizes = {"measured": MEASURED, "font": None}.get(args.sizes, args.sizes)
+    synth = WordSynth(store, load_priors(sizes=sizes), cfg)
     lexicon = Lexicon.load(args.lexicon, args.alpha, args.rare_share)
     words = Words(synth, lexicon, args.seed, args.numbers, args.stop)
 
@@ -88,7 +90,8 @@ def main():
     seconds = time.time() - t0
     shapes = np.array(shapes)
     summary = {"n": args.n, "seed": args.seed, "glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
-               "sizes": Path(args.sizes).name if args.sizes else "font", "numbers": args.numbers, "stop": args.stop,
+               "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
+               "numbers": args.numbers, "stop": args.stop,
                "alpha": args.alpha, "rare_share": lexicon.rare_share, "rare_characters": lexicon.rare_chars,
                "config": dataclasses.asdict(cfg),
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
