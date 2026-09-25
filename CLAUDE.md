@@ -276,6 +276,41 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
   between character boxes, not ink (`ink_gaps_in_L` in the fourth run's files, renamed
   `box_gaps_in_L`); for signs, the ink is measured by `scripts/check_signs.py`.
 
+## Phase 2: recogniser (details in `docs/phase2_recogniser.md`)
+
+Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Code ready (25 September
+2026), not yet run on TUMMHCD; the design below waits for the owner's confirmation**
+(`docs/phase2_recogniser.md`, section 6).
+
+- **Model:** the word image contrast-normalised (paper = its 90th percentile, ink = its 1st),
+  64 px high, proportions kept (at most 1,024 px wide); ConvNeXt-T stem and stages 1-3, the
+  third stage's downsampling halving the height only (4 rows x 384 channels, a column per
+  8 px: on 3,000 synthetic words no word has too few columns for CTC, 1.8 times the need at
+  the 1st percentile); each column projected, 2-layer BiLSTM (256 per direction), CTC over
+  the 54 characters and the blank. Unicode order is the reading order (a sign after its letter).
+- **Runs:** ConvNeXt-T from the first paper's TUMMHCD weights (main; the grey member without
+  size features, from the Hugging Face release), from ImageNet, and a small CNN from scratch
+  (the CRNN baseline).
+- **Training:** 60,000 steps of 64 synthetic words rendered on the fly (own seed, 1,000),
+  AdamW 3e-4, 2,000 warm-up steps, cosine to 1%, EMA 0.999, bfloat16 encoder; augmentation on
+  the GPU towards phone photos (rotation, shear, scale, warp, stroke width, blur, ink,
+  shading, ruled lines, noise; no flips). Greedy CER on the synthetic validation set every
+  2,000 steps picks `best.pt`. Resumable after a disconnection.
+- **Language model:** character n-grams (Kneser-Ney) of the training lexicon, order (3-7)
+  and word weighting (count ** 0, 0.5 or 1) chosen by validation perplexity; CTC beam search
+  with its weight alpha and a bonus beta per character chosen on the synthetic validation set.
+- **Metrics:** CER, WER (word accuracy with a 95% Wilson interval), the pairs ꯦ/꯰, ꯨ/ꯁ,
+  ꯗ/ꯘ, and, on synthetic sets, by kind of word (lexicon, composed of syllables, numbers).
+- **Baseline:** perfect segmentation (the synthesiser's boxes), each character classified
+  by the first paper's ensemble with ꯢ and ꯏ merged: as its original TUMMHCD image (upper
+  bound) and cut from the word image; with perfect zones (the idea of Hijam and Saharia's
+  second stage; the orthographic rule no longer matters in everyday spelling) and with the
+  same language model. The CRNN from scratch is the segmentation-free baseline.
+- **Protocol:** choices on the synthetic validation set; the synthetic test set once (the
+  notebook's `RUN_TEST`); two or more seeds for final numbers; the Phase 3 real set is the
+  main evaluation. Suggested to the owner: a small real development set in their own hand,
+  apart from the Phase 3 test set.
+
 ## Working rules
 
 - Environment: Google Colab, one NVIDIA A100 (80 GB). Keep notebooks runnable top to bottom.
