@@ -16,7 +16,7 @@ LETTERS = [chr(c) for c in range(0xABC0, 0xABDB)]
 def page_and_truth(touch, seed=0):
     rng = np.random.default_rng(seed)
     lex = Lexicon({"".join(rng.choice(LETTERS, 5)): 1 for _ in range(200)})
-    cfg = Config(touch=touch, slant=0, rotation=0, blur=(0, 0), noise=0, letter_height_jitter=0)
+    cfg = Config(touch=touch, touch_between=1.0, slant=0, rotation=0, blur=(0, 0), noise=0, letter_height_jitter=0)
     words = Words(WordSynth(GlyphStore.from_font(), config=cfg), lex, numbers=0, stop=0)
     layouts = []
     render = words.synth.render

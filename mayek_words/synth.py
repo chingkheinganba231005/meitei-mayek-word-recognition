@@ -28,7 +28,7 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage
 
-from .charset import CHEIKHEI, normalise, renderable
+from .charset import CHEIKHEI, normalise, renderable, syllables
 from .glyphs import ASSETS
 
 
@@ -39,12 +39,17 @@ class Config:
     width: tuple = (0.8, 1.25)          # letter width factor per word
     glyph_width_jitter: float = 0.08    # per character, sd of log
     glyph_height_jitter: float = 0.06
-    gap: tuple = (-0.10, 0.05)          # per word, added to the font's side bearings, in L
+    gap: tuple = (-0.10, 0.05)          # per word, added to the font's spacing, in L
     gap_jitter: float = 0.03
-    max_overlap: float = 0.05           # letters' boxes may overlap this much, in L
-    touch: tuple = (0.05, 0.65)         # per word, the chance that a letter joins the one before it:
-    #                                     slid left until its ink meets theirs (handwriting joins about
-    #                                     a third of neighbouring letters: results/spacing_web_samples.json)
+    max_overlap: float = 0.05           # neighbours' boxes may overlap this much, in L
+    uneven: tuple = (0.0, 0.12)         # most handwriting is evenly spaced; in some words (p_uneven)
+    p_uneven: float = 0.2               # syllables stand apart: gaps inside a syllable narrower, between
+    #                                     syllables wider, by this, in L (the owner's observation)
+    touch: tuple = (0.05, 0.65)         # per word, the chance that a character joins the one before it
+    touch_between: float = 0.5          # inside a syllable; between syllables times this. A joined
+    #                                     character is slid left until its ink meets the ink before it
+    #                                     (handwriting joins about a third of neighbouring letters:
+    #                                     results/spacing_web_samples.json)
     baseline_jitter: float = 0.04       # drift of the baseline, in L
     mark_scale: tuple = (0.85, 1.3)     # size of the signs relative to print, per word
     mark_size_jitter: float = 0.1       # per sign, sd of log
@@ -93,17 +98,21 @@ def load_priors(path=None, sizes=None, clip=(0.5, 2.0)):
 
 
 def line_gaps(layouts, prior):
-    """Gaps between the ink of neighbours on the line, in units of L, from Sample.layout:
-    letters, lonsum letters, digits and the signs written beside them (not above or below).
-    -> {"letter to letter": [...], "letter to sign beside it": [...], "sign to next letter": [...]}"""
-    out = {"letter to letter": [], "letter to sign beside it": [], "sign to next letter": []}
+    """Gaps between neighbours on the line, in units of L, from Sample.layout: letters,
+    lonsum letters, digits and the signs written beside a letter (not above or below).
+    -> {"letter to letter", "letter to sign beside it", "sign to next letter",
+        "inside a syllable", "between syllables": [...]}"""
+    out = {"letter to letter": [], "letter to sign beside it": [], "sign to next letter": [],
+           "inside a syllable": [], "between syllables": []}
     for boxes in layouts:
-        line = [b for b in boxes if prior[b[0]]["kind"] == "base" or prior[b[0]]["adv"] > 0.1]
-        for b1, b2 in zip(line, line[1:]):
+        syl = syllables("".join(b[0] for b in boxes))
+        line = [(b, n) for b, n in zip(boxes, syl) if prior[b[0]]["kind"] == "base" or prior[b[0]]["adv"] > 0.1]
+        for (b1, n1), (b2, n2) in zip(line, line[1:]):
             k1, k2 = prior[b1[0]]["kind"], prior[b2[0]]["kind"]
             key = ("letter to letter" if k1 == k2 == "base" else
                    "letter to sign beside it" if k2 == "mark" else "sign to next letter")
             out[key].append(b2[1] - b1[2])
+            out["inside a syllable" if n1 == n2 else "between syllables"].append(b2[1] - b1[2])
     return out
 
 
@@ -180,56 +189,95 @@ class WordSynth:
                 "rotation": float(np.clip(rng.normal(0, c.rotation), -2.5 * c.rotation, 2.5 * c.rotation)),
                 "pen": uniform(c.pen) if c.pen else None,
                 "touch": uniform(c.touch) if c.touch else 0.0,
+                "uneven": uniform(c.uneven) if rng.random() < c.p_uneven else 0.0,
                 "blur": uniform(c.blur),
                 "paper": uniform(c.paper),
                 "ink": uniform(c.ink) if c.ink else None}
 
     def layout(self, word, rng, st):
         """-> ([(character, x0, x1, bottom, top)] in units of L (y up, baseline at 0),
-               [True where the character is to be slid left until it touches the ink before it])."""
+               [True where the character is to be slid left until its ink meets the ink before it]).
+
+        1. Every character is placed as the font places it, with its size jittered.
+        2. The gaps between neighbours on the line (letters, lonsum letters, digits and the
+           signs written beside a letter) are set: the font's spacing, plus the word's gap,
+           plus jitter. A syllable is kept together (``charset.syllables``): no gap inside
+           it is wider than the gaps between it and its neighbours, so a sign is never
+           closer to the next letter than to its own. Most words are spaced evenly; in some
+           (st["uneven"]) the syllables stand visibly apart.
+        3. Joins: a character joins the one before it with chance st["touch"] inside a
+           syllable, less often between syllables; when two syllables join, their insides
+           are joined too.
+        """
         c = self.cfg
 
         def jitter(sd):
             return float(np.exp(rng.normal(0, sd)))
 
-        boxes, joins, pen, drift, base, right = [], [], 0.0, 0.0, None, None  # right: last ink edge on the line
-        for ch in word:
+        # 1. the font's placement
+        boxes, line, pen, drift, base = [], [], 0.0, 0.0, None
+        for i, ch in enumerate(word):
             p = self.prior[ch]
-            join = False
             if p["kind"] == "base" or base is None:
-                join = right is not None and rng.random() < st["touch"]
                 drift = 0.6 * drift + float(rng.normal(0, c.baseline_jitter))
                 w = p["w"] * st["width"] * jitter(c.glyph_width_jitter)
                 h = (p["top"] - p["bottom"]) * jitter(c.glyph_height_jitter)
-                gap = st["gap"] + float(rng.normal(0, c.gap_jitter)) if boxes else 0.0
-                x0 = pen + p.get("lsb", 0.05) + gap
-                if right is not None:
-                    x0 = max(x0, right - c.max_overlap)
+                x0 = pen + p.get("lsb", 0.05)
                 bottom = p["bottom"] * h / max(p["top"] - p["bottom"], 1e-6) + drift if p["kind"] == "base" else drift
                 box = [x0, x0 + w, bottom, bottom + h]
                 pen = x0 + w + p.get("rsb", 0.05)
-                base, right = box, x0 + w
+                base = box
+                line.append(i)
             else:
                 s = st["mark_scale"] * jitter(c.mark_size_jitter)
                 w, h = p["w"] * s, (p["top"] - p["bottom"]) * s
+                beside = p["adv"] > 0.1
                 if p.get("span"):  # apun: under the whole letter before it
                     x0 = base[0] + float(rng.normal(0, c.mark_jitter))
                     x1 = base[1] + float(rng.normal(0, c.mark_jitter))
                     w = max(x1 - x0, 0.3)
-                else:
-                    x0 = pen + p["off"] + float(rng.normal(0, c.mark_jitter))
+                else:              # a sign beside the letter gets its spacing in step 2
+                    x0 = pen + p["off"] + (0.0 if beside else float(rng.normal(0, c.mark_jitter)))
                 dy = drift + float(rng.normal(0, c.mark_jitter))
                 if p["bottom"] >= 0.9 or abs(p["bottom"]) < 0.05:  # above, or standing on the baseline
                     bottom = p["bottom"] + dy
                 else:                                              # hanging from its top
                     bottom = p["top"] + dy - h
                 box = [x0, x0 + w, bottom, bottom + h]
-                if p["adv"] > 0.1:  # a sign beside the letter: the line goes on after it
+                if beside:         # the line goes on after it
                     pen = max(pen + p["adv"] * s, x0 + w)
-                    right = max(right, x0 + w)
-            boxes.append((ch, *box))
-            joins.append(join)
-        return boxes, joins
+                    line.append(i)
+            boxes.append([ch, *box])
+
+        # 2. gaps on the line, syllables kept together
+        syl = syllables(word)
+        pairs = list(zip(line, line[1:]))
+        inside = [syl[a] == syl[b] for a, b in pairs]
+        natural = [boxes[b][1] - boxes[a][2] for a, b in pairs]
+        u = st.get("uneven", 0.0)
+        gaps = [n + st["gap"] + (-u if k else u) + float(rng.normal(0, c.gap_jitter)) for n, k in zip(natural, inside)]
+        edges = {}  # syllable -> the narrowest gap between it and a neighbour
+        for (a, b), k, g in zip(pairs, inside, gaps):
+            if not k:
+                for n in (syl[a], syl[b]):
+                    edges[n] = min(edges.get(n, np.inf), g)
+        gaps = [max(min(g, edges.get(syl[a], np.inf)) if k else g, -c.max_overlap)
+                for (a, b), k, g in zip(pairs, inside, gaps)]
+
+        # 3. joins
+        joined = [rng.random() < st["touch"] * (1.0 if k else c.touch_between) for k in inside]
+        linked = {n for (a, b), k, j in zip(pairs, inside, joined) if j and not k for n in (syl[a], syl[b])}
+        joined = [j or (k and syl[a] in linked) for (a, b), k, j in zip(pairs, inside, joined)]
+
+        shift, joins, second = 0.0, [False] * len(word), {b: j for j, (a, b) in enumerate(pairs)}
+        for i in range(len(word)):
+            if i in second:
+                j = second[i]
+                shift += gaps[j] - natural[j]
+                joins[i] = joined[j]
+            boxes[i][1] += shift
+            boxes[i][2] += shift
+        return [tuple(b) for b in boxes], joins
 
     # ------------------------------------------------------------------ drawing
 

@@ -13,7 +13,8 @@ K, LAI = chr(0xABC0), chr(0xABC2)
 ANAP, UNAP, INAP, NUNG, APUN = chr(0xABE5), chr(0xABE8), chr(0xABE4), chr(0xABEA), chr(0xABED)
 PLAIN = Config(width=(1, 1), glyph_width_jitter=0, glyph_height_jitter=0, gap=(0.1, 0.1), gap_jitter=0,
                baseline_jitter=0, mark_scale=(1, 1), mark_size_jitter=0, mark_jitter=0, slant=0, rotation=0,
-               pen=None, blur=(0, 0), noise=0, letter_height_jitter=0, style_k=None, margin=(0.2, 0.2))
+               pen=None, blur=(0, 0), noise=0, letter_height_jitter=0, style_k=None, margin=(0.2, 0.2),
+               touch=None, p_uneven=0.0)
 
 
 @pytest.fixture(scope="module")

@@ -50,6 +50,30 @@ def renderable(word):
     return bool(word) and all(ch in CLASS_OF and ch != I_LONSUM for ch in word)
 
 
+CODA_I_AFTER = frozenset(chr(c) for c in (0xABE5, 0xABE3, 0xABE8))  # ꯥ ꯣ ꯨ
+
+
+def syllables(word):
+    """The syllable each character belongs to, numbered 0, 1, ... from the left.
+
+    A syllable starts at a letter (the onset); a letter after apun joins it (a cluster,
+    ꯗ꯭ꯔ); vowel signs (the nucleus), nung and a lonsum letter (the coda) close it. An i
+    right after ꯥ, ꯣ or ꯨ ends that syllable's vowel (ꯑꯥꯏ: the i the standard spelling
+    writes ꯢ, a final). Digits and cheikhei stand alone. Writers keep a syllable together,
+    so its parts are never further apart than the syllable is from its neighbours.
+    """
+    out, n, prev = [], -1, None
+    for ch in word:
+        if ch in LETTERS:
+            if n < 0 or not (prev == APUN or (ch == I_LETTER and prev in CODA_I_AFTER)):
+                n += 1
+        elif ch in DIGITS or ch == CHEIKHEI or n < 0:
+            n += 1
+        out.append(n)
+        prev = ch
+    return out
+
+
 def problem(word):
     """Why a normalised word cannot be a written word, or None.
 
