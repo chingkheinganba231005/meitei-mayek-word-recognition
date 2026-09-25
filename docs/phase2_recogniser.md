@@ -149,9 +149,13 @@ bound by rendering.
 - Training stream, fixed sets from a folder or a .tar, word kinds, augmentation, a CTC
   model learning a batch, and a training run written, resumed and finished: tests
   (`tests/test_htr.py`, `tests/test_htr_torch.py`; the second is skipped without PyTorch).
-- Learning: the small CNN on the CPU (16 words per step, TUMMHCD validation characters,
-  the Phase 1 development word list, a 300-word validation set of other words): greedy
-  validation CER 1.0 at the start, 0.96 at step 250, 0.88 at step 500, 0.76 at step 750.
+- Learning: the small CNN on the CPU, 1,500 steps of 16 words (light augmentation,
+  learning rate 1e-3), TUMMHCD validation characters for both training and checking, the
+  Phase 1 development word list (7,000 words) for training and 300 words of other words for
+  checking: greedy CER 0.96 at step 250, 0.77 at 750, 0.42 at 1,000, 0.25 at 1,500 (WER
+  0.74). Beam search with the language model (alpha 0.25 and beta 1.5, chosen on the same
+  300 words) brought it to CER 0.20 and WER 0.61, and ꯗ/ꯘ from 66% to 79% read correctly.
+  A check that the chain works, not a result: the characters were the same, the run short.
 - The whole notebook, run top to bottom in this session with Colab stubbed out, the
   simulated release, the development data, the CPU and a few training steps (the ImageNet
   run left out, as Hugging Face is blocked here): every section works, including going on
