@@ -1,12 +1,12 @@
 # Phase 1: synthetic words
 
-Started 24 September 2026. Status (25 September): the code, tests and Colab notebook are
-ready; the owner ran the notebook on TUMMHCD twice (section 5). The first run led to the
-syllable rule (section 2.7), the draws for rare letters and the words built from syllables
-(section 3), the sizes measured on TUMMHCD, a wider pen range and a fix for pale writing
-(section 2.8). After the second run the owner still saw ꯤ nearer the next letter: signs are
-now placed on the ink (section 2.7; the rule is the owner's, the result to be confirmed on
-the next contact sheet). Next: the notebook is run again to regenerate the fixed synthetic sets.
+Started 24 September 2026. **Status (25 September): done.** The owner ran the notebook on
+TUMMHCD four times (section 5) and approved the contact sheet of the fourth run. The first run
+led to the syllable rule (section 2.7), the draws for rare letters and the words built from
+syllables (section 3), the sizes measured on TUMMHCD, a wider pen range and a fix for pale
+writing (section 2.8); the second to signs placed on the ink; the third to a minimum stroke
+contrast. The fixed synthetic validation and test sets of the fourth run are on Drive
+(`WORK/synth/{val,test}.tar`, settings in `results/synth_{val,test}.json`). Next: Phase 2.
 
 ## 1. What the synthesiser does
 
@@ -333,8 +333,10 @@ records the mix with and without it (`structure_train`).
 - The whole notebook on a fake archive (font characters, distorted, in TUMMHCD's layout)
   with Colab stubbed out: the split rule (15% of every class, seed 42), the duplicate
   exclusion, the size check, lexicon, contact sheets, fixed sets.
-- 44 tests (`pytest -q`), among them positions of every kind of sign, spacing and joining,
-  signs nearer their own letter on the ink, the spacing tool on synthetic pages, pen width, the split
+- 49 tests (`pytest -q`), among them positions of every kind of sign, spacing and joining,
+  signs nearer their own letter on the ink, heights of signs above and below, hollows of a
+  letter, faint strokes, layout boxes in letter heights, the spacing tool on synthetic pages,
+  pen width, the split
   and its stability, duplicate exclusion, and that the committed priors are exactly what
   `scripts/glyph_priors.py` writes.
 
@@ -399,6 +401,32 @@ as before. The gap statistics of the fixed sets (`ink_gaps_in_L` in `synth_*.jso
 signs beside a letter: a variable in the new placement code overwrote the sign's box in the
 recorded layout with pixels (the images were right); fixed, with a test, and the sets are
 regenerated in the next run.
+
+**Fourth run (owner, 25 September 2026): approved.** "I am pretty satisfied with the contact
+sheet." Compared with the third run's sheet, only the eleven palest words changed (darker; for
+example the darkest 2% of one went from grey 167 to 121); every other pixel is the same. On the
+full lexicon and the training characters (`results/sign_placement_tummhcd.json`; 300 words per
+sign, seed 1000):
+
+- Signs beside a letter: the body nearer the next letter 0% and the next letter touching the
+  sign 0%, for ꯤ, ꯦ, ꯣ and ꯧ, in even and uneven words. ꯤ touches its own letter in 0.3% of
+  cases (1.4% of uneven words) and crosses into it in 0.6%; its body is a median 0.19 L from
+  its letter and 0.24 L from the next (uneven words: 0.17 and 0.29 L). ꯦ, ꯣ, ꯧ never touch or
+  cross their letter. By the cruder centre of ink, ꯤ is nearer the next letter in 7% of cases.
+- Signs above and below: median gap to the letter 0.085–0.10 L (ꯥ, ꯩ, ꯪ, ꯨ), touching 0–1.3%,
+  over 0.2 L 1–3%; apun 0.18 L (in print 0.16 L).
+- Contrast (`results/pen_strokes_tummhcd_val.json`, validation characters and lexicon, 1,000
+  words): strokes less than 100 grey levels below the paper 0.6% of words (9.7% without the
+  minimum contrast), less than 80 none (2.6%); characters missing over 10% of their strokes after
+  the pen step 0.55% (1.45% with the old cut at 0.5).
+- Spacing (`results/spacing_synthetic_tummhcd.json`): 32.4% of neighbouring letters touch,
+  visible gaps 0.059 L (real handwriting 33.5%, 0.097 L).
+- Fixed sets (`results/synth_{val,test}.json`): 5,000 words each, about 10 ms per word.
+  Their `ink_gaps_in_L` are gaps between the characters' boxes (the image frames as placed), not
+  between their ink: signs beside a letter are placed on the ink, and ꯤ's lead-in makes its box
+  overlap its neighbours where the ink does not touch, so their "touching" there (36% for the
+  sign and the next letter) counts overlapping boxes, not ink (0%, above). From now on
+  `render_words.py` calls them `box_gaps_in_L`, with "overlapping", and adds a note.
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

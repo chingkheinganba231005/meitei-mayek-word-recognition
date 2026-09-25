@@ -181,11 +181,15 @@ spelling convention, under which its ensemble's accuracy is its own figure of 98
 
 ## Phase 1: synthetic words (details in `docs/phase1_synthetic_words.md`)
 
-Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. Runs on TUMMHCD
-by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`,
-`results/spacing_synthetic_tummhcd.json`); the packaged sizes are those of the second run.
-Three runs; after the third the owner approved the placements. Next: rerun the notebook (pale
-words darkened, below) to regenerate the fixed sets; the owner checks the contact sheet.
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. **Done (25 September
+2026):** four runs on TUMMHCD by the owner, who approved the contact sheet of the fourth
+("pretty satisfied"). Results of that run: `results/glyph_*.json`, `results/lexicon_stats.json`,
+`results/spacing_synthetic_tummhcd.json`, `results/sign_placement_tummhcd.json`,
+`results/pen_strokes_tummhcd_val.json`, `results/synth_{val,test}.json`; the fixed sets are on
+Drive (`WORK/synth/{val,test}.tar`). Final checks on the full lexicon: signs beside a letter
+never nearer the next letter nor touched by it (0%); signs above and below a median
+0.085–0.10 L from their letter; 0.6% of words with strokes under 100 grey levels below the
+paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recogniser).
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
   Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
@@ -268,7 +272,9 @@ words darkened, below) to regenerate the fixed sets; the owner checks the contac
   run (strokes 0.084 L; signs a little larger).
 - **Sets:** training words are rendered on the fly (4–11 ms per word per core); fixed
   synthetic validation and test sets of 5,000 words each, for model selection and a check.
-  The main evaluation stays the Phase 3 real set.
+  The main evaluation stays the Phase 3 real set. The gap figures in `synth_*.json` are
+  between character boxes, not ink (`ink_gaps_in_L` in the fourth run's files, renamed
+  `box_gaps_in_L`); for signs, the ink is measured by `scripts/check_signs.py`.
 
 ## Working rules
 

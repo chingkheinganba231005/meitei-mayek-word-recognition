@@ -100,12 +100,17 @@ def main():
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
                "width_px": {"mean": round(float(shapes[:, 1].mean()), 1), "max": int(shapes[:, 1].max())},
                "ms_per_word": round(1000 * seconds / max(args.n, 1), 2),
-               "ink_gaps_in_L": {k: {"n": len(v), "p10": round(float(np.percentile(v, 10)), 3),
+               "box_gaps_in_L": {k: {"n": len(v), "p10": round(float(np.percentile(v, 10)), 3),
                                      "median": round(float(np.median(v)), 3),
                                      "p90": round(float(np.percentile(v, 90)), 3),
-                                     "touching": round(float(np.mean(np.array(v) <= 0)), 3),
+                                     "overlapping": round(float(np.mean(np.array(v) <= 0)), 3),
                                      "under_0.03": round(float(np.mean(np.array(v) < 0.03)), 3)}
-                                 for k, v in line_gaps(layouts, synth.prior).items() if v}}
+                                 for k, v in line_gaps(layouts, synth.prior).items() if v},
+               "box_gaps_note": ("gaps between the boxes of neighbouring characters on the line (each box is "
+                                 "a TUMMHCD image frame as placed, its ink's extent), not between their ink: "
+                                 "signs beside a letter are placed on the ink, and the lead-in of ꯤ makes its "
+                                 "box overlap its neighbours where the ink does not touch; for the ink see "
+                                 "scripts/check_signs.py")}
     if out:
         (out / "labels.tsv").write_text("".join(lines), encoding="utf-8")
         (out / "config.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False), encoding="utf-8")

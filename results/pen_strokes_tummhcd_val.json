@@ -1,0 +1,37 @@
+{
+ "glyphs": "val.npz",
+ "characters": 4000,
+ "seed": 0,
+ "share_of_characters_missing_strokes": {
+  "cut at 0.5": {
+   "over_0.05": 0.0457,
+   "over_0.1": 0.0145,
+   "over_0.2": 0.0008
+  },
+  "strokes": {
+   "over_0.05": 0.026,
+   "over_0.1": 0.0055,
+   "over_0.2": 0.0003
+  }
+ },
+ "word_contrast": {
+  "with minimum contrast": {
+   "min_contrast": 130.0,
+   "words": 1000,
+   "median": 150.4,
+   "p5": 110.2,
+   "under_80": 0.0,
+   "under_100": 0.006,
+   "under_120": 0.125
+  },
+  "without": {
+   "min_contrast": null,
+   "words": 1000,
+   "median": 150.4,
+   "p5": 89.1,
+   "under_80": 0.026,
+   "under_100": 0.097,
+   "under_120": 0.22
+  }
+ }
+}
