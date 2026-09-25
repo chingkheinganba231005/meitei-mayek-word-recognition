@@ -170,7 +170,8 @@ from the Phase 3 real set.
 so the size probe's separation of 046/009 (86.5%) and 011/047 (84.1%) must come mostly from ink
 fraction: a small glyph scaled up to 24 px gets thicker strokes. If the paper says the features
 see a character's zone or size directly, correct that at revision; the Phase 1 size
-measurement (`results/glyph_sizes_tummhcd.json`) shows how much each class was stretched. (2) Score the final system
+measurement (`results/glyph_sizes_tummhcd.json`) shows it: ꯦ is written 0.47 L tall, ꯰ 0.87 L, so
+in the 24 px images the strokes of ꯦ are about twice as thick. (2) Score the final system
 without the 469 test images that have a train twin (`results/tummhcd_audit_duplicates.csv`); if
 none of the 241 errors is among them, accuracy would be 98.04% instead of 98.12%. Earlier TUMMHCD
 results share the test set, so the comparison stands; reporting both pre-empts a reviewer.
@@ -178,10 +179,12 @@ results share the test set, so the comparison stands; reporting both pre-empts a
 spelling convention, under which its ensemble's accuracy is its own figure of 98.73%
 (163 errors).
 
-## Phase 1: synthetic words (code ready 24 September 2026; details in `docs/phase1_synthetic_words.md`)
+## Phase 1: synthetic words (details in `docs/phase1_synthetic_words.md`)
 
-Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. The first run on
-TUMMHCD (owner, Colab) is pending; nothing below is a TUMMHCD result yet.
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. First run on TUMMHCD
+done by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`).
+Open: sizes from the font or measured, and the pen width; then rerun the notebook to
+regenerate the fixed sets.
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
   Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
@@ -196,8 +199,9 @@ TUMMHCD (owner, Colab) is pending; nothing below is a TUMMHCD result yet.
 - **Handwritten sizes from TUMMHCD itself:** the stretch to 24 x 24 thickens strokes in
   proportion, so the thickness of vertical and horizontal strokes gives back each class's
   lost width and height (checked on the font's characters: heights within 4%, widths
-  within about 15%). Output `results/glyph_sizes_tummhcd.json`; use it instead of the
-  font's sizes (`--sizes`) if the contact sheets look better that way.
+  within about 15%). Measured (`results/glyph_sizes_tummhcd.json`): letters as printed;
+  signs written larger (height: ꯨ 2.4 times the font's, ꯩ 1.5, ꯧ 1.4, ꯪ 1.3, ꯦ and ꯥ 1.2;
+  ꯤ 1.4 times as wide); strokes 0.07 L. Font or measured sizes: the owner decides.
 - **No writer IDs, so style matching:** each character is one of the 16 images of its class
   closest to a random anchor (within-class z-scores of slant, stroke width, ink fraction,
   ink darkness); the pen width is made equal across the word.
@@ -206,10 +210,17 @@ TUMMHCD (owner, Colab) is pending; nothing below is a TUMMHCD result yet.
   neighbouring letters touch (median 33.5%) and the others are about 0.1 L apart. The
   synthesiser joins a letter to the one before it (ink touching) with a per-word chance of
   5–65% and otherwise leaves −0.10 to +0.05 L on top of the font's side bearings; measured
-  the same way, 33% touching, gaps 0.086 L (`results/spacing_*.json`).
+  the same way, 36% touching, gaps 0.085 L (`results/spacing_*.json`).
+- **Syllables kept together (owner, 25 September 2026):** a syllable is a letter or an
+  apun cluster, its vowel sign, and a nung or lonsum coda (`charset.syllables`). Spacing is
+  usually even; a gap inside a syllable is never wider than the gaps around it, so ꯤ, ꯦ,
+  ꯣ, ꯧ and a lonsum are never closer to the next letter than to their own; in 1 word in 5
+  the syllables stand apart. Before this, ꯤ looked attached to the next letter in 87% of
+  cases; now in none.
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
-  2% full stops. Apun must join two consonants, lonsum letters included (typed loanwords:
+  2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
+  owner, 25 September 2026). First run: 76,066 words kept; 68,450 / 3,855 / 3,761. Apun must join two consonants, lonsum letters included (typed loanwords:
   ꯑꯦꯟ꯭ꯗ "and").
 - **Sets:** training words are rendered on the fly (5–7 ms per word per core); fixed
   synthetic validation and test sets of 5,000 words each, for model selection and a check.

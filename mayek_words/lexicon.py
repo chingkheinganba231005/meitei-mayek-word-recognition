@@ -12,7 +12,11 @@ train, 5% validation, 5% test. Real-test-set prompts (Phase 3) can be kept out o
 training with ``exclude``.
 
 Sampling: a word is drawn with probability proportional to count ** alpha (alpha = 0.5
-by default), between running text (alpha = 1) and a plain word list (alpha = 0).
+by default), between running text (alpha = 1) and a plain word list (alpha = 0). Some
+letters are rare in text (ꯘ is 0.009% of the characters, ꯓ and ꯙ about 0.02%), yet each
+is a character the recogniser must read (ꯗ/ꯘ is a confusable pair). So a share of the
+draws (rare_share, 10% by default) goes to the rare characters, those under rare_below
+(0.5%) of all characters: one of them is picked at random, then a word containing it.
 """
 
 import hashlib
@@ -21,7 +25,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .charset import ALPHABET, DIGITS, normalise, problem
+from .charset import ALPHABET, CHEIKHEI, DIGITS, normalise, problem
 
 MAX_LEN = 24
 SPLITS = (("train", 0.90), ("val", 0.95), ("test", 1.0))
@@ -102,22 +106,48 @@ def describe(counts):
 
 
 class Lexicon:
-    """Words with sampling weights count ** alpha."""
+    """Words with sampling weights count ** alpha; with rare_share, that share of the draws
+    is a word containing one of the rare characters (see the module notes)."""
 
-    def __init__(self, counts, alpha=0.5):
+    def __init__(self, counts, alpha=0.5, rare_share=0.1, rare_below=0.005):
         self.words = list(counts)
         w = np.array([counts[x] for x in self.words], np.float64) ** alpha
         self.cum = np.cumsum(w / w.sum())
+        self.rare = {}
+        if rare_share > 0 and self.words:
+            weight, total = Counter(), float((w * np.array([len(x) for x in self.words])).sum())
+            for word, wt in zip(self.words, w):
+                for ch in set(word):
+                    weight[ch] += wt * word.count(ch)
+            for ch in ALPHABET:
+                if ch not in DIGITS and ch != CHEIKHEI and 0 < weight[ch] / total < rare_below:
+                    idx = np.array([i for i, word in enumerate(self.words) if ch in word])
+                    self.rare[ch] = (idx, np.cumsum(w[idx] / w[idx].sum()))
+        self.rare_chars = sorted(self.rare)
+        self.rare_share = rare_share if self.rare else 0.0
 
     @classmethod
-    def load(cls, path, alpha=0.5):
-        return cls(read_counts(path), alpha)
+    def load(cls, path, alpha=0.5, rare_share=0.1):
+        return cls(read_counts(path), alpha, rare_share)
 
     def __len__(self):
         return len(self.words)
 
     def sample(self, rng):
+        if self.rare_share and rng.random() < self.rare_share:
+            idx, cum = self.rare[self.rare_chars[int(rng.integers(len(self.rare_chars)))]]
+            return self.words[int(idx[min(int(np.searchsorted(cum, rng.random(), side="right")), len(idx) - 1)])]
         return self.words[min(int(np.searchsorted(self.cum, rng.random(), side="right")), len(self.words) - 1)]
+
+
+def sampled_shares(lexicon, n=200000, seed=0):
+    """Share of each character among the characters of n drawn words."""
+    rng = np.random.default_rng(seed)
+    chars = Counter()
+    for _ in range(n):
+        chars.update(lexicon.sample(rng))
+    total = sum(chars.values())
+    return {ch: chars[ch] / total for ch in ALPHABET if ch not in DIGITS and ch != CHEIKHEI}
 
 
 def number(rng, max_digits=4):

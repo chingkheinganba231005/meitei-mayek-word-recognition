@@ -42,6 +42,14 @@ def main():
     if args.exclude:
         exclude = [normalise(w.strip()) for w in Path(args.exclude).read_text(encoding="utf-8").split() if w.strip()]
     parts = lx.split(kept, exclude)
+    plain, boosted = lx.Lexicon(parts["train"], rare_share=0.0), lx.Lexicon(parts["train"])
+    shares = (lx.sampled_shares(plain), lx.sampled_shares(boosted))
+    stats["sampling_train"] = {
+        "note": "share of each character among the characters of 200,000 drawn training words, without and "
+                "with the draws for rare characters (rare_share 0.1, rare_below 0.005)",
+        "rare_characters": boosted.rare_chars,
+        "shares": {ch: {"plain": round(shares[0][ch], 5), "with_rare_draws": round(shares[1][ch], 5)}
+                   for ch in sorted(shares[0], key=lambda c: shares[0][c])}}
     stats.update({
         "combined": {"distinct_words": len(combined), "running_words": sum(combined.values()),
                      "note": "largest count over the sources"},

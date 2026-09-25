@@ -26,6 +26,20 @@ def test_alphabet_merges_the_two_i():
     assert not cs.renderable(K + cs.I_LONSUM) and cs.renderable(K + cs.I_LETTER)
 
 
+def test_syllables_follow_the_owners_rules():
+    AA, NG, NUNG, I, HUK, INAP, RAI, BA = (chr(0xABE5), chr(0xABE1), chr(0xABEA), cs.I_LETTER, chr(0xABCD),
+                                          chr(0xABE4), chr(0xABD4), chr(0xABD5))
+    assert cs.syllables(K) == [0]                                     # onset, inherent vowel
+    assert cs.syllables(K + AA) == [0, 0]                             # onset, long a
+    assert cs.syllables(K + NUNG) == [0, 0]                           # nung closes it
+    assert cs.syllables(K + AA + NG) == [0, 0, 0]                     # lonsum closes it
+    assert cs.syllables(HUK + INAP + NG + HUK + NUNG) == [0, 0, 0, 1, 1]  # two syllables
+    assert cs.syllables(DIL + cs.APUN + RAI) == [0, 0, 0]             # apun: one onset cluster
+    assert cs.syllables(K + AA + I + BA) == [0, 0, 0, 1]              # an i after aa ends the vowel
+    assert cs.syllables(K + LAI) == [0, 1]                            # a bare letter is a syllable
+    assert cs.syllables(chr(0xABF1) + chr(0xABF2)) == [0, 1]          # digits stand alone
+
+
 def test_problems():
     assert cs.problem(ATIYA + YENAP + NA_LONSUM + cs.APUN + DIL) is None  # "and": lonsum + apun + letter
     assert cs.problem(K + cs.APUN + LAI) is None

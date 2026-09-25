@@ -1,9 +1,10 @@
 # Phase 1: synthetic words
 
-Started 24 September 2026. Status: the code, tests and Colab notebook are ready and have
-been checked on the font's own characters and on a fake archive; the first run on TUMMHCD
-(`notebooks/phase1_synthetic_words.ipynb`, run by the owner) is pending. No number in this
-note comes from TUMMHCD yet, except those taken from Phase 0.
+Started 24 September 2026. Status (25 September): the code, tests and Colab notebook are
+ready; the owner ran the notebook on TUMMHCD (section 5), and the syllable rule (section 2.7)
+and the draws for rare letters (section 3) followed from it. Two choices are open: sizes
+from the font or measured on TUMMHCD, and the pen width. Then the notebook is run again to
+regenerate the fixed synthetic sets.
 
 ## 1. What the synthesiser does
 
@@ -14,9 +15,10 @@ Package `mayek_words`; one word image takes 5–7 ms on one CPU core.
 2. **Characters.** For each character, a TUMMHCD image of its class, chosen to match the
    word's style (section 2.5).
 3. **Layout**, in units of L, the height of a letter. Letters, lonsum letters and digits
-   stand on the baseline one after another, with a gap; a sign is placed relative to the
-   pen position after the character before it, as the font places it (section 2.3). Sizes,
-   gaps, positions and the baseline are jittered.
+   stand on the baseline one after another; a sign is placed relative to the pen position
+   after the character before it, as the font places it (section 2.3). Then the gaps on the
+   line are set together, keeping every syllable together (section 2.7). Sizes, gaps,
+   positions and the baseline are jittered.
 4. **Drawing.** Each 24 x 24 image is resized into its box, which gives back the
    proportions TUMMHCD lost, and its strokes are thickened or thinned to the word's pen
    width (resizing scales strokes with the box). The word is slanted, rotated a little,
@@ -96,7 +98,8 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | letter height L | 32 px, log-normal jitter sd 0.1 |
 | letter width factor | 0.8–1.25 (log-uniform) |
 | gap between letters that do not join, added to the font's side bearings | −0.10 to +0.05 L, sd 0.03 L per gap |
-| chance that a letter joins the one before it (ink touching) | 5–65% |
+| chance that a character joins the one before it (ink touching), inside a syllable | 5–65%; between syllables half that |
+| words spaced unevenly by syllable (inside narrower, between wider) | 1 in 5, by 0–0.12 L |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.07–0.12 L (TUMMHCD letters: 2.2 px in 24, about 0.09) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -130,6 +133,28 @@ by the layout, more than twice the font's 0.12 L. The notebook repeats the check
 TUMMHCD characters (`results/spacing_synthetic_tummhcd.json`): how readily two letters
 join depends on their shapes.
 
+**2.7 Syllables.** On the contact sheets of the first run, the owner saw ꯤ drawn closer to
+the letter after it than to its own consonant. Measured with the font's characters, for ꯤ
+followed by another syllable, the first layout put it nearer the next letter in 52% of cases
+and joined it to the next letter alone in 35%: the word's gap and the joins applied to the
+gap after a sign but not to the gap before it. In the owner's rules a syllable starts at a
+letter (a consonant, or a cluster joined by apun), takes a vowel sign as its nucleus, and may
+close with nung or a lonsum letter (`charset.syllables`; an i right after ꯥ, ꯣ or ꯨ also
+closes it, like the ꯢ of the standard spelling). Handwriting is usually spaced evenly; when
+it is not, the gaps follow the syllables, and nobody writes a vowel sign closer to the next
+letter than to its own.
+
+So the layout now sets all the gaps on a line together. Spacing is even by default: ꯤ, when
+touching neither neighbour, sits halfway (median ratio of its two gaps 1.00). A gap inside a
+syllable is never wider than the gaps around it. In 1 word in 5 the syllables stand apart.
+A character joins the one before it with the word's chance inside a syllable and half that
+between syllables, and a join between syllables joins their insides too. The ꯤ cases above
+drop to 0%. The rule covers every sign beside a letter (ꯤ, ꯦ, ꯣ, ꯧ) and lonsum codas
+(confirmed by the owner, 25 September 2026). Letters stay as close as before: measured
+like for like on 30 synthetic pages (`results/spacing_synthetic_font.json`), 36% of
+neighbouring letters touch and the others are 0.085 L apart (the owner's screenshots: 33.5%
+and 0.097 L).
+
 ## 3. Lexicon
 
 `scripts/build_lexicon.py` reads the Phase 0 word-frequency lists (one per source, on
@@ -148,6 +173,16 @@ proportional to count^0.5. The word lists stay on Drive (they derive from CC BY-
 ODC-By text); `results/lexicon_stats.json` has their sizes and character frequencies.
 Real-test-set prompts (Phase 3) can be kept out of training with `--exclude`.
 
+**Rare letters.** Some letters are rare in text: in the training words of the first run,
+ꯘ is 478 of about 5.4 million characters (0.009%), ꯓ 934 and ꯙ 1,243
+(`results/lexicon_stats.json`). Each is still a character the recogniser must read, and
+ꯗ/ꯘ is one of the confusable pairs. So 10% of the draws go to the rare characters (under
+0.5% of all characters): one of them is picked at random, then a word containing it.
+On the Phase 0 word list available in development (7,810 words) this raises ꯘ about
+17-fold, to 0.3% of characters, and barely changes the common ones (ꯤ 9.6% to 9.5%); the
+next lexicon run records the shares with and without these draws (`sampling_train`).
+Confirmed by the owner, 25 September 2026.
+
 ## 4. Checks done so far
 
 - Layout against the font's own shaping of every sign and of two-sign combinations
@@ -160,15 +195,31 @@ Real-test-set prompts (Phase 3) can be kept out of training with `--exclude`.
   and its stability, duplicate exclusion, and that the committed priors are exactly what
   `scripts/glyph_priors.py` writes.
 
-## 5. After the Colab run
+## 5. First run on TUMMHCD (owner, 24–25 September 2026)
 
-1. The two contact sheets, read by a native writer: signs in the right place and of the
-   right size, spacing, anything no writer would do. Then choose font or measured sizes.
-2. `results/glyph_sizes_tummhcd.json`: are signs written larger or smaller than printed?
-   Is the method's check on the font as good as here?
-3. `results/lexicon_stats.json`: sizes, what was dropped, character frequencies. Rare
-   letters (the borrowed ꯓ, ꯙ, ꯚ ...) may need words that contain them drawn more often.
-4. `results/glyph_store_stats.json`: images per class after the exclusions.
+- **Character stores** (`results/glyph_store_stats.json`): 61,475 training, 10,820
+  validation and 12,325 test images (29, 6 and 469 left out); the fewest per class are
+  506 training images of cheikhei.
+- **Sizes** (`results/glyph_sizes_tummhcd.json`): the method's check on the font is as in
+  development. Letters and lonsum letters are written about as printed (median width 0.98
+  and height 0.99 times the font's). Signs are written larger: height 2.4 times the font's for ꯨ, 1.5 for
+  ꯩ, 1.4 for ꯧ, 1.3 for ꯪ, 1.2 for ꯦ and ꯥ; ꯤ is 1.4 times as wide. Strokes are about
+  0.07 L across.
+- **First-paper note:** ꯦ is written 0.47 L tall and ꯰ 0.87 L, so in the 24 x 24 images
+  the strokes of ꯦ are about twice as thick: that is what the size features see.
+- **Spacing** with TUMMHCD characters (first layout): 35.4% of neighbouring letters touch,
+  visible gaps 0.094 L, as in real handwriting (33.5%, 0.097 L). To be repeated with the
+  syllable layout.
+- **Lexicon** (`results/lexicon_stats.json`): three sources (FLORES+ was not downloaded),
+  77,580 distinct words, 76,066 kept (272 dropped for characters outside the alphabet, 98
+  for apun, 30 for starting with a sign, 4 for length); 68,450 training, 3,855 validation
+  and 3,761 test words. ꯤ is the most frequent character (10.9%).
+- **Fixed sets**: 5,000 words each, 6.2 ms per word, made with the first layout: to be
+  regenerated (their files, and the spacing check, are not committed).
+
+Open: sizes from the font or measured on TUMMHCD (a side-by-side comparison was sent to
+the owner), and the pen width (TUMMHCD strokes 0.07 L; the owner's screenshots about
+0.17 L, inflated by blur; the current range is 0.07–0.12 L).
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

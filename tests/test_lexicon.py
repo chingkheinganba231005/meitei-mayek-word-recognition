@@ -52,6 +52,15 @@ def test_sampling_and_numbers():
         assert all(ch in DIGITS for ch in n) and (len(n) == 1 or n[0] != chr(0xABF0))
 
 
+def test_rare_characters_are_drawn_more_often():
+    counts = Counter({K + ANAP: 10000, LAI + ANAP: 10000, K + LAI: 10000, chr(0xABD8) + ANAP: 1})  # ꯘ: 0.17%
+    GHOU = chr(0xABD8)
+    plain, boosted = lx.Lexicon(counts, rare_share=0.0), lx.Lexicon(counts)
+    assert boosted.rare_chars == [GHOU] and plain.rare_chars == []
+    a, b = lx.sampled_shares(plain, 20000), lx.sampled_shares(boosted, 20000)
+    assert a[GHOU] < 0.003 and b[GHOU] > 0.03 and b[K] > 0.85 * a[K]   # the rest shrink by about rare_share
+
+
 def test_scripts_end_to_end(tmp_path):
     src = tmp_path / "wiki.tsv"
     src.write_text("".join(f"{w}\t{i + 1}\n" for i, w in enumerate(words(400))), encoding="utf-8")

@@ -59,6 +59,7 @@ def main():
     ap.add_argument("--numbers", type=float, default=0.03)
     ap.add_argument("--stop", type=float, default=0.02)
     ap.add_argument("--alpha", type=float, default=0.5, help="sampling weight = count ** alpha")
+    ap.add_argument("--rare-share", type=float, default=0.1, help="share of draws for rare characters")
     ap.add_argument("--sheet", help="contact sheet .png")
     ap.add_argument("--sheet-n", type=int, default=48)
     args = ap.parse_args()
@@ -66,7 +67,8 @@ def main():
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
     cfg = Config()
     synth = WordSynth(store, load_priors(sizes=args.sizes), cfg)
-    words = Words(synth, Lexicon.load(args.lexicon, args.alpha), args.seed, args.numbers, args.stop)
+    lexicon = Lexicon.load(args.lexicon, args.alpha, args.rare_share)
+    words = Words(synth, lexicon, args.seed, args.numbers, args.stop)
 
     t0 = time.time()
     samples, shapes, lines, layouts = [], [], [], []
@@ -87,7 +89,8 @@ def main():
     shapes = np.array(shapes)
     summary = {"n": args.n, "seed": args.seed, "glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
                "sizes": Path(args.sizes).name if args.sizes else "font", "numbers": args.numbers, "stop": args.stop,
-               "alpha": args.alpha, "config": dataclasses.asdict(cfg),
+               "alpha": args.alpha, "rare_share": lexicon.rare_share, "rare_characters": lexicon.rare_chars,
+               "config": dataclasses.asdict(cfg),
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
                "width_px": {"mean": round(float(shapes[:, 1].mean()), 1), "max": int(shapes[:, 1].max())},
                "ms_per_word": round(1000 * seconds / max(args.n, 1), 2),
