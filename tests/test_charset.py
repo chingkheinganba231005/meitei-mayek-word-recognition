@@ -40,6 +40,16 @@ def test_syllables_follow_the_owners_rules():
     assert cs.syllables(chr(0xABF1) + chr(0xABF2)) == [0, 1]          # digits stand alone
 
 
+def test_the_four_kinds_of_syllable():
+    AA, NG, M_L, NUNG, RAI = chr(0xABE5), chr(0xABE1), chr(0xABDD), chr(0xABEA), chr(0xABD4)
+    word = K + K + AA + K + AA + NG + K + M_L + K + NUNG + DIL + cs.APUN + RAI + AA
+    parts = cs.split_syllables(word)
+    assert "".join(parts) == word
+    assert [cs.syllable_type(p) for p in parts] == ["C", "CV", "CVC", "CC", "CC", "CV"]
+    assert cs.syllable_type(K + AA + cs.I_LETTER) == "CVC"          # ꯀꯥꯏ: the i is a final
+    assert cs.syllable_type(chr(0xABF1)) == "other"
+
+
 def test_problems():
     assert cs.problem(ATIYA + YENAP + NA_LONSUM + cs.APUN + DIL) is None  # "and": lonsum + apun + letter
     assert cs.problem(K + cs.APUN + LAI) is None

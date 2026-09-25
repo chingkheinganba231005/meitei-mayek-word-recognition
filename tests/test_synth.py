@@ -129,4 +129,7 @@ def test_words_on_demand(store):
     w = Words(WordSynth(store), lex, seed=3)
     assert np.array_equal(w[7].image, w[7].image) and w[7].text in (K + ANAP, LAI)
     digits = Words(WordSynth(store), lex, seed=3, numbers=1.0, stop=1.0)[0].text
+    built = Words(WordSynth(store), lex, seed=3, numbers=0.0, built=1.0)
+    assert built.bank is not None and len(built[1].text) >= 1
+    assert Words(WordSynth(store), lex, seed=3).bank is None             # off unless asked for
     assert digits[-1] == CHEIKHEI and all(ch in DIGITS for ch in digits[:-1])

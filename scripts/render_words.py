@@ -61,6 +61,8 @@ def main():
     ap.add_argument("--stop", type=float, default=0.02)
     ap.add_argument("--alpha", type=float, default=0.5, help="sampling weight = count ** alpha")
     ap.add_argument("--rare-share", type=float, default=0.1, help="share of draws for rare characters")
+    ap.add_argument("--built", type=float, default=0.0,
+                    help="share of words composed of real syllables (1-8 syllables, every kind)")
     ap.add_argument("--sheet", help="contact sheet .png")
     ap.add_argument("--sheet-n", type=int, default=48)
     args = ap.parse_args()
@@ -70,7 +72,7 @@ def main():
     sizes = {"measured": MEASURED, "font": None}.get(args.sizes, args.sizes)
     synth = WordSynth(store, load_priors(sizes=sizes), cfg)
     lexicon = Lexicon.load(args.lexicon, args.alpha, args.rare_share)
-    words = Words(synth, lexicon, args.seed, args.numbers, args.stop)
+    words = Words(synth, lexicon, args.seed, args.numbers, args.stop, args.built)
 
     t0 = time.time()
     samples, shapes, lines, layouts = [], [], [], []
@@ -93,6 +95,7 @@ def main():
                "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
                "numbers": args.numbers, "stop": args.stop,
                "alpha": args.alpha, "rare_share": lexicon.rare_share, "rare_characters": lexicon.rare_chars,
+               "built": args.built,
                "config": dataclasses.asdict(cfg),
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
                "width_px": {"mean": round(float(shapes[:, 1].mean()), 1), "max": int(shapes[:, 1].max())},

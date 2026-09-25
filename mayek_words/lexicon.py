@@ -25,7 +25,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .charset import ALPHABET, CHEIKHEI, DIGITS, normalise, problem
+from .charset import ALPHABET, CHEIKHEI, DIGITS, SYLLABLE_TYPES, normalise, problem, split_syllables, syllable_type
 
 MAX_LEN = 24
 SPLITS = (("train", 0.90), ("val", 0.95), ("test", 1.0))
@@ -138,6 +138,47 @@ class Lexicon:
             idx, cum = self.rare[self.rare_chars[int(rng.integers(len(self.rare_chars)))]]
             return self.words[int(idx[min(int(np.searchsorted(cum, rng.random(), side="right")), len(idx) - 1)])]
         return self.words[min(int(np.searchsorted(self.cum, rng.random(), side="right")), len(self.words) - 1)]
+
+
+class SyllableBank:
+    """The syllables of the lexicon's words, by kind (C, CV, CVC, CC; ``charset.syllable_type``),
+    weighted as the words are. ``word`` composes a word of real syllables: its number of
+    syllables and the kind of each drawn evenly, so that short and long words and every
+    kind of syllable are well represented, whatever the text's own mix."""
+
+    def __init__(self, lexicon):
+        weights = np.diff(np.concatenate([[0.0], lexicon.cum]))
+        bank = {t: Counter() for t in SYLLABLE_TYPES}
+        for word, wt in zip(lexicon.words, weights):
+            for s in split_syllables(word):
+                t = syllable_type(s)
+                if t in bank:
+                    bank[t][s] += wt
+        self.kinds = [t for t in SYLLABLE_TYPES if bank[t]]
+        self.bank = {t: (list(bank[t]), np.cumsum(np.array(list(bank[t].values())) / sum(bank[t].values())))
+                     for t in self.kinds}
+
+    def word(self, rng, syllables=(1, 8)):
+        out = []
+        for _ in range(int(rng.integers(syllables[0], syllables[1] + 1))):
+            names, cum = self.bank[self.kinds[int(rng.integers(len(self.kinds)))]]
+            out.append(names[min(int(np.searchsorted(cum, rng.random(), side="right")), len(names) - 1)])
+        return "".join(out)
+
+
+def structure(words):
+    """Share of words by number of syllables, and of syllables by kind, in a list of words."""
+    n_syl, kinds, has = Counter(), Counter(), Counter()
+    for w in words:
+        parts = split_syllables(w)
+        n_syl["7+" if len(parts) >= 7 else str(len(parts))] += 1
+        ks = [syllable_type(p) for p in parts]
+        kinds.update(k for k in ks if k in SYLLABLE_TYPES)
+        has.update(set(k for k in ks if k in SYLLABLE_TYPES))
+    n, total = max(len(words), 1), max(sum(kinds.values()), 1)
+    return {"syllables_per_word": {k: round(n_syl[k] / n, 4) for k in ["1", "2", "3", "4", "5", "6", "7+"]},
+            "syllable_kinds": {k: round(kinds[k] / total, 4) for k in SYLLABLE_TYPES},
+            "words_containing_kind": {k: round(has[k] / n, 4) for k in SYLLABLE_TYPES}}
 
 
 def sampled_shares(lexicon, n=200000, seed=0):

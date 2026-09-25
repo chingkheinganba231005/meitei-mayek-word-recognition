@@ -61,6 +61,19 @@ def test_rare_characters_are_drawn_more_often():
     assert a[GHOU] < 0.003 and b[GHOU] > 0.03 and b[K] > 0.85 * a[K]   # the rest shrink by about rare_share
 
 
+def test_words_built_from_syllables():
+    AA, NG, M_L = chr(0xABE5), chr(0xABE1), chr(0xABDD)
+    lex = lx.Lexicon(Counter({K + AA + NG + LAI: 50, K + M_L: 20, LAI + K + AA: 10}), rare_share=0.0)
+    bank = lx.SyllableBank(lex)
+    assert set(bank.kinds) == {"C", "CV", "CVC", "CC"}
+    rng = np.random.default_rng(0)
+    words = [bank.word(rng) for _ in range(4000)]
+    s = lx.structure(words)
+    assert all(v > 0.08 for v in s["syllables_per_word"].values())       # 1 to 8 syllables, all present
+    assert all(abs(v - 0.25) < 0.03 for v in s["syllable_kinds"].values())  # each kind about a quarter
+    assert lx.structure([K + AA, K])["syllables_per_word"]["1"] == 1.0
+
+
 def test_scripts_end_to_end(tmp_path):
     src = tmp_path / "wiki.tsv"
     src.write_text("".join(f"{w}\t{i + 1}\n" for i, w in enumerate(words(400))), encoding="utf-8")

@@ -15,6 +15,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mayek_words import lexicon as lx  # noqa: E402
 from mayek_words.charset import normalise  # noqa: E402
@@ -50,6 +52,15 @@ def main():
         "rare_characters": boosted.rare_chars,
         "shares": {ch: {"plain": round(shares[0][ch], 5), "with_rare_draws": round(shares[1][ch], 5)}
                    for ch in sorted(shares[0], key=lambda c: shares[0][c])}}
+    rng = np.random.default_rng(0)
+    drawn = [boosted.sample(rng) for _ in range(100000)]
+    bank = lx.SyllableBank(boosted)
+    built = [bank.word(rng) for _ in range(15000)] + drawn[:85000]
+    stats["structure_train"] = {
+        "note": "100,000 drawn training words: syllables per word, kinds of syllable (C, CV, CVC, CC), "
+                "without and with 15% of words composed of real syllables",
+        "drawn": lx.structure(drawn), "with_15pc_built": lx.structure(built),
+        "syllable_inventory": {k: len(bank.bank[k][0]) for k in bank.kinds}}
     stats.update({
         "combined": {"distinct_words": len(combined), "running_words": sum(combined.values()),
                      "note": "largest count over the sources"},

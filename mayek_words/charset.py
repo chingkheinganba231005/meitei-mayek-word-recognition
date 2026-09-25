@@ -74,6 +74,35 @@ def syllables(word):
     return out
 
 
+NUNG = chr(0xABEA)
+VOWEL_SIGNS = SIGNS - {NUNG}
+SYLLABLE_TYPES = ("C", "CV", "CVC", "CC")
+
+
+def split_syllables(word):
+    """The syllables of a word, as strings (``syllables``)."""
+    parts, last = [], None
+    for ch, n in zip(word, syllables(word)):
+        if n != last:
+            parts.append("")
+            last = n
+        parts[-1] += ch
+    return parts
+
+
+def syllable_type(syllable):
+    """The owner's four kinds of syllable: 'C' (a letter alone, with its inherent vowel),
+    'CV' (with a vowel sign), 'CVC' (a vowel sign and a final: lonsum, nung, or an i after
+    ꯥ, ꯣ or ꯨ), 'CC' (a final right after the letter, with the inherent vowel). An apun
+    cluster counts as one onset. Digits and cheikhei: 'other'."""
+    if not syllable or syllable[0] not in LETTERS:
+        return "other"
+    vowel = any(ch in VOWEL_SIGNS for ch in syllable)
+    final = any(ch in LONSUM or ch == NUNG for ch in syllable) or any(
+        ch == I_LETTER and syllable[i - 1] in CODA_I_AFTER for i, ch in enumerate(syllable) if i)
+    return ("CVC" if final else "CV") if vowel else ("CC" if final else "C")
+
+
 def problem(word):
     """Why a normalised word cannot be a written word, or None.
 
