@@ -87,6 +87,9 @@ class Config:
     noise: float = 3.0                  # sd of pixel noise in grey levels
     paper: tuple = (225.0, 255.0)
     ink: tuple = None                   # ink grey level range; None: from the chosen images
+    min_contrast: float = 130.0         # the centre of a stroke at least this many grey levels darker than
+    #                                     the paper, after blur (owner, 25 September 2026: pale words looked
+    #                                     as if characters were disappearing); None: as the images are
     margin: tuple = (0.1, 0.35)         # around the word, in L
 
 
@@ -514,12 +517,12 @@ class WordSynth:
                     over = letter_right - (px - border + first) if letter_right is not None else -np.inf
                     room = min(d - want, lead - past, limit - over)  # a step left of `room` keeps these
                     room = int(room) if room >= 1 else 0
-                    x0, y0 = px - border, py - border
-                    while room >= 1 and enclosed(span, xs + x0 - room, ys + y0):  # and never into the letter
+                    cx, cy = px - border, py - border               # where the sign's ink is pasted
+                    while room >= 1 and enclosed(span, xs + cx - room, ys + cy):  # and never into the letter
                         room -= 1
                     if room >= 1:
                         step = -room
-                    elif d < low or past > lead or over > limit or enclosed(span, xs + x0, ys + y0):
+                    elif d < low or past > lead or over > limit or enclosed(span, xs + cx, ys + cy):
                         step = max(int(math.ceil(max(low - d, past - lead, over - limit))), 1)  # back off
                     else:
                         break
@@ -589,6 +592,11 @@ class WordSynth:
             canvas = ndimage.gaussian_filter(canvas, st["blur"])
         ink_level = st["ink"] if st["ink"] is not None else float(np.mean(
             [self.store.raw_style[g][3] for g in glyphs]))
+        if c.min_contrast:  # pale scans on grey paper, blurred: a stroke's centre stays this much darker
+            peak = 1.0      # than the paper (the centre of a stroke `pen` wide after a gaussian blur)
+            if st["blur"] > 0.05 and st["pen"] is not None:
+                peak = math.erf(st["pen"] * L / (2 * math.sqrt(2) * st["blur"]))
+            ink_level = max(min(ink_level, st["paper"] - c.min_contrast / max(peak, 0.3)), 0.0)
         img = st["paper"] - canvas * (st["paper"] - ink_level)
         if c.noise:
             img = img + rng.normal(0, c.noise, img.shape)

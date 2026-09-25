@@ -111,6 +111,7 @@ signed distance to its stroke edge), and the ink darkness is the mean of the cho
 | any of these signs | never into its letter; the next letter never touching it, never nearer it than the sign is to its letter (after ꯤ in uneven words: 0.04–0.08 L further, plus the syllable spacing) |
 | ꯤ's height | from its letter's foot to about 0.1 L above its letter's top (sized like a letter) |
 | sign above or below its letter (ꯥ, ꯩ, ꯪ, ꯨ, apun), on the ink | as far from the letter's ink as in print (about 0.08, 0.09, 0.16 L), spread 0.05 L, at least 0.02 L; never into a hollow of the letter |
+| ink | from the chosen images, but a stroke's centre (after blur) at least 130 grey levels darker than the paper |
 | size of the signs relative to print | 0.85–1.3 |
 | pen width | 0.06–0.14 L (TUMMHCD's scanned strokes about 0.07; photos look thicker; the owner's choice) |
 | slant | normal, sd 0.12 (tan of the angle), clipped at 2.5 sd |
@@ -255,6 +256,18 @@ across their soft rim, and still drops faint specks on their own and the rim its
 missing after the pen step drop from 1.5% to 0.5%, more than 5% from 4.6% to 2.6%
 (`scripts/check_strokes.py`, `results/pen_strokes_dev_val.json`).
 
+*Pale words (owner, 25 September 2026).* On the contact sheet of the third run the owner
+found everything placed right, but some characters looked as if they were disappearing. They
+were words drawn in pale ink: a word takes the ink of its chosen images, the palest TUMMHCD
+scans have ink at grey 167 (5% of images), the paper is 225–255, and blur of up to 0.8 px on
+a thin pen lowers a stroke's centre further. On 1,000 words with the validation characters,
+10.2% had their darkest strokes less than 100 grey levels below the paper, 2.3% less than 80.
+The centre of a stroke, after blur (estimated from the pen width and the blur), is now kept at
+least 130 grey levels darker than the paper (`Config.min_contrast`): it darkens 20% of words and
+leaves the others as they were; under 100 grey levels 0.5%, under 80 none
+(`scripts/check_strokes.py --lexicon`, `results/pen_strokes_dev_val.json`). A floor of 110
+changed too little (9% of words), 150 flattened the ink of a third of them.
+
 **2.8 Pale writing.** On previews with real characters the owner saw a few characters
 disappearing. The cause was the pen step: it redraws each character from the pixels of its
 ink map over 0.5, and the map was scaled so that the darkest 5% of the ink was 1. On a pale
@@ -377,6 +390,15 @@ syllable rule, rare-letter draws and built words:
   the ink, so they are regenerated in the next run.
 - **Contact sheet**: the owner found it good except that ꯤ still sat nearer the next letter
   (section 2.7, signs on the ink).
+
+**Third run (owner, 25 September 2026)**, with signs on the ink and heights: the owner found all
+placements right; some characters on the contact sheet looked as if they were disappearing (pale
+words; section 2.7, pale words). Spacing with TUMMHCD characters: 32.7% of neighbouring letters
+touch, visible gaps 0.06 L (`results/spacing_synthetic_tummhcd.json`). Sizes, lexicon and stores
+as before. The gap statistics of the fixed sets (`ink_gaps_in_L` in `synth_*.json`) were wrong for
+signs beside a letter: a variable in the new placement code overwrote the sign's box in the
+recorded layout with pixels (the images were right); fixed, with a test, and the sets are
+regenerated in the next run.
 
 Later: a check of the style matching (can a classifier tell matched words from randomly
 mixed ones?), and the real-set prompts kept out of training.

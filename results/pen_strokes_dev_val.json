@@ -13,5 +13,25 @@
    "over_0.1": 0.0055,
    "over_0.2": 0.0003
   }
+ },
+ "word_contrast": {
+  "with minimum contrast": {
+   "min_contrast": 130.0,
+   "words": 1000,
+   "median": 150.7,
+   "p5": 110.6,
+   "under_80": 0.0,
+   "under_100": 0.005,
+   "under_120": 0.128
+  },
+  "without": {
+   "min_contrast": null,
+   "words": 1000,
+   "median": 150.7,
+   "p5": 89.0,
+   "under_80": 0.023,
+   "under_100": 0.102,
+   "under_120": 0.226
+  }
  }
 }

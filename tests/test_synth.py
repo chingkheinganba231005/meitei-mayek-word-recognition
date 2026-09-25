@@ -52,6 +52,16 @@ def test_signs_sit_where_they_belong(store):
     assert b[NUNG][3] <= b[chr(0xABE3)][3] and b[NUNG][2] > b[K][2]
 
 
+def test_layout_in_letter_heights(store):
+    """Sample.layout keeps every box in letter heights, in writing order (a sign's box once
+    came out in pixels, which broke the gap statistics of the fixed sets)."""
+    s = WordSynth(store)
+    for i in range(10):
+        for word in (K + INAP + LAI + UNAP, K + chr(0xABE6) + LAI + chr(0xABE9), K + APUN + LAI + INAP):
+            lay = s.render(word, np.random.default_rng(i)).layout
+            assert all(x0 < x1 and -1 < x0 < 3 * len(word) and b < t for _, x0, x1, b, t in lay)
+
+
 def test_boxes_inside_image(store):
     s = WordSynth(store)
     for i in range(20):

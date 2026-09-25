@@ -181,11 +181,11 @@ spelling convention, under which its ensemble's accuracy is its own figure of 98
 
 ## Phase 1: synthetic words (details in `docs/phase1_synthetic_words.md`)
 
-Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. Two runs on TUMMHCD
+Package `mayek_words`, notebook `notebooks/phase1_synthetic_words.ipynb`. Runs on TUMMHCD
 by the owner (24–25 September 2026; `results/glyph_*.json`, `results/lexicon_stats.json`,
 `results/spacing_synthetic_tummhcd.json`); the packaged sizes are those of the second run.
-Next: rerun the notebook (signs placed on the ink, below): regenerates the fixed sets and
-writes `results/sign_placement_tummhcd.json`; the owner checks the contact sheet.
+Three runs; after the third the owner approved the placements. Next: rerun the notebook (pale
+words darkened, below) to regenerate the fixed sets; the owner checks the contact sheet.
 
 - **Alphabet:** 54 characters, TUMMHCD without ꯢ; ꯏ is drawn with images of 025 and 044.
   Characters outside TUMMHCD (lum iyek ꯬, the Extensions) cannot be drawn.
@@ -241,6 +241,12 @@ writes `results/sign_placement_tummhcd.json`; the owner checks the contact sheet
   of the letter. The pen step keeps faint strokes joined to the dark ones (pale bars of some
   ꯡ were erased): characters missing over 10% of their strokes 1.5% to 0.5%
   (`results/sign_placement_dev_val.json`, `results/pen_strokes_dev_val.json`).
+- **Pale words (owner, third run, 25 September 2026):** placements approved; some characters
+  looked as if disappearing: words in pale ink (palest scans on grey paper, blurred; 10% of
+  words had strokes under 100 grey levels below the paper). A stroke's centre, after blur, is
+  now at least 130 grey levels darker than the paper (`Config.min_contrast`; darkens 20% of
+  words): under 100 grey levels 0.5%. The fixed sets' gap statistics of the third run were
+  wrong for signs (a layout-recording bug, images unaffected); fixed, sets to be regenerated.
 - **Lexicon:** the Phase 0 word lists, ꯢ written ꯏ, split by word with a hash (90% train,
   5% validation, 5% test), drawn with probability proportional to count^0.5; 3% numbers,
   2% full stops; 10% of draws go to rare letters (under 0.5% of characters: ꯘ, ꯓ, ꯙ ...;
