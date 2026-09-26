@@ -247,3 +247,36 @@ all errors). Next: ꯈ read as ꯗ (7-10). Numbers: WER 0.7-1.3% (150 words).
    TUMMHCD's makes a stretched ꯁ look like a stretched ꯨ.
 4. *Rendering sets the pace:* the GPU waited for data 49% of the time in the ConvNeXt runs
    and 65% in the small CNN's (2.4-2.6 hours per run, about 420 words per second).
+
+### The baseline with the development networks, and the ꯘ words (26 September 2026)
+
+Section 6 run again by the owner with the first paper's development networks
+(`results/phase2_baseline_val.json`; the per-word predictions of the three runs came with
+it). Isolated, these networks miss 0.97% of the validation characters (the released ones
+missed 0.003%), so they had not seen them. On the 5,000 validation words:
+
+| System | CER | WER |
+|---|---|---|
+| Recogniser, with the language model (the three runs) | 0.27-0.28% | 1.8% |
+| Baseline, characters cut from the word, perfect zones, language model | 4.0% | 20.2% |
+| Baseline, the same with each character's original TUMMHCD image (not attainable) | 0.17% | 1.1% |
+| Baseline, original images, most probable class only | 0.97% | 6.3% |
+
+Cut from the words, the characters are read far worse than whole words are (ꯁ as ꯨ, ꯤ
+taking in part of its letter, ꯕ as ꯗ); only characters freed from their neighbours and
+written alone, as in TUMMHCD, beat the recogniser, and no segmenter delivers those.
+
+*ꯘ.* The validation set's 64 ꯘ belong to five words. Two are misread every time by all
+three runs, greedy and with the language model: ꯇꯃꯟꯘꯁꯦꯠ (19 of 19, read ꯇꯃꯟꯗꯁꯦꯠ) and
+ꯃꯘ꯭ꯔꯦꯕꯤ (12-13 of 13, read ꯃꯗ꯭ꯔꯦꯕꯤ); the other three (ꯔꯥꯘꯣꯕꯨ, ꯃꯦꯘꯥꯟ, ꯃꯦꯘꯥꯟ꯫, 32
+instances) are read correctly (one miss in one run). The development networks read all 64
+ꯘ right as isolated images. So the images are clear; the recogniser misreads ꯘ where ꯗ is
+common in text (after ꯟ, and in the cluster ꯗ꯭ꯔ) whichever image of ꯘ is drawn: it has
+learned from its training words a prior that overrides what it sees. ꯘ occurs in training
+only inside the few words that contain it (0.009% of the lexicon's characters), repeated by
+the draws for rare letters. Without these two words the recogniser's CER is 0.17-0.18% and
+WER 1.1-1.2% with the language model (greedy 0.19-0.23%, 1.2-1.5%), the level of the
+isolated-image baseline. The other errors are spread thinly (62-73 distinct words per run;
+the next largest, ꯈꯥ read as ꯗꯥ, 2 of 13). A remedy would be training words in which every
+letter appears in every context, for example a share of words with their letters replaced
+by random letters of the same kind; it needs retraining (owner's decision pending).

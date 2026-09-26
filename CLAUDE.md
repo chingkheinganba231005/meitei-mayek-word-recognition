@@ -301,6 +301,18 @@ test set untouched; the design below waits for the owner's confirmation**
   `runs/<network>/dev/final.pt`, trained without the validation part; the owner's Drive:
   `MyDrive/tummhcd98/runs`), assembled by `scripts/dev_ensemble.py`; the test uses the
   released networks with the weights chosen that way.
+- **Clean baseline on validation (development networks, `results/phase2_baseline_val.json`):**
+  isolated they miss 0.97% of the characters (so they had not seen them). Characters cut
+  from the words, perfect zones and the language model: CER 4.0%, WER 20.2% (recogniser
+  0.27%, 1.8%). Each character's original TUMMHCD image with perfect zones and the language
+  model (not attainable by any segmenter): CER 0.17%, WER 1.1%.
+- **ꯘ diagnosed (26 September 2026):** of the five validation words with ꯘ, two are misread
+  every time by all three runs (ꯇꯃꯟꯘꯁꯦꯠ as ꯇꯃꯟꯗꯁꯦꯠ, ꯃꯘ꯭ꯔꯦꯕꯤ as ꯃꯗ꯭ꯔꯦꯕꯤ) and three
+  never; the development networks read all 64 ꯘ images right. The recogniser has learned
+  from its training words a context prior (ꯟꯗ, ꯗ꯭ꯔ are common) that overrides the image.
+  Without those two words: CER 0.17-0.18%, WER 1.1-1.2% with the language model, the level
+  of the isolated-image baseline. Proposed remedy (owner to decide; needs retraining):
+  training words with letters replaced by random letters of the same kind.
 
 - **Model:** the word image contrast-normalised (paper = its 90th percentile, ink = its 1st),
   64 px high, proportions kept (at most 1,024 px wide); ConvNeXt-T stem and stages 1-3, the
