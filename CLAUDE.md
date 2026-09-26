@@ -293,9 +293,14 @@ test set untouched; the design below waits for the owner's confirmation**
   Training was bound by CPU rendering (GPU waiting 49-65%; 2.4-2.6 h per run).
 - **Baseline caveat:** the released first-paper networks were trained on TUMMHCD train
   *including* our validation part (`full` = train + val), so the baseline cannot be
-  validated with them (isolated: 1 error in 33,175 validation characters); the synthetic
-  test set is clean. Cut from the words, the same characters give CER 13.6%, and 4.2% with
-  perfect zones and the language model (ꯁ read as ꯨ, ꯤ taking in its letter).
+  validated with them (isolated: 1 error in 33,175 validation characters,
+  `results/phase2_baseline_val_released.json`); the synthetic test set is clean. Cut from
+  the words, the same characters give CER 13.6%, and 4.2% with perfect zones and the
+  language model (ꯁ read as ꯨ, ꯤ taking in its letter). Fix: the baseline is validated
+  with the first paper's development networks (the first project's
+  `runs/<network>/dev/final.pt`, trained without the validation part; the owner's Drive:
+  `MyDrive/tummhcd98/runs`), assembled by `scripts/dev_ensemble.py`; the test uses the
+  released networks with the weights chosen that way.
 
 - **Model:** the word image contrast-normalised (paper = its 90th percentile, ink = its 1st),
   64 px high, proportions kept (at most 1,024 px wide); ConvNeXt-T stem and stages 1-3, the

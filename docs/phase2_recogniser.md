@@ -190,7 +190,8 @@ little either way.
 
 Three runs of 60,000 steps, one seed each, sections 1 to 6 of the notebook; the synthetic
 test set untouched. Files: `results/phase2_lm.json`, `results/phase2_train_<run>.json`,
-`results/phase2_val_<run>.json`, `results/phase2_baseline_val.json`.
+`results/phase2_val_<run>.json`, `results/phase2_baseline_val_released.json` (the baseline with the
+released networks; renamed, see finding 2).
 
 **Language model:** order 6, every distinct training word counted once (power 0),
 perplexity 7.61 per character on the validation words (order 5: 7.75; order 7: 7.75;
@@ -229,8 +230,14 @@ all errors). Next: ꯈ read as ꯗ (7-10). Numbers: WER 0.7-1.3% (150 words).
    classified as isolated images, 1 error in 33,175 characters (on TUMMHCD test the same
    ensemble misses 1.9%). The synthetic test set is clean (TUMMHCD test characters). The
    encoder of `convnext_tummhcd` also started from such a network; on validation it is no
-   better than the ImageNet start. A clean validation of the baseline needs the first
-   paper's networks trained without the validation part.
+   better than the ImageNet start. Fix (26 September): the owner still has the first
+   paper's development networks, trained without the validation part (the first project's
+   `runs/<network>/dev/final.pt` for `convnext_t`, `effv2_s`, `resnet50d_topo` and their
+   `_meta` versions). `scripts/dev_ensemble.py` puts them together in the release's format
+   (checking that each holds the same tensors as the released network, and not the released
+   weights themselves), and the notebook's section 6 validates the baseline with them; the
+   test uses the released networks with the language-model weights chosen that way, as in
+   the first paper (choices on the development networks, the final ones on test).
 3. *Cut from the word, the same characters are misread much more:* CER 13.6% and WER 53.8%
    (most probable class); with perfect zones and the language model 4.2% and 20.9%, against
    the recogniser's 0.27% and 1.8%. Commonest errors: ꯁ read as ꯨ (1,181 of 1,824 ꯁ; zones

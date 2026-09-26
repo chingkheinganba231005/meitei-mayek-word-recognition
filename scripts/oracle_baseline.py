@@ -205,7 +205,7 @@ def main():
     n_chars = len(iso)
     out = {"set": Path(args.set).name, "words": len(refs), "characters": n_chars,
            "model": {"folder": folder.name, "members": [m["name"] for m in rec.config["members"]],
-                     "tta": not args.no_tta},
+                     "trained_on": rec.config.get("trained_on"), "tta": not args.no_tta},
            "reproduced": {"identical_images": int(same), "of": len(refs),
                           "largest_mean_difference_grey_levels": round(max(diffs), 3) if diffs else None},
            "zones": {"from": "each character's own zone (perfect zones)",
