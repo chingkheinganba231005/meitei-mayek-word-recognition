@@ -280,8 +280,18 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
 
 Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **First round run by the
 owner (26 September 2026): three runs, validation, baseline on validation; the synthetic
-test set untouched; the design below waits for the owner's confirmation**
-(`docs/phase2_recogniser.md`, sections 6 and 7).
+test set untouched. Second round decided and prepared** (`docs/phase2_recogniser.md`,
+sections 6 and 7).
+
+- **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
+  (`lexicon.scramble`: a lexicon word with each letter, lonsum letter and vowel sign replaced
+  by a random one of its kind; `TrainConfig.scrambled`, default 0.1) to break the context
+  prior behind the ꯘ errors; with scrambling off every word renders exactly as before, so
+  the fixed sets stay reproducible. (2) Second round with this recipe: ConvNeXt-T from
+  TUMMHCD with two seeds (0 and 1, training words 1000 and 1001), from ImageNet and the
+  small CNN once each (runs `round2_*`, about 10 hours); the first round's runs are kept.
+  (3) No real development set: to the owner the synthetic words look as realistic as
+  actual writing, so the first check on real handwriting is the Phase 3 set.
 
 - **First round, synthetic validation (5,000 words; `results/phase2_val_*.json`):** CER
   0.30% / 0.29% / 0.32% and WER 2.0% / 1.9% / 2.1% greedy for ConvNeXt-T from TUMMHCD, from
@@ -340,8 +350,7 @@ test set untouched; the design below waits for the owner's confirmation**
   same language model. The CRNN from scratch is the segmentation-free baseline.
 - **Protocol:** choices on the synthetic validation set; the synthetic test set once (the
   notebook's `RUN_TEST`); two or more seeds for final numbers; the Phase 3 real set is the
-  main evaluation. Suggested to the owner: a small real development set in their own hand,
-  apart from the Phase 3 test set.
+  main evaluation (no real development set: owner, 26 September 2026).
 
 ## Working rules
 

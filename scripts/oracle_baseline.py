@@ -90,7 +90,7 @@ def rerender(info, glyphs, lexicon, sizes):
     store = GlyphStore.load(glyphs)
     synth = WordSynth(store, load_priors(sizes=sizes), cfg)
     words = Words(synth, Lexicon.load(lexicon, info["alpha"], info["rare_share"]), info["seed"],
-                  info["numbers"], info["stop"], info["built"])
+                  info["numbers"], info["stop"], info["built"], info.get("scrambled", 0.0))
     return words, store, synth.prior
 
 

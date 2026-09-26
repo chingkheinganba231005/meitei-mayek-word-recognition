@@ -127,6 +127,16 @@ def test_fixed_set_folder_tar_and_kinds(words, tmp_path):
             assert all(0xABF0 <= ord(c) <= 0xABF9 for c in text)
         elif kind == "lexicon":
             assert text in WORDS
+    w = Words(words.synth, words.lexicon, seed=5, numbers=0.1, stop=0.0, built=0.1, scrambled=0.5)
+    got = data.kinds({"seed": 5, "numbers": 0.1, "built": 0.1, "scrambled": 0.5},
+                     [f"images/{i:06d}.png" for i in range(60)])
+    assert "scrambled" in got
+    for i, kind in enumerate(got):
+        text = w.text(np.random.default_rng([5, i]))
+        if kind == "lexicon":
+            assert text in WORDS
+        elif kind == "scrambled":
+            assert len(text) in {len(x) for x in WORDS}
 
 
 def test_augment_shapes_and_range():
@@ -167,6 +177,9 @@ def test_train_writes_and_resumes(words, tmp_path):
     val = data.FixedSet(write_set(words, tmp_path / "val", n=4))
     cfg = TrainConfig(encoder="small_cnn", init="none", steps=4, batch=4, pool=1, workers=0, warmup=2,
                       eval_every=2, save_every=2, log_every=2, hidden=32, layers=1)
+    with pytest.raises(ValueError):                                     # words not drawn as the settings say
+        train(cfg, words, val, tmp_path / "wrong", device="cpu", log=lambda m: None)
+    cfg.data_seed, cfg.scrambled = words.seed, words.scrambled
     run = tmp_path / "run"
     history = train(cfg, words, val, run, device="cpu", log=lambda m: None)
     assert [h["step"] for h in history] == [2, 4]

@@ -172,6 +172,10 @@ little either way.
 
 ## 6. For the owner to confirm
 
+Items 1 to 5 were run as proposed in the first round and kept for the second by the owner's
+decisions of 26 September 2026 (which added scrambled training words and a second seed of
+the main model, section 7); item 6 was declined.
+
 1. Input 64 px high and a column per 8 px (2.2).
 2. The three runs (2.3): ConvNeXt-T from TUMMHCD (main), from ImageNet, and the small CNN
    from scratch.
@@ -280,3 +284,27 @@ isolated-image baseline. The other errors are spread thinly (62-73 distinct word
 the next largest, ꯈꯥ read as ꯗꯥ, 2 of 13). A remedy would be training words in which every
 letter appears in every context, for example a share of words with their letters replaced
 by random letters of the same kind; it needs retraining (owner's decision pending).
+
+### Second round (decided 26 September 2026)
+
+The owner's decisions: scrambled training words, yes; the second round below, yes; a real
+development set, no (to the owner the synthetic words look as realistic as actual writing;
+the first check on real handwriting is therefore the Phase 3 set).
+
+*Scrambled words* (`mayek_words.lexicon.scramble`, `Words(scrambled=...)`,
+`TrainConfig.scrambled` = 0.1): a tenth of the training words are lexicon words with each
+letter replaced by a random letter (any of the 27), each lonsum letter by a random lonsum
+letter and each vowel sign by a random vowel sign, uniformly; nung, apun, digits and the
+full stop stay. The word keeps its shape (length, syllables, signs above, beside and below)
+and every letter meets every neighbour: on the development word list ꯘ stands in 456
+different (before, after) pairs instead of 21, and ꯟꯘ and ꯘ꯭, never seen before, occur 21
+and 43 times per 100,000 words. The share comes out of the lexicon words (numbers 3%,
+syllable-built words 15%, scrambled 10%, lexicon 72%). With the share at 0 every word is
+drawn and rendered exactly as before (checked on 300 words), so the fixed validation and
+test sets and the baseline's re-rendering are unchanged; the evaluation sets have no
+scrambled words. Contact sheet of 48 scrambled words shown to the owner.
+
+*Runs* (60,000 steps each, otherwise as in the first round): `round2_convnext_tummhcd`
+(seed 0, training words 1000), `round2_convnext_tummhcd_seed1` (seed 1, words 1001),
+`round2_convnext_imagenet`, `round2_crnn_scratch`; about 10 hours on the A100 40 GB. Then
+validation (section 5); the baseline on validation is done; the test waits.

@@ -641,22 +641,26 @@ class Words:
     the seed sequence (seed, i). A word is drawn from the lexicon; with probability `numbers`
     it is a number in Meitei Mayek digits instead, and with probability `built` a word
     composed of real syllables (``lexicon.SyllableBank``: 1 to 6 syllables, every kind of
-    syllable; 15% by default, the owner's choice); with probability `stop` a full stop
+    syllable; 15% by default, the owner's choice); with probability `scrambled` a lexicon
+    word with its letters replaced by random letters of the same kind (``lexicon.scramble``;
+    0 by default, which leaves every item as it was); with probability `stop` a full stop
     (cheikhei) follows it."""
 
-    def __init__(self, synth, lexicon, seed=0, numbers=0.03, stop=0.02, built=0.15):
+    def __init__(self, synth, lexicon, seed=0, numbers=0.03, stop=0.02, built=0.15, scrambled=0.0):
         from .lexicon import SyllableBank
 
         self.synth, self.lexicon, self.seed = synth, lexicon, seed
-        self.numbers, self.stop, self.built = numbers, stop, built
+        self.numbers, self.stop, self.built, self.scrambled = numbers, stop, built, scrambled
         self.bank = SyllableBank(lexicon) if built > 0 else None
 
     def text(self, rng):
-        from .lexicon import number
+        from .lexicon import number, scramble
 
         r = rng.random()
         text = (number(rng) if r < self.numbers else
-                self.bank.word(rng) if r < self.numbers + self.built else self.lexicon.sample(rng))
+                self.bank.word(rng) if r < self.numbers + self.built else
+                scramble(self.lexicon.sample(rng), rng) if r < self.numbers + self.built + self.scrambled else
+                self.lexicon.sample(rng))
         return text + CHEIKHEI if rng.random() < self.stop else text
 
     def __getitem__(self, i):

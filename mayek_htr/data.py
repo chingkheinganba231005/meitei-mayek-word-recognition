@@ -102,13 +102,15 @@ def set_info(path):
 
 def kinds(info, names):
     """The kind of each word of a synthetic set as ``mayek_words.synth.Words.text`` drew it:
-    'number', 'syllables' (composed of real syllables) or 'lexicon'. Item i is the file
-    images/{i:06d}.png; its first random number decides."""
-    out = []
+    'number', 'syllables' (composed of real syllables), 'scrambled' (random letters in a
+    word's shape) or 'lexicon'. Item i is the file images/{i:06d}.png; its first random
+    number decides."""
+    out, scrambled = [], info.get("scrambled", 0.0)
     for name in names:
         r = np.random.default_rng([info["seed"], int(Path(name).stem)]).random()
         out.append("number" if r < info["numbers"] else
-                   "syllables" if r < info["numbers"] + info["built"] else "lexicon")
+                   "syllables" if r < info["numbers"] + info["built"] else
+                   "scrambled" if r < info["numbers"] + info["built"] + scrambled else "lexicon")
     return out
 
 

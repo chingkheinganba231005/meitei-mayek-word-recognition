@@ -17,6 +17,12 @@ letters are rare in text (ꯘ is 0.009% of the characters, ꯓ and ꯙ about 0.0
 is a character the recogniser must read (ꯗ/ꯘ is a confusable pair). So a share of the
 draws (rare_share, 10% by default) goes to the rare characters, those under rare_below
 (0.5%) of all characters: one of them is picked at random, then a word containing it.
+
+Scrambled words (``scramble``): a drawn word with every letter replaced by a random letter,
+every lonsum letter by a random lonsum letter and every vowel sign by a random vowel sign,
+so that each letter is seen in every context. Without them the recogniser learned where
+ꯘ may stand from the few training words that contain it, and read ꯘ as ꯗ where ꯗ is
+common (ꯟꯘ, ꯘ꯭ꯔ), whatever the image showed (owner's decision, 26 September 2026).
 """
 
 import hashlib
@@ -25,7 +31,8 @@ from pathlib import Path
 
 import numpy as np
 
-from .charset import ALPHABET, CHEIKHEI, DIGITS, SYLLABLE_TYPES, normalise, problem, split_syllables, syllable_type
+from .charset import (ALPHABET, CHEIKHEI, DIGITS, I_LONSUM, LETTERS, LONSUM, SYLLABLE_TYPES, VOWEL_SIGNS, normalise,
+                      problem, split_syllables, syllable_type)
 
 MAX_LEN = 24
 SPLITS = (("train", 0.90), ("val", 0.95), ("test", 1.0))
@@ -198,3 +205,23 @@ def number(rng, max_digits=4):
     n = int(rng.integers(1, max_digits + 1))
     first = digits[int(rng.integers(1, 10))] if n > 1 else digits[int(rng.integers(0, 10))]
     return first + "".join(digits[int(rng.integers(0, 10))] for _ in range(n - 1))
+
+
+# the kinds a scrambled word's characters are drawn from; nung, apun, digits and cheikhei stay
+SCRAMBLE_POOLS = (sorted(LETTERS), sorted(LONSUM - {I_LONSUM}), sorted(VOWEL_SIGNS))
+
+
+def scramble(word, rng, tries=10):
+    """The word with every letter, lonsum letter and vowel sign replaced by a random one of
+    its kind (uniformly), the rest kept: the shape of a real word, any letters in it. Drawn
+    again if the result is not a writable word (``charset.problem``); the word itself after
+    `tries` failures."""
+    for _ in range(tries):
+        out = []
+        for ch in word:
+            pool = next((p for p in SCRAMBLE_POOLS if ch in p), None)
+            out.append(pool[int(rng.integers(len(pool)))] if pool else ch)
+        text = "".join(out)
+        if problem(text) is None:
+            return text
+    return word

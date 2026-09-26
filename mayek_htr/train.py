@@ -56,6 +56,8 @@ class TrainConfig:
     pool: int = 8                        # batches rendered at once by a worker, grouped by width
     seed: int = 0                        # weights, augmentation
     data_seed: int = 1000                # the training words (the fixed sets use seeds 1 and 2)
+    scrambled: float = 0.1               # share of training words with random letters of each kind (owner,
+    #                                      26 September 2026; the first round had none)
 
 
 class EMA:
@@ -149,7 +151,11 @@ def load_checkpoint(path, device="cpu"):
 
 def train(cfg, words, val_set, run_dir, tummhcd_dir=None, device=None, log=print):
     """Train (or resume) into run_dir; returns the history. words: mayek_words.synth.Words
-    over the training characters and lexicon, made with seed cfg.data_seed."""
+    over the training characters and lexicon, made with seed cfg.data_seed and share
+    cfg.scrambled of scrambled words."""
+    if words.seed != cfg.data_seed or abs(getattr(words, "scrambled", 0.0) - cfg.scrambled) > 1e-12:
+        raise ValueError(f"the training words (seed {words.seed}, scrambled {getattr(words, 'scrambled', 0.0)}) "
+                         f"do not match the settings (data_seed {cfg.data_seed}, scrambled {cfg.scrambled})")
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -184,7 +190,9 @@ def train(cfg, words, val_set, run_dir, tummhcd_dir=None, device=None, log=print
         opt.load_state_dict(ck["opt"])
         ema.updates, step, history, best = ck["ema_updates"], ck["step"], ck["history"], ck["best"]
         log(f"resuming at step {step}")
-        changed = {k: (v, asdict(cfg)[k]) for k, v in ck["cfg"].items() if asdict(cfg).get(k) != v}
+        now = asdict(cfg)
+        changed = {k: (ck["cfg"].get(k), now.get(k)) for k in set(ck["cfg"]) | set(now)
+                   if ck["cfg"].get(k) != now.get(k)}
         if changed:
             log(f"settings changed since the checkpoint (then, now): {changed}")
 

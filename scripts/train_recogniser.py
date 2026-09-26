@@ -8,8 +8,10 @@
 Every field of mayek_htr.train.TrainConfig can be set (--encoder, --init, --steps, --lr,
 --seed, --data-seed ...). Run again with the same --run-dir to go on after an interruption.
 The training words are drawn as the fixed sets were (scripts/render_words.py: numbers 3%,
-full stops 2%, count ** 0.5, rare characters 10%, words composed of syllables 15%), from
-the training lexicon and the training characters, with their own seed (--data-seed).
+full stops 2%, count ** 0.5, rare characters 10%, words composed of syllables 15%), plus
+--scrambled (10% by default) of lexicon words with their letters replaced by random ones of
+the same kind, from the training lexicon and the training characters, with their own seed
+(--data-seed).
 The run folder gets best.pt (the weights with the lowest validation CER), final.pt,
 last.pt (to resume) and history.json; --results gets a summary.
 """
@@ -66,7 +68,8 @@ def main():
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
     sizes = {"measured": MEASURED, "font": None}.get(args.sizes, args.sizes)
-    words = Words(WordSynth(store, load_priors(sizes=sizes)), Lexicon.load(args.lexicon), seed=cfg.data_seed)
+    words = Words(WordSynth(store, load_priors(sizes=sizes)), Lexicon.load(args.lexicon), seed=cfg.data_seed,
+                  scrambled=cfg.scrambled)
     val = FixedSet(args.val, limit=args.val_limit)
     print(f"training characters: {len(store)} images; lexicon: {len(words.lexicon)} words; "
           f"validation: {len(val)} words; device: {args.device or ('cuda' if torch.cuda.is_available() else 'cpu')}",
@@ -84,7 +87,7 @@ def main():
                    "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
                    "training": {"glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
                                 "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
-                                "words_seen": cfg.steps * cfg.batch},
+                                "scrambled": cfg.scrambled, "words_seen": cfg.steps * cfg.batch},
                    "validation": {"set": Path(args.val).name, "words": len(val)},
                    "best": saved["best"], "val_at_best": best.get("val"),
                    "history": history,

@@ -75,6 +75,37 @@ def test_words_built_from_syllables():
     assert lx.structure([K + AA, K])["syllables_per_word"]["1"] == 1.0
 
 
+def test_scramble_keeps_the_shape_and_varies_the_letters():
+    from mayek_words.charset import LETTERS, LONSUM, VOWEL_SIGNS, problem
+
+    word = K + ANAP + LAI + chr(0xABE4) + chr(0xABDF) + K + APUN + LAI      # ꯀꯥꯂꯤꯟꯀ꯭ꯂ
+    kind = [LETTERS, VOWEL_SIGNS, LETTERS, VOWEL_SIGNS, LONSUM, LETTERS, {APUN}, LETTERS]
+    rng = np.random.default_rng(0)
+    out = [lx.scramble(word, rng) for _ in range(2000)]
+    assert all(len(w) == len(word) and problem(w) is None for w in out)
+    assert all(ch in k for w in out for ch, k in zip(w, kind))              # each character keeps its kind
+    assert len(set(out)) > 1900                                            # and changes
+    firsts = Counter(w[0] for w in out)
+    assert set(firsts) == LETTERS and min(firsts.values()) > 30            # every letter, the rare ones too
+    assert I_LONSUM not in "".join(out)                                    # everyday spelling
+    assert lx.scramble(word, np.random.default_rng(5)) == lx.scramble(word, np.random.default_rng(5))
+
+
+def test_words_with_scrambled_share():
+    from mayek_words.synth import Words
+
+    lex = lx.Lexicon(Counter({w: 5 for w in words(300)}), rare_share=0.0)
+    plain = Words(None, lex, seed=4, built=0.0, stop=0.0)
+    mixed = Words(None, lex, seed=4, built=0.0, stop=0.0, scrambled=0.5)
+    texts = [(plain.text(np.random.default_rng([4, i])), mixed.text(np.random.default_rng([4, i]))) for i in range(400)]
+    same = sum(a == b for a, b in texts)
+    assert 120 < same < 280                                                 # about half scrambled
+    known = set(lex.words)
+    assert all(a in known or a.startswith(tuple(DIGITS)) for a, _ in texts)
+    unscrambled = Words(None, lex, seed=4, built=0.0, stop=0.0, scrambled=0.0)  # 0: every item as before
+    assert all(unscrambled.text(np.random.default_rng([4, i])) == texts[i][0] for i in range(400))
+
+
 def test_scripts_end_to_end(tmp_path):
     src = tmp_path / "wiki.tsv"
     src.write_text("".join(f"{w}\t{i + 1}\n" for i, w in enumerate(words(400))), encoding="utf-8")
