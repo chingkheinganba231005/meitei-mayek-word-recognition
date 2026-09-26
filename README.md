@@ -15,7 +15,9 @@ This follows the character-level work in
 - Phase 0, the literature and data audit: done, [`docs/phase0_audit.md`](docs/phase0_audit.md).
 - Phase 1, synthetic words from TUMMHCD characters: done,
   [`docs/phase1_synthetic_words.md`](docs/phase1_synthetic_words.md).
-- Phase 2, the word recogniser: code ready, first run on Colab pending,
+- Phase 2, the word recogniser: done on synthetic data (synthetic test set: CER 0.24%, WER
+  1.57% with the language model, against 4.3% and 21% for the first paper's ensemble on the
+  same characters cut from the words); the real-handwriting evaluation waits for Phase 3,
   [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
 
 ## Layout

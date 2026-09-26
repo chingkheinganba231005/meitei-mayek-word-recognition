@@ -1,8 +1,8 @@
 # Phase 2: the word recogniser
 
-Started 25 September 2026. **Status (26 September): first round run by the owner**
-(three runs, validation and the baseline on validation; section 7). The synthetic test set
-is untouched. The decisions in section 6 wait for the owner's confirmation.
+Started 25 September 2026. **Status (26 September): done on synthetic data.** Two rounds
+of training, validation, the baseline, and the synthetic test set used once (section 7).
+The main evaluation, on real handwriting, waits for the Phase 3 set.
 
 ## 1. What the recogniser does
 
@@ -340,3 +340,54 @@ better, overall no worse).
 *Test plan.* One pass (section 7) over the four second-round runs, the three first-round
 runs (so that the effect of the scrambled words can be reported on test) and the baseline
 (released networks, language-model weights chosen with the development networks).
+
+### The synthetic test set, used once (owner, 26 September 2026)
+
+5,000 words (seed 2) from the test lexicon, written with TUMMHCD test characters (without
+the 469 that have a training twin); every checkpoint, alpha and beta as chosen on
+validation (checked in each file). Files: `results/phase2_test_<run>.json`,
+`results/phase2_baseline_test.json`.
+
+| System | CER greedy | WER greedy | CER with LM | WER with LM |
+|---|---|---|---|---|
+| **Recogniser, final recipe** (ConvNeXt-T from TUMMHCD, second round), seed 0 | 0.329% | 2.12% | 0.236% | 1.52% |
+| same, seed 1 | 0.370% | 2.32% | 0.251% | 1.62% |
+| same, mean of the two seeds | 0.35% | 2.22% | 0.24% | 1.57% |
+| ConvNeXt-T from ImageNet, second round | 0.326% | 2.04% | 0.245% | 1.56% |
+| Small CNN from scratch (CRNN), second round | 0.335% | 2.10% | 0.275% | 1.70% |
+| First round (no scrambled words): TUMMHCD / ImageNet / small CNN | 0.317 / 0.329 / 0.341% | 2.04 / 2.08 / 2.20% | 0.266 / 0.257 / 0.269% | 1.74 / 1.60 / 1.74% |
+| Baseline, cut from the word, perfect zones, LM | | | 4.26% | 20.98% |
+| Baseline, original isolated images, most probable class | 1.20% | 7.64% | | |
+| Baseline, original isolated images, perfect zones, LM (not attainable) | | | 0.173% | 1.12% |
+
+(The baseline's figures are per character with as many characters as the truth; its LM
+column uses the weights chosen with the development networks, the released networks
+classify.)
+
+**Findings on test.**
+
+1. *Reading whole words against cutting them up:* with the language model the recogniser
+   misreads 0.24% of the characters and 1.57% of the words (mean of two seeds); the first
+   paper's ensemble on the same characters cut from the words, with perfect cuts, perfect
+   zones and the same language model, misreads 4.26% and 21%: about 17 times as many
+   character errors and 13 times as many word errors. Only characters handed over alone,
+   as TUMMHCD images, with perfect zones, do better (0.17%, 1.1%), which no segmenter can
+   deliver.
+2. *The confusable pairs:* as isolated images the ensemble reads ꯦ as ꯰ or the reverse 94
+   times and ꯨ/ꯁ 115 times; the recogniser 0 times for both (every run). ꯗ/ꯘ: 6-17 swaps per
+   run and decoding (ensemble 51).
+3. *No measurable differences between the runs:* word by word (exact binomial test on the
+   words one run reads and the other misreads) the rounds, the seeds and the encoders
+   differ with p of 0.16 or more, greedy and with the language model. The scrambled words
+   neither help nor hurt measurably on synthetic words; the TUMMHCD start, the ImageNet
+   start and the small CNN from scratch are equal on them. Synthetic words cannot rank the
+   encoders; the real set may.
+4. *ꯘ on test:* the seven test words with ꯘ are read right nearly always by every run; their
+   contexts (ꯘ first, after ꯔ, ꯗ꯭ꯔꯘ) are not the ones that failed on validation.
+5. *By kind of word* (final model, with the language model): lexicon words WER 1.04-1.07%,
+   words composed of syllables 3.9-4.7% (the language model favours real words), numbers
+   2.2%.
+6. *What the synthetic test measures:* the recogniser was trained on words from the same
+   synthesiser, with characters from the same TUMMHCD writers (TUMMHCD has no writer
+   information), so these figures are in-distribution. Real handwriting (Phase 3) will be
+   harder; how much harder is the main open question.

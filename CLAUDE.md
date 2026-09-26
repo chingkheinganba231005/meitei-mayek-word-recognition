@@ -278,10 +278,22 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
 
 ## Phase 2: recogniser (details in `docs/phase2_recogniser.md`)
 
-Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **First round run by the
-owner (26 September 2026): three runs, validation, baseline on validation. Second round
-(scrambled words) run and validated the same day; the synthetic test set untouched**
-(`docs/phase2_recogniser.md`, sections 6 and 7).
+Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Done on synthetic data
+(26 September 2026):** two rounds of training by the owner, validation, the baseline, and
+the synthetic test set used once (`docs/phase2_recogniser.md`, sections 6 and 7). The main
+evaluation, on real handwriting, waits for the Phase 3 set.
+
+- **Synthetic test, used once (`results/phase2_test_*.json`, `results/phase2_baseline_test.json`;
+  5,000 words, TUMMHCD test characters):** final recipe (ConvNeXt-T from TUMMHCD, second
+  round), mean of two seeds: CER 0.35%, WER 2.22% greedy; **CER 0.24%, WER 1.57% with the
+  language model** (seeds 0.236% / 0.251%, 1.52% / 1.62%). Baseline with the same
+  characters cut from the words, perfect cuts, perfect zones and the language model: CER
+  4.26%, WER 21.0% (17 and 13 times as many errors); original isolated images with perfect
+  zones and the language model (not attainable): 0.17%, 1.1%; the ensemble alone on
+  isolated images: 1.20%, 7.6%. Swaps ꯦ/꯰ and ꯨ/ꯁ: ensemble on isolated images 94 and 115,
+  recogniser 0 and 0 (every run); ꯗ/ꯘ 6-17 (ensemble 51). Rounds, seeds and encoders do not
+  differ measurably (paired tests p >= 0.16). The figures are in-distribution (same
+  synthesiser, same TUMMHCD writers): real handwriting will be harder.
 
 - **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
   (`lexicon.scramble`: a lexicon word with each letter, lonsum letter and vowel sign replaced
@@ -300,8 +312,7 @@ owner (26 September 2026): three runs, validation, baseline on validation. Secon
   network alone reads the failing ꯘ words better (ꯃꯘ꯭ꯔꯦꯕꯤ misread 4-5 of 13 instead of 12,
   ꯇꯃꯟꯘꯁꯦꯠ 10-15 of 19 instead of 19, greedy), the language model pulls most back, and ꯗ is
   now read as ꯘ more often, so ꯗ/ꯘ keeps 35-36 errors: the hardest pair, to be measured on
-  the real set. Second round = final recipe. Next: the test, once, over all seven runs and
-  the baseline (notebook section 7).
+  the real set. Second round = final recipe.
 - **First round, synthetic validation (5,000 words; `results/phase2_val_*.json`):** CER
   0.30% / 0.29% / 0.32% and WER 2.0% / 1.9% / 2.1% greedy for ConvNeXt-T from TUMMHCD, from
   ImageNet and the small CNN from scratch; with the language model (order 6, every
