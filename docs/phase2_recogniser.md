@@ -1,9 +1,8 @@
 # Phase 2: the word recogniser
 
-Started 25 September 2026. **Status: code ready, not yet run on TUMMHCD.** Everything below
-was checked in the cloud session on the CPU (section 5); training needs the Colab A100
-(`notebooks/phase2_recogniser.ipynb`). The decisions in section 6 wait for the owner's
-confirmation.
+Started 25 September 2026. **Status (26 September): first round run by the owner**
+(three runs, validation and the baseline on validation; section 7). The synthetic test set
+is untouched. The decisions in section 6 wait for the owner's confirmation.
 
 ## 1. What the recogniser does
 
@@ -187,4 +186,57 @@ little either way.
 
 ## 7. Runs
 
-None on TUMMHCD yet.
+### First round (owner, Colab A100 40 GB, 25-26 September 2026, commit 5680ae8)
+
+Three runs of 60,000 steps, one seed each, sections 1 to 6 of the notebook; the synthetic
+test set untouched. Files: `results/phase2_lm.json`, `results/phase2_train_<run>.json`,
+`results/phase2_val_<run>.json`, `results/phase2_baseline_val.json`.
+
+**Language model:** order 6, every distinct training word counted once (power 0),
+perplexity 7.61 per character on the validation words (order 5: 7.75; order 7: 7.75;
+words weighted by count ** 0.5: 8.15).
+
+**Recogniser on the synthetic validation set** (5,000 words, 33,175 characters):
+
+| Run | Best step | CER greedy | WER greedy | CER with LM | WER with LM | alpha, beta |
+|---|---|---|---|---|---|---|
+| `convnext_tummhcd` | 58,000 | 0.304% | 2.00% | 0.277% | 1.80% | 0.5, 0 |
+| `convnext_imagenet` | 60,000 | 0.289% | 1.88% | 0.265% | 1.76% | 0.25, 0 |
+| `crnn_scratch` | 46,000 | 0.317% | 2.08% | 0.265% | 1.76% | 0.5, 0 |
+
+The 95% intervals of word accuracy overlap (greedy: 97.6-98.4%, 97.7-98.5%, 97.5-98.3%):
+on synthetic words the three encoders cannot be told apart. The language model removes
+about a tenth of the errors; a bonus per character (beta) does not help. Confusable pairs,
+every run: ꯦ/꯰ 1,398 of 1,398 read correctly, ꯨ/ꯁ 2,839 of 2,840; ꯗ/ꯘ 1,015-1,020 of
+1,053, the misses being ꯘ read as ꯗ (31-33 per run, about half of the 64 ꯘ and a third of
+all errors). Next: ꯈ read as ꯗ (7-10). Numbers: WER 0.7-1.3% (150 words).
+
+**Findings.**
+
+1. *ꯘ on the synthetic sets rests on a few words.* ꯘ is 0.009% of the training lexicon's
+   characters (478 in running text); the validation lexicon holds it 4 times, the test
+   lexicon 6. The draws for rare letters (10% of draws, over seven letters) therefore fill
+   the 64 ꯘ of the validation set from at most four words, each repeated many times (the
+   owner's error sheets show two words again and again). Whether the images of ꯘ are
+   ambiguous or the recogniser has learned that ꯘ occurs only in the few training words
+   that contain it is to be checked on the per-word predictions
+   (`WORK/runs/<run>/val_predictions.tsv`). ꯗ/ꯘ needs the real set, with prompts that
+   hold ꯘ in many different words.
+2. *The baseline's validation numbers are not usable.* The released networks are the first
+   paper's final models, trained on TUMMHCD train including our validation part
+   (`mayek.data.load_index`: `full` = train + val; `mayek.recognizer.export` reads
+   `runs/<name>/full/final.pt`), so they have seen every character of the validation set:
+   classified as isolated images, 1 error in 33,175 characters (on TUMMHCD test the same
+   ensemble misses 1.9%). The synthetic test set is clean (TUMMHCD test characters). The
+   encoder of `convnext_tummhcd` also started from such a network; on validation it is no
+   better than the ImageNet start. A clean validation of the baseline needs the first
+   paper's networks trained without the validation part.
+3. *Cut from the word, the same characters are misread much more:* CER 13.6% and WER 53.8%
+   (most probable class); with perfect zones and the language model 4.2% and 20.9%, against
+   the recogniser's 0.27% and 1.8%. Commonest errors: ꯁ read as ꯨ (1,181 of 1,824 ꯁ; zones
+   remove these) and ꯤ (51% wrong: its box, with the lead-in, takes in part of its letter).
+   A likely reason for ꯁ/ꯨ: the classifier separates them by stroke thickness relative to
+   the character (check (1) for the first paper in `CLAUDE.md`), and a pen thicker than
+   TUMMHCD's makes a stretched ꯁ look like a stretched ꯨ.
+4. *Rendering sets the pace:* the GPU waited for data 49% of the time in the ConvNeXt runs
+   and 65% in the small CNN's (2.4-2.6 hours per run, about 420 words per second).

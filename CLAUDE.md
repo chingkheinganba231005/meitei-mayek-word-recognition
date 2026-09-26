@@ -278,9 +278,24 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
 
 ## Phase 2: recogniser (details in `docs/phase2_recogniser.md`)
 
-Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Code ready (25 September
-2026), not yet run on TUMMHCD; the design below waits for the owner's confirmation**
-(`docs/phase2_recogniser.md`, section 6).
+Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **First round run by the
+owner (26 September 2026): three runs, validation, baseline on validation; the synthetic
+test set untouched; the design below waits for the owner's confirmation**
+(`docs/phase2_recogniser.md`, sections 6 and 7).
+
+- **First round, synthetic validation (5,000 words; `results/phase2_val_*.json`):** CER
+  0.30% / 0.29% / 0.32% and WER 2.0% / 1.9% / 2.1% greedy for ConvNeXt-T from TUMMHCD, from
+  ImageNet and the small CNN from scratch; with the language model (order 6, every
+  distinct word once, perplexity 7.61) CER 0.28% / 0.27% / 0.27%, WER 1.8% / 1.8% / 1.8%.
+  Intervals overlap: synthetic words do not separate the encoders. ꯦ/꯰ and ꯨ/ꯁ read
+  (almost) perfectly; ꯘ read as ꯗ half the time, but the validation set's 64 ꯘ come from
+  at most four words (ꯘ is 0.009% of text; the draws for rare letters repeat them).
+  Training was bound by CPU rendering (GPU waiting 49-65%; 2.4-2.6 h per run).
+- **Baseline caveat:** the released first-paper networks were trained on TUMMHCD train
+  *including* our validation part (`full` = train + val), so the baseline cannot be
+  validated with them (isolated: 1 error in 33,175 validation characters); the synthetic
+  test set is clean. Cut from the words, the same characters give CER 13.6%, and 4.2% with
+  perfect zones and the language model (ꯁ read as ꯨ, ꯤ taking in its letter).
 
 - **Model:** the word image contrast-normalised (paper = its 90th percentile, ink = its 1st),
   64 px high, proportions kept (at most 1,024 px wide); ConvNeXt-T stem and stages 1-3, the

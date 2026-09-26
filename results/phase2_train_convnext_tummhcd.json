@@ -1,0 +1,556 @@
+{
+ "run": "convnext_tummhcd",
+ "cfg": {
+  "encoder": "convnext_tiny",
+  "init": "tummhcd",
+  "steps": 60000,
+  "batch": 64,
+  "lr": 0.0003,
+  "lr_min": 0.01,
+  "warmup": 2000,
+  "wd": 0.05,
+  "ema": 0.999,
+  "clip": 5.0,
+  "aug": "full",
+  "hidden": 256,
+  "layers": 2,
+  "dropout": 0.2,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "log_every": 200,
+  "workers": 10,
+  "pool": 8,
+  "seed": 0,
+  "data_seed": 1000
+ },
+ "commit": "5680ae8",
+ "parameters": 16314007,
+ "encoder_parameters": 12344928,
+ "training": {
+  "glyphs": "train.npz",
+  "lexicon": "train.tsv",
+  "sizes": "glyph_sizes_tummhcd.json",
+  "words_seen": 3840000
+ },
+ "validation": {
+  "set": "val.tar",
+  "words": 5000
+ },
+ "best": {
+  "cer": 0.00304,
+  "wer": 0.02,
+  "step": 58000
+ },
+ "val_at_best": {
+  "words": 5000,
+  "characters": 33175,
+  "cer": 0.00304,
+  "wer": 0.02,
+  "word_accuracy": 0.98,
+  "word_accuracy_95ci": [
+   0.97573,
+   0.98353
+  ],
+  "substitutions": 94,
+  "deletions": 3,
+  "insertions": 4,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 1398,
+    "correct": 1398,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 2840,
+    "correct": 2839,
+    "accuracy": 0.99965,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 1053,
+    "correct": 1017,
+    "accuracy": 0.96581,
+    "read_as_the_other": 34
+   }
+  },
+  "top_errors": [
+   [
+    "ꯘ",
+    "ꯗ",
+    31
+   ],
+   [
+    "ꯈ",
+    "ꯗ",
+    9
+   ],
+   [
+    "ꯇ",
+    "ꯍ",
+    6
+   ],
+   [
+    "ꯄ",
+    "ꯒ",
+    5
+   ],
+   [
+    "ꯡ",
+    "ꯛ",
+    4
+   ],
+   [
+    "ꯏ",
+    "ꯈ",
+    4
+   ],
+   [
+    "ꯗ",
+    "ꯘ",
+    3
+   ],
+   [
+    "ꯅ",
+    "ꯑ",
+    3
+   ],
+   [
+    "(inserted)",
+    "ꯨ",
+    2
+   ],
+   [
+    "ꯗ",
+    "ꯈ",
+    2
+   ],
+   [
+    "ꯊ",
+    "ꯏ",
+    2
+   ],
+   [
+    "ꯏ",
+    "ꯇ",
+    2
+   ],
+   [
+    "ꯄ",
+    "ꯞ",
+    2
+   ],
+   [
+    "ꯕ",
+    "ꯗ",
+    2
+   ],
+   [
+    "ꯙ",
+    "ꯜ",
+    1
+   ],
+   [
+    "ꯏ",
+    "ꯠ",
+    1
+   ],
+   [
+    "ꯞ",
+    "ꯒ",
+    1
+   ],
+   [
+    "(inserted)",
+    "ꯥ",
+    1
+   ],
+   [
+    "ꯛ",
+    "ꯔ",
+    1
+   ],
+   [
+    "ꯪ",
+    "(deleted)",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯘ",
+    0.4844,
+    64
+   ],
+   [
+    "ꯙ",
+    0.0417,
+    72
+   ],
+   [
+    "꯹",
+    0.0244,
+    41
+   ],
+   [
+    "ꯈ",
+    0.021,
+    428
+   ],
+   [
+    "ꯄ",
+    0.0097,
+    827
+   ],
+   [
+    "ꯏ",
+    0.0091,
+    772
+   ],
+   [
+    "ꯩ",
+    0.0068,
+    146
+   ],
+   [
+    "ꯇ",
+    0.0063,
+    948
+   ],
+   [
+    "ꯗ",
+    0.0051,
+    989
+   ],
+   [
+    "ꯞ",
+    0.0051,
+    195
+   ],
+   [
+    "ꯌ",
+    0.0044,
+    459
+   ],
+   [
+    "ꯪ",
+    0.0043,
+    230
+   ],
+   [
+    "ꯊ",
+    0.0041,
+    487
+   ],
+   [
+    "ꯡ",
+    0.004,
+    999
+   ],
+   [
+    "ꯐ",
+    0.0028,
+    363
+   ],
+   [
+    "ꯕ",
+    0.0026,
+    1164
+   ],
+   [
+    "ꯅ",
+    0.0022,
+    1344
+   ],
+   [
+    "ꯍ",
+    0.0021,
+    466
+   ],
+   [
+    "ꯛ",
+    0.0014,
+    719
+   ],
+   [
+    "ꯑ",
+    0.0014,
+    695
+   ]
+  ]
+ },
+ "history": [
+  {
+   "step": 2000,
+   "loss": 1.81275,
+   "lr": 0.0003,
+   "val_cer": 0.01173,
+   "val_wer": 0.072,
+   "words_per_s": 252.8,
+   "waiting_for_data": 0.276
+  },
+  {
+   "step": 4000,
+   "loss": 0.10246,
+   "lr": 0.0002991303560827237,
+   "val_cer": 0.00742,
+   "val_wer": 0.0468,
+   "words_per_s": 310.3,
+   "waiting_for_data": 0.343
+  },
+  {
+   "step": 6000,
+   "loss": 0.07799,
+   "lr": 0.00029652988143794045,
+   "val_cer": 0.00651,
+   "val_wer": 0.0418,
+   "words_per_s": 341.2,
+   "waiting_for_data": 0.379
+  },
+  {
+   "step": 8000,
+   "loss": 0.0675,
+   "lr": 0.0002922290640353826,
+   "val_cer": 0.00567,
+   "val_wer": 0.0372,
+   "words_per_s": 360.2,
+   "waiting_for_data": 0.407
+  },
+  {
+   "step": 10000,
+   "loss": 0.06057,
+   "lr": 0.0002862783270268202,
+   "val_cer": 0.0054,
+   "val_wer": 0.0354,
+   "words_per_s": 370.9,
+   "waiting_for_data": 0.421
+  },
+  {
+   "step": 12000,
+   "loss": 0.05682,
+   "lr": 0.0002787474373628678,
+   "val_cer": 0.00476,
+   "val_wer": 0.031,
+   "words_per_s": 378.2,
+   "waiting_for_data": 0.434
+  },
+  {
+   "step": 14000,
+   "loss": 0.05147,
+   "lr": 0.0002697246878392773,
+   "val_cer": 0.00476,
+   "val_wer": 0.031,
+   "words_per_s": 385.3,
+   "waiting_for_data": 0.443
+  },
+  {
+   "step": 16000,
+   "loss": 0.04964,
+   "lr": 0.0002593158619446342,
+   "val_cer": 0.00431,
+   "val_wer": 0.0284,
+   "words_per_s": 390.8,
+   "waiting_for_data": 0.451
+  },
+  {
+   "step": 18000,
+   "loss": 0.04633,
+   "lr": 0.0002476429936456729,
+   "val_cer": 0.00482,
+   "val_wer": 0.0308,
+   "words_per_s": 394.9,
+   "waiting_for_data": 0.457
+  },
+  {
+   "step": 20000,
+   "loss": 0.04164,
+   "lr": 0.00023484293665059348,
+   "val_cer": 0.00434,
+   "val_wer": 0.0282,
+   "words_per_s": 398.2,
+   "waiting_for_data": 0.462
+  },
+  {
+   "step": 22000,
+   "loss": 0.03907,
+   "lr": 0.00022106575992445954,
+   "val_cer": 0.00398,
+   "val_wer": 0.0262,
+   "words_per_s": 400.7,
+   "waiting_for_data": 0.465
+  },
+  {
+   "step": 24000,
+   "loss": 0.03695,
+   "lr": 0.00020647298826779212,
+   "val_cer": 0.00392,
+   "val_wer": 0.0254,
+   "words_per_s": 401.3,
+   "waiting_for_data": 0.467
+  },
+  {
+   "step": 26000,
+   "loss": 0.03357,
+   "lr": 0.00019123570858596735,
+   "val_cer": 0.00362,
+   "val_wer": 0.0234,
+   "words_per_s": 402.7,
+   "waiting_for_data": 0.47
+  },
+  {
+   "step": 28000,
+   "loss": 0.0321,
+   "lr": 0.00017553256405167692,
+   "val_cer": 0.00377,
+   "val_wer": 0.025,
+   "words_per_s": 404.1,
+   "waiting_for_data": 0.473
+  },
+  {
+   "step": 30000,
+   "loss": 0.02973,
+   "lr": 0.00015954765967706345,
+   "val_cer": 0.00371,
+   "val_wer": 0.0244,
+   "words_per_s": 405.3,
+   "waiting_for_data": 0.476
+  },
+  {
+   "step": 32000,
+   "loss": 0.02681,
+   "lr": 0.00014346840385078184,
+   "val_cer": 0.00368,
+   "val_wer": 0.024,
+   "words_per_s": 406.6,
+   "waiting_for_data": 0.478
+  },
+  {
+   "step": 34000,
+   "loss": 0.02403,
+   "lr": 0.00012748331114599142,
+   "val_cer": 0.00359,
+   "val_wer": 0.0232,
+   "words_per_s": 407.9,
+   "waiting_for_data": 0.479
+  },
+  {
+   "step": 36000,
+   "loss": 0.02315,
+   "lr": 0.00011177979215934616,
+   "val_cer": 0.00368,
+   "val_wer": 0.024,
+   "words_per_s": 409.2,
+   "waiting_for_data": 0.481
+  },
+  {
+   "step": 38000,
+   "loss": 0.02047,
+   "lr": 9.654195629310031e-05,
+   "val_cer": 0.00353,
+   "val_wer": 0.0228,
+   "words_per_s": 410.4,
+   "waiting_for_data": 0.482
+  },
+  {
+   "step": 40000,
+   "loss": 0.01905,
+   "lr": 8.194845324069931e-05,
+   "val_cer": 0.00389,
+   "val_wer": 0.025,
+   "words_per_s": 411.3,
+   "waiting_for_data": 0.484
+  },
+  {
+   "step": 42000,
+   "loss": 0.01723,
+   "lr": 6.817037848246536e-05,
+   "val_cer": 0.00353,
+   "val_wer": 0.023,
+   "words_per_s": 412.3,
+   "waiting_for_data": 0.485
+  },
+  {
+   "step": 44000,
+   "loss": 0.01625,
+   "lr": 5.5369267347525084e-05,
+   "val_cer": 0.00347,
+   "val_wer": 0.0226,
+   "words_per_s": 413.2,
+   "waiting_for_data": 0.486
+  },
+  {
+   "step": 46000,
+   "loss": 0.01454,
+   "lr": 4.3695201159767935e-05,
+   "val_cer": 0.00332,
+   "val_wer": 0.0216,
+   "words_per_s": 413.9,
+   "waiting_for_data": 0.488
+  },
+  {
+   "step": 48000,
+   "loss": 0.01378,
+   "lr": 3.3285047671545053e-05,
+   "val_cer": 0.00347,
+   "val_wer": 0.0226,
+   "words_per_s": 414.6,
+   "waiting_for_data": 0.488
+  },
+  {
+   "step": 50000,
+   "loss": 0.01293,
+   "lr": 2.426085641441159e-05,
+   "val_cer": 0.00326,
+   "val_wer": 0.0214,
+   "words_per_s": 415.3,
+   "waiting_for_data": 0.489
+  },
+  {
+   "step": 52000,
+   "loss": 0.01154,
+   "lr": 1.672842777996075e-05,
+   "val_cer": 0.00323,
+   "val_wer": 0.021,
+   "words_per_s": 415.9,
+   "waiting_for_data": 0.49
+  },
+  {
+   "step": 54000,
+   "loss": 0.01125,
+   "lr": 1.0776072606966297e-05,
+   "val_cer": 0.00326,
+   "val_wer": 0.0214,
+   "words_per_s": 416.4,
+   "waiting_for_data": 0.49
+  },
+  {
+   "step": 56000,
+   "loss": 0.01127,
+   "lr": 6.473576817541335e-06,
+   "val_cer": 0.00313,
+   "val_wer": 0.0206,
+   "words_per_s": 416.8,
+   "waiting_for_data": 0.491
+  },
+  {
+   "step": 58000,
+   "loss": 0.01107,
+   "lr": 3.871383241007471e-06,
+   "val_cer": 0.00304,
+   "val_wer": 0.02,
+   "words_per_s": 417.3,
+   "waiting_for_data": 0.492
+  },
+  {
+   "step": 60000,
+   "loss": 0.01067,
+   "lr": 3.000000217841301e-06,
+   "val_cer": 0.0031,
+   "val_wer": 0.0202,
+   "words_per_s": 417.7,
+   "waiting_for_data": 0.493
+  }
+ ],
+ "hours_this_session": 2.56,
+ "note": "val CER and WER by greedy decoding of the EMA weights; best.pt is the step with the lowest CER"
+}

@@ -1,0 +1,128 @@
+{
+ "chosen": {
+  "order": 6,
+  "power": 0.0,
+  "val_perplexity": 7.6059,
+  "ngrams": 454480,
+  "seconds": 2.0
+ },
+ "discount": 0.75,
+ "train": {
+  "file": "train.tsv",
+  "distinct_words": 68450
+ },
+ "val": {
+  "file": "val.tsv",
+  "distinct_words": 3855,
+  "in_train": 0,
+  "weighting": "count ** 0.5, numbers 3% and full stops 2% of the weight, as the synthetic sets"
+ },
+ "note": "perplexity per character, the end of the word counted as a character",
+ "grid": [
+  {
+   "order": 3,
+   "power": 0.0,
+   "val_perplexity": 10.5995,
+   "ngrams": 22241,
+   "seconds": 0.6
+  },
+  {
+   "order": 4,
+   "power": 0.0,
+   "val_perplexity": 8.5073,
+   "ngrams": 101695,
+   "seconds": 0.9
+  },
+  {
+   "order": 5,
+   "power": 0.0,
+   "val_perplexity": 7.7512,
+   "ngrams": 253007,
+   "seconds": 1.4
+  },
+  {
+   "order": 6,
+   "power": 0.0,
+   "val_perplexity": 7.6059,
+   "ngrams": 454480,
+   "seconds": 2.0
+  },
+  {
+   "order": 7,
+   "power": 0.0,
+   "val_perplexity": 7.7535,
+   "ngrams": 685411,
+   "seconds": 2.6
+  },
+  {
+   "order": 3,
+   "power": 0.5,
+   "val_perplexity": 10.6018,
+   "ngrams": 22248,
+   "seconds": 0.7
+  },
+  {
+   "order": 4,
+   "power": 0.5,
+   "val_perplexity": 8.7211,
+   "ngrams": 101723,
+   "seconds": 0.8
+  },
+  {
+   "order": 5,
+   "power": 0.5,
+   "val_perplexity": 8.1864,
+   "ngrams": 253140,
+   "seconds": 1.4
+  },
+  {
+   "order": 6,
+   "power": 0.5,
+   "val_perplexity": 8.1477,
+   "ngrams": 454820,
+   "seconds": 2.0
+  },
+  {
+   "order": 7,
+   "power": 0.5,
+   "val_perplexity": 8.3838,
+   "ngrams": 685967,
+   "seconds": 2.8
+  },
+  {
+   "order": 3,
+   "power": 1.0,
+   "val_perplexity": 13.3013,
+   "ngrams": 22236,
+   "seconds": 0.7
+  },
+  {
+   "order": 4,
+   "power": 1.0,
+   "val_perplexity": 11.2165,
+   "ngrams": 101720,
+   "seconds": 0.8
+  },
+  {
+   "order": 5,
+   "power": 1.0,
+   "val_perplexity": 10.6081,
+   "ngrams": 253250,
+   "seconds": 1.4
+  },
+  {
+   "order": 6,
+   "power": 1.0,
+   "val_perplexity": 10.5242,
+   "ngrams": 455076,
+   "seconds": 2.0
+  },
+  {
+   "order": 7,
+   "power": 1.0,
+   "val_perplexity": 10.8631,
+   "ngrams": 686298,
+   "seconds": 2.8
+  }
+ ]
+}
