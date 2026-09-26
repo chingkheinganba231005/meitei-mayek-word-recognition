@@ -58,6 +58,7 @@ notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
   phase2_recogniser.ipynb       Phase 2 on Colab (A100)
+  collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
 results/             JSON files written by the code; every reported number comes from here
 docs/                Phase 0 report, Phase 1 and Phase 2 design, AI use log
 tests/               pytest
