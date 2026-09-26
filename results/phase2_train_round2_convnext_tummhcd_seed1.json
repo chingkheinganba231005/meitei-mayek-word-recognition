@@ -1,0 +1,558 @@
+{
+ "run": "round2_convnext_tummhcd_seed1",
+ "cfg": {
+  "encoder": "convnext_tiny",
+  "init": "tummhcd",
+  "steps": 60000,
+  "batch": 64,
+  "lr": 0.0003,
+  "lr_min": 0.01,
+  "warmup": 2000,
+  "wd": 0.05,
+  "ema": 0.999,
+  "clip": 5.0,
+  "aug": "full",
+  "hidden": 256,
+  "layers": 2,
+  "dropout": 0.2,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "log_every": 200,
+  "workers": 10,
+  "pool": 8,
+  "seed": 1,
+  "data_seed": 1001,
+  "scrambled": 0.1
+ },
+ "commit": "c25f902",
+ "parameters": 16314007,
+ "encoder_parameters": 12344928,
+ "training": {
+  "glyphs": "train.npz",
+  "lexicon": "train.tsv",
+  "sizes": "glyph_sizes_tummhcd.json",
+  "scrambled": 0.1,
+  "words_seen": 3840000
+ },
+ "validation": {
+  "set": "val.tar",
+  "words": 5000
+ },
+ "best": {
+  "cer": 0.00298,
+  "wer": 0.0192,
+  "step": 52000
+ },
+ "val_at_best": {
+  "words": 5000,
+  "characters": 33175,
+  "cer": 0.00298,
+  "wer": 0.0192,
+  "word_accuracy": 0.9808,
+  "word_accuracy_95ci": [
+   0.97661,
+   0.98425
+  ],
+  "substitutions": 92,
+  "deletions": 4,
+  "insertions": 3,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 1398,
+    "correct": 1398,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 2840,
+    "correct": 2838,
+    "accuracy": 0.9993,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 1053,
+    "correct": 1021,
+    "accuracy": 0.96961,
+    "read_as_the_other": 28
+   }
+  },
+  "top_errors": [
+   [
+    "ꯘ",
+    "ꯗ",
+    15
+   ],
+   [
+    "ꯗ",
+    "ꯘ",
+    13
+   ],
+   [
+    "ꯈ",
+    "ꯗ",
+    8
+   ],
+   [
+    "ꯄ",
+    "ꯒ",
+    4
+   ],
+   [
+    "ꯡ",
+    "ꯛ",
+    3
+   ],
+   [
+    "ꯗ",
+    "ꯈ",
+    3
+   ],
+   [
+    "ꯏ",
+    "ꯈ",
+    3
+   ],
+   [
+    "ꯇ",
+    "ꯍ",
+    2
+   ],
+   [
+    "(inserted)",
+    "ꯨ",
+    2
+   ],
+   [
+    "ꯙ",
+    "ꯊ",
+    2
+   ],
+   [
+    "ꯊ",
+    "ꯏ",
+    2
+   ],
+   [
+    "ꯏ",
+    "ꯇ",
+    2
+   ],
+   [
+    "ꯄ",
+    "ꯞ",
+    2
+   ],
+   [
+    "ꯟ",
+    "ꯡ",
+    2
+   ],
+   [
+    "ꯇ",
+    "ꯁ",
+    1
+   ],
+   [
+    "ꯏ",
+    "ꯠ",
+    1
+   ],
+   [
+    "ꯞ",
+    "ꯒ",
+    1
+   ],
+   [
+    "ꯈ",
+    "ꯆ",
+    1
+   ],
+   [
+    "ꯓ",
+    "ꯈ",
+    1
+   ],
+   [
+    "(inserted)",
+    "ꯤ",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯘ",
+    0.2344,
+    64
+   ],
+   [
+    "ꯙ",
+    0.0417,
+    72
+   ],
+   [
+    "꯹",
+    0.0244,
+    41
+   ],
+   [
+    "꯵",
+    0.0238,
+    42
+   ],
+   [
+    "ꯈ",
+    0.021,
+    428
+   ],
+   [
+    "ꯗ",
+    0.0172,
+    989
+   ],
+   [
+    "ꯓ",
+    0.013,
+    77
+   ],
+   [
+    "ꯄ",
+    0.0085,
+    827
+   ],
+   [
+    "ꯏ",
+    0.0078,
+    772
+   ],
+   [
+    "ꯩ",
+    0.0068,
+    146
+   ],
+   [
+    "ꯌ",
+    0.0065,
+    459
+   ],
+   [
+    "ꯋ",
+    0.0065,
+    155
+   ],
+   [
+    "ꯎ",
+    0.006,
+    168
+   ],
+   [
+    "ꯇ",
+    0.0053,
+    948
+   ],
+   [
+    "ꯞ",
+    0.0051,
+    195
+   ],
+   [
+    "ꯡ",
+    0.005,
+    999
+   ],
+   [
+    "ꯍ",
+    0.0043,
+    466
+   ],
+   [
+    "ꯪ",
+    0.0043,
+    230
+   ],
+   [
+    "ꯊ",
+    0.0041,
+    487
+   ],
+   [
+    "ꯐ",
+    0.0028,
+    363
+   ]
+  ]
+ },
+ "history": [
+  {
+   "step": 2000,
+   "loss": 1.85193,
+   "lr": 0.0003,
+   "val_cer": 0.01097,
+   "val_wer": 0.067,
+   "words_per_s": 259.9,
+   "waiting_for_data": 0.308
+  },
+  {
+   "step": 4000,
+   "loss": 0.11248,
+   "lr": 0.0002991303560827237,
+   "val_cer": 0.00687,
+   "val_wer": 0.044,
+   "words_per_s": 325.4,
+   "waiting_for_data": 0.386
+  },
+  {
+   "step": 6000,
+   "loss": 0.08745,
+   "lr": 0.00029652988143794045,
+   "val_cer": 0.00555,
+   "val_wer": 0.0352,
+   "words_per_s": 348.3,
+   "waiting_for_data": 0.4
+  },
+  {
+   "step": 8000,
+   "loss": 0.07713,
+   "lr": 0.0002922290640353826,
+   "val_cer": 0.00503,
+   "val_wer": 0.0324,
+   "words_per_s": 364.1,
+   "waiting_for_data": 0.421
+  },
+  {
+   "step": 10000,
+   "loss": 0.07121,
+   "lr": 0.0002862783270268202,
+   "val_cer": 0.00494,
+   "val_wer": 0.0322,
+   "words_per_s": 376.2,
+   "waiting_for_data": 0.436
+  },
+  {
+   "step": 12000,
+   "loss": 0.06535,
+   "lr": 0.0002787474373628678,
+   "val_cer": 0.00494,
+   "val_wer": 0.0324,
+   "words_per_s": 384.5,
+   "waiting_for_data": 0.446
+  },
+  {
+   "step": 14000,
+   "loss": 0.06285,
+   "lr": 0.0002697246878392773,
+   "val_cer": 0.00458,
+   "val_wer": 0.0298,
+   "words_per_s": 390.0,
+   "waiting_for_data": 0.45
+  },
+  {
+   "step": 16000,
+   "loss": 0.05865,
+   "lr": 0.0002593158619446342,
+   "val_cer": 0.00458,
+   "val_wer": 0.03,
+   "words_per_s": 393.4,
+   "waiting_for_data": 0.455
+  },
+  {
+   "step": 18000,
+   "loss": 0.05507,
+   "lr": 0.0002476429936456729,
+   "val_cer": 0.00431,
+   "val_wer": 0.0282,
+   "words_per_s": 397.4,
+   "waiting_for_data": 0.46
+  },
+  {
+   "step": 20000,
+   "loss": 0.04851,
+   "lr": 0.00023484293665059348,
+   "val_cer": 0.00458,
+   "val_wer": 0.0298,
+   "words_per_s": 400.7,
+   "waiting_for_data": 0.465
+  },
+  {
+   "step": 22000,
+   "loss": 0.04621,
+   "lr": 0.00022106575992445954,
+   "val_cer": 0.0041,
+   "val_wer": 0.0268,
+   "words_per_s": 403.3,
+   "waiting_for_data": 0.468
+  },
+  {
+   "step": 24000,
+   "loss": 0.04373,
+   "lr": 0.00020647298826779212,
+   "val_cer": 0.00383,
+   "val_wer": 0.025,
+   "words_per_s": 405.6,
+   "waiting_for_data": 0.471
+  },
+  {
+   "step": 26000,
+   "loss": 0.04034,
+   "lr": 0.00019123570858596735,
+   "val_cer": 0.00383,
+   "val_wer": 0.0252,
+   "words_per_s": 407.4,
+   "waiting_for_data": 0.473
+  },
+  {
+   "step": 28000,
+   "loss": 0.03834,
+   "lr": 0.00017553256405167692,
+   "val_cer": 0.00395,
+   "val_wer": 0.0258,
+   "words_per_s": 409.1,
+   "waiting_for_data": 0.476
+  },
+  {
+   "step": 30000,
+   "loss": 0.03555,
+   "lr": 0.00015954765967706345,
+   "val_cer": 0.0035,
+   "val_wer": 0.0226,
+   "words_per_s": 409.8,
+   "waiting_for_data": 0.477
+  },
+  {
+   "step": 32000,
+   "loss": 0.0322,
+   "lr": 0.00014346840385078184,
+   "val_cer": 0.00407,
+   "val_wer": 0.0268,
+   "words_per_s": 411.1,
+   "waiting_for_data": 0.479
+  },
+  {
+   "step": 34000,
+   "loss": 0.02996,
+   "lr": 0.00012748331114599142,
+   "val_cer": 0.0041,
+   "val_wer": 0.0264,
+   "words_per_s": 412.4,
+   "waiting_for_data": 0.481
+  },
+  {
+   "step": 36000,
+   "loss": 0.02793,
+   "lr": 0.00011177979215934616,
+   "val_cer": 0.00374,
+   "val_wer": 0.024,
+   "words_per_s": 413.4,
+   "waiting_for_data": 0.482
+  },
+  {
+   "step": 38000,
+   "loss": 0.02455,
+   "lr": 9.654195629310031e-05,
+   "val_cer": 0.00338,
+   "val_wer": 0.022,
+   "words_per_s": 414.4,
+   "waiting_for_data": 0.483
+  },
+  {
+   "step": 40000,
+   "loss": 0.02347,
+   "lr": 8.194845324069931e-05,
+   "val_cer": 0.00362,
+   "val_wer": 0.0236,
+   "words_per_s": 414.6,
+   "waiting_for_data": 0.483
+  },
+  {
+   "step": 42000,
+   "loss": 0.02241,
+   "lr": 6.817037848246536e-05,
+   "val_cer": 0.00329,
+   "val_wer": 0.0212,
+   "words_per_s": 415.5,
+   "waiting_for_data": 0.485
+  },
+  {
+   "step": 44000,
+   "loss": 0.02044,
+   "lr": 5.5369267347525084e-05,
+   "val_cer": 0.0032,
+   "val_wer": 0.021,
+   "words_per_s": 416.1,
+   "waiting_for_data": 0.486
+  },
+  {
+   "step": 46000,
+   "loss": 0.01856,
+   "lr": 4.3695201159767935e-05,
+   "val_cer": 0.00313,
+   "val_wer": 0.0202,
+   "words_per_s": 416.8,
+   "waiting_for_data": 0.487
+  },
+  {
+   "step": 48000,
+   "loss": 0.01704,
+   "lr": 3.3285047671545053e-05,
+   "val_cer": 0.00313,
+   "val_wer": 0.0204,
+   "words_per_s": 417.4,
+   "waiting_for_data": 0.487
+  },
+  {
+   "step": 50000,
+   "loss": 0.01653,
+   "lr": 2.426085641441159e-05,
+   "val_cer": 0.00307,
+   "val_wer": 0.02,
+   "words_per_s": 418.0,
+   "waiting_for_data": 0.488
+  },
+  {
+   "step": 52000,
+   "loss": 0.01617,
+   "lr": 1.672842777996075e-05,
+   "val_cer": 0.00298,
+   "val_wer": 0.0192,
+   "words_per_s": 418.4,
+   "waiting_for_data": 0.489
+  },
+  {
+   "step": 54000,
+   "loss": 0.01549,
+   "lr": 1.0776072606966297e-05,
+   "val_cer": 0.00301,
+   "val_wer": 0.0192,
+   "words_per_s": 418.9,
+   "waiting_for_data": 0.49
+  },
+  {
+   "step": 56000,
+   "loss": 0.01489,
+   "lr": 6.473576817541335e-06,
+   "val_cer": 0.00298,
+   "val_wer": 0.019,
+   "words_per_s": 419.3,
+   "waiting_for_data": 0.491
+  },
+  {
+   "step": 58000,
+   "loss": 0.01452,
+   "lr": 3.871383241007471e-06,
+   "val_cer": 0.00307,
+   "val_wer": 0.0196,
+   "words_per_s": 419.7,
+   "waiting_for_data": 0.491
+  },
+  {
+   "step": 60000,
+   "loss": 0.01388,
+   "lr": 3.000000217841301e-06,
+   "val_cer": 0.0031,
+   "val_wer": 0.0198,
+   "words_per_s": 420.1,
+   "waiting_for_data": 0.492
+  }
+ ],
+ "hours_this_session": 2.54,
+ "note": "val CER and WER by greedy decoding of the EMA weights; best.pt is the step with the lowest CER"
+}

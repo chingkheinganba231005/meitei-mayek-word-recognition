@@ -1,0 +1,558 @@
+{
+ "run": "round2_convnext_tummhcd",
+ "cfg": {
+  "encoder": "convnext_tiny",
+  "init": "tummhcd",
+  "steps": 60000,
+  "batch": 64,
+  "lr": 0.0003,
+  "lr_min": 0.01,
+  "warmup": 2000,
+  "wd": 0.05,
+  "ema": 0.999,
+  "clip": 5.0,
+  "aug": "full",
+  "hidden": 256,
+  "layers": 2,
+  "dropout": 0.2,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "log_every": 200,
+  "workers": 10,
+  "pool": 8,
+  "seed": 0,
+  "data_seed": 1000,
+  "scrambled": 0.1
+ },
+ "commit": "c25f902",
+ "parameters": 16314007,
+ "encoder_parameters": 12344928,
+ "training": {
+  "glyphs": "train.npz",
+  "lexicon": "train.tsv",
+  "sizes": "glyph_sizes_tummhcd.json",
+  "scrambled": 0.1,
+  "words_seen": 3840000
+ },
+ "validation": {
+  "set": "val.tar",
+  "words": 5000
+ },
+ "best": {
+  "cer": 0.00274,
+  "wer": 0.0178,
+  "step": 60000
+ },
+ "val_at_best": {
+  "words": 5000,
+  "characters": 33175,
+  "cer": 0.00274,
+  "wer": 0.0178,
+  "word_accuracy": 0.9822,
+  "word_accuracy_95ci": [
+   0.97815,
+   0.98551
+  ],
+  "substitutions": 87,
+  "deletions": 2,
+  "insertions": 2,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 1398,
+    "correct": 1398,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 2840,
+    "correct": 2839,
+    "accuracy": 0.99965,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 1053,
+    "correct": 1022,
+    "accuracy": 0.97056,
+    "read_as_the_other": 31
+   }
+  },
+  "top_errors": [
+   [
+    "ꯘ",
+    "ꯗ",
+    19
+   ],
+   [
+    "ꯗ",
+    "ꯘ",
+    12
+   ],
+   [
+    "ꯈ",
+    "ꯗ",
+    6
+   ],
+   [
+    "ꯄ",
+    "ꯒ",
+    4
+   ],
+   [
+    "ꯏ",
+    "ꯈ",
+    4
+   ],
+   [
+    "ꯇ",
+    "ꯍ",
+    3
+   ],
+   [
+    "ꯡ",
+    "ꯛ",
+    3
+   ],
+   [
+    "ꯙ",
+    "ꯊ",
+    2
+   ],
+   [
+    "ꯒ",
+    "ꯄ",
+    2
+   ],
+   [
+    "ꯡ",
+    "ꯑ",
+    2
+   ],
+   [
+    "ꯏ",
+    "ꯇ",
+    2
+   ],
+   [
+    "ꯅ",
+    "ꯑ",
+    2
+   ],
+   [
+    "ꯄ",
+    "ꯞ",
+    2
+   ],
+   [
+    "ꯏ",
+    "ꯠ",
+    1
+   ],
+   [
+    "ꯞ",
+    "ꯒ",
+    1
+   ],
+   [
+    "ꯈ",
+    "ꯆ",
+    1
+   ],
+   [
+    "(inserted)",
+    "꯭",
+    1
+   ],
+   [
+    "ꯛ",
+    "ꯔ",
+    1
+   ],
+   [
+    "ꯪ",
+    "(deleted)",
+    1
+   ],
+   [
+    "ꯙ",
+    "ꯚ",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯘ",
+    0.2969,
+    64
+   ],
+   [
+    "ꯙ",
+    0.0417,
+    72
+   ],
+   [
+    "꯸",
+    0.025,
+    40
+   ],
+   [
+    "꯹",
+    0.0244,
+    41
+   ],
+   [
+    "꯵",
+    0.0238,
+    42
+   ],
+   [
+    "ꯈ",
+    0.0164,
+    428
+   ],
+   [
+    "ꯓ",
+    0.013,
+    77
+   ],
+   [
+    "ꯗ",
+    0.0121,
+    989
+   ],
+   [
+    "ꯏ",
+    0.0091,
+    772
+   ],
+   [
+    "ꯄ",
+    0.0073,
+    827
+   ],
+   [
+    "ꯩ",
+    0.0068,
+    146
+   ],
+   [
+    "ꯋ",
+    0.0065,
+    155
+   ],
+   [
+    "ꯐ",
+    0.0055,
+    363
+   ],
+   [
+    "ꯞ",
+    0.0051,
+    195
+   ],
+   [
+    "ꯡ",
+    0.005,
+    999
+   ],
+   [
+    "ꯪ",
+    0.0043,
+    230
+   ],
+   [
+    "ꯇ",
+    0.0042,
+    948
+   ],
+   [
+    "ꯊ",
+    0.0041,
+    487
+   ],
+   [
+    "ꯛ",
+    0.0028,
+    719
+   ],
+   [
+    "ꯒ",
+    0.0022,
+    904
+   ]
+  ]
+ },
+ "history": [
+  {
+   "step": 2000,
+   "loss": 1.85061,
+   "lr": 0.0003,
+   "val_cer": 0.01061,
+   "val_wer": 0.0656,
+   "words_per_s": 254.0,
+   "waiting_for_data": 0.268
+  },
+  {
+   "step": 4000,
+   "loss": 0.11197,
+   "lr": 0.0002991303560827237,
+   "val_cer": 0.00681,
+   "val_wer": 0.0428,
+   "words_per_s": 311.7,
+   "waiting_for_data": 0.341
+  },
+  {
+   "step": 6000,
+   "loss": 0.08654,
+   "lr": 0.00029652988143794045,
+   "val_cer": 0.00564,
+   "val_wer": 0.0356,
+   "words_per_s": 342.0,
+   "waiting_for_data": 0.379
+  },
+  {
+   "step": 8000,
+   "loss": 0.07711,
+   "lr": 0.0002922290640353826,
+   "val_cer": 0.00518,
+   "val_wer": 0.0332,
+   "words_per_s": 360.7,
+   "waiting_for_data": 0.406
+  },
+  {
+   "step": 10000,
+   "loss": 0.07282,
+   "lr": 0.0002862783270268202,
+   "val_cer": 0.00458,
+   "val_wer": 0.029,
+   "words_per_s": 373.3,
+   "waiting_for_data": 0.423
+  },
+  {
+   "step": 12000,
+   "loss": 0.06637,
+   "lr": 0.0002787474373628678,
+   "val_cer": 0.00491,
+   "val_wer": 0.0316,
+   "words_per_s": 380.1,
+   "waiting_for_data": 0.433
+  },
+  {
+   "step": 14000,
+   "loss": 0.06207,
+   "lr": 0.0002697246878392773,
+   "val_cer": 0.00455,
+   "val_wer": 0.0298,
+   "words_per_s": 387.1,
+   "waiting_for_data": 0.444
+  },
+  {
+   "step": 16000,
+   "loss": 0.05834,
+   "lr": 0.0002593158619446342,
+   "val_cer": 0.00482,
+   "val_wer": 0.0312,
+   "words_per_s": 392.3,
+   "waiting_for_data": 0.451
+  },
+  {
+   "step": 18000,
+   "loss": 0.05513,
+   "lr": 0.0002476429936456729,
+   "val_cer": 0.00458,
+   "val_wer": 0.0288,
+   "words_per_s": 396.2,
+   "waiting_for_data": 0.457
+  },
+  {
+   "step": 20000,
+   "loss": 0.0522,
+   "lr": 0.00023484293665059348,
+   "val_cer": 0.0041,
+   "val_wer": 0.0264,
+   "words_per_s": 399.3,
+   "waiting_for_data": 0.462
+  },
+  {
+   "step": 22000,
+   "loss": 0.04728,
+   "lr": 0.00022106575992445954,
+   "val_cer": 0.00407,
+   "val_wer": 0.0262,
+   "words_per_s": 401.9,
+   "waiting_for_data": 0.466
+  },
+  {
+   "step": 24000,
+   "loss": 0.04621,
+   "lr": 0.00020647298826779212,
+   "val_cer": 0.00359,
+   "val_wer": 0.0236,
+   "words_per_s": 403.3,
+   "waiting_for_data": 0.468
+  },
+  {
+   "step": 26000,
+   "loss": 0.04234,
+   "lr": 0.00019123570858596735,
+   "val_cer": 0.00371,
+   "val_wer": 0.0242,
+   "words_per_s": 405.3,
+   "waiting_for_data": 0.471
+  },
+  {
+   "step": 28000,
+   "loss": 0.03791,
+   "lr": 0.00017553256405167692,
+   "val_cer": 0.00341,
+   "val_wer": 0.0224,
+   "words_per_s": 407.1,
+   "waiting_for_data": 0.474
+  },
+  {
+   "step": 30000,
+   "loss": 0.03601,
+   "lr": 0.00015954765967706345,
+   "val_cer": 0.00353,
+   "val_wer": 0.0232,
+   "words_per_s": 408.7,
+   "waiting_for_data": 0.476
+  },
+  {
+   "step": 32000,
+   "loss": 0.03329,
+   "lr": 0.00014346840385078184,
+   "val_cer": 0.00335,
+   "val_wer": 0.0218,
+   "words_per_s": 410.0,
+   "waiting_for_data": 0.478
+  },
+  {
+   "step": 34000,
+   "loss": 0.03017,
+   "lr": 0.00012748331114599142,
+   "val_cer": 0.00335,
+   "val_wer": 0.022,
+   "words_per_s": 411.3,
+   "waiting_for_data": 0.48
+  },
+  {
+   "step": 36000,
+   "loss": 0.0288,
+   "lr": 0.00011177979215934616,
+   "val_cer": 0.00323,
+   "val_wer": 0.0214,
+   "words_per_s": 412.4,
+   "waiting_for_data": 0.482
+  },
+  {
+   "step": 38000,
+   "loss": 0.02607,
+   "lr": 9.654195629310031e-05,
+   "val_cer": 0.0035,
+   "val_wer": 0.0228,
+   "words_per_s": 413.3,
+   "waiting_for_data": 0.483
+  },
+  {
+   "step": 40000,
+   "loss": 0.02446,
+   "lr": 8.194845324069931e-05,
+   "val_cer": 0.00326,
+   "val_wer": 0.0214,
+   "words_per_s": 414.2,
+   "waiting_for_data": 0.484
+  },
+  {
+   "step": 42000,
+   "loss": 0.02215,
+   "lr": 6.817037848246536e-05,
+   "val_cer": 0.00323,
+   "val_wer": 0.021,
+   "words_per_s": 415.0,
+   "waiting_for_data": 0.485
+  },
+  {
+   "step": 44000,
+   "loss": 0.02098,
+   "lr": 5.5369267347525084e-05,
+   "val_cer": 0.00329,
+   "val_wer": 0.0216,
+   "words_per_s": 415.2,
+   "waiting_for_data": 0.486
+  },
+  {
+   "step": 46000,
+   "loss": 0.01907,
+   "lr": 4.3695201159767935e-05,
+   "val_cer": 0.00317,
+   "val_wer": 0.0208,
+   "words_per_s": 415.8,
+   "waiting_for_data": 0.487
+  },
+  {
+   "step": 48000,
+   "loss": 0.01829,
+   "lr": 3.3285047671545053e-05,
+   "val_cer": 0.00317,
+   "val_wer": 0.0204,
+   "words_per_s": 416.4,
+   "waiting_for_data": 0.488
+  },
+  {
+   "step": 50000,
+   "loss": 0.01732,
+   "lr": 2.426085641441159e-05,
+   "val_cer": 0.00323,
+   "val_wer": 0.0208,
+   "words_per_s": 417.0,
+   "waiting_for_data": 0.489
+  },
+  {
+   "step": 52000,
+   "loss": 0.01576,
+   "lr": 1.672842777996075e-05,
+   "val_cer": 0.00295,
+   "val_wer": 0.0192,
+   "words_per_s": 417.5,
+   "waiting_for_data": 0.49
+  },
+  {
+   "step": 54000,
+   "loss": 0.01542,
+   "lr": 1.0776072606966297e-05,
+   "val_cer": 0.0028,
+   "val_wer": 0.0184,
+   "words_per_s": 418.0,
+   "waiting_for_data": 0.491
+  },
+  {
+   "step": 56000,
+   "loss": 0.01542,
+   "lr": 6.473576817541335e-06,
+   "val_cer": 0.00295,
+   "val_wer": 0.0192,
+   "words_per_s": 418.4,
+   "waiting_for_data": 0.491
+  },
+  {
+   "step": 58000,
+   "loss": 0.01506,
+   "lr": 3.871383241007471e-06,
+   "val_cer": 0.00301,
+   "val_wer": 0.0194,
+   "words_per_s": 418.8,
+   "waiting_for_data": 0.492
+  },
+  {
+   "step": 60000,
+   "loss": 0.01436,
+   "lr": 3.000000217841301e-06,
+   "val_cer": 0.00274,
+   "val_wer": 0.0178,
+   "words_per_s": 419.2,
+   "waiting_for_data": 0.492
+  }
+ ],
+ "hours_this_session": 2.55,
+ "note": "val CER and WER by greedy decoding of the EMA weights; best.pt is the step with the lowest CER"
+}

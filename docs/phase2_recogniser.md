@@ -308,3 +308,35 @@ scrambled words. Contact sheet of 48 scrambled words shown to the owner.
 (seed 0, training words 1000), `round2_convnext_tummhcd_seed1` (seed 1, words 1001),
 `round2_convnext_imagenet`, `round2_crnn_scratch`; about 10 hours on the A100 40 GB. Then
 validation (section 5); the baseline on validation is done; the test waits.
+
+**Second round, results (owner, 26 September 2026; `results/phase2_{train,val}_round2_*.json`,
+per-word predictions sent with `notebooks/collect_results.ipynb`).** Synthetic validation,
+5,000 words:
+
+| Run | Best step | CER greedy | WER greedy | CER with LM | WER with LM | alpha, beta |
+|---|---|---|---|---|---|---|
+| `round2_convnext_tummhcd` | 60,000 | 0.274% | 1.78% | 0.253% | 1.68% | 0.5, 0 |
+| `round2_convnext_tummhcd_seed1` | 52,000 | 0.298% | 1.92% | 0.253% | 1.64% | 0.5, 0 |
+| `round2_convnext_imagenet` | 58,000 | 0.326% | 2.10% | 0.268% | 1.78% | 0.5, 0.5 |
+| `round2_crnn_scratch` | 54,000 | 0.298% | 1.92% | 0.259% | 1.70% | 0.25, 1.5 |
+
+Against the first round (WER with LM 1.76-1.80%) slightly better, but not measurably: word
+by word, the main model's first and second rounds differ on 37 against 26 words (greedy)
+and 19 against 13 (with the language model), and its two seeds differ as much (23 against
+30; 15 against 13). The two seeds agree closely (CER with LM 0.253% both). The encoders are
+still indistinguishable on synthetic words.
+
+*ꯘ.* The network alone now reads more of the two failing words: ꯃꯘ꯭ꯔꯦꯕꯤ is misread in 4-5
+of 13 (first round 12) and ꯇꯃꯟꯘꯁꯦꯠ in 10-15 of 19 (first round 19), greedy. The language
+model, which has never seen ꯘ after ꯟ or before ꯭ꯔ, pulls most of them back (ConvNeXt runs
+with the language model: 13 of 13 and 14-19 of 19 still wrong). And the network now reads ꯗ
+as ꯘ more often (12-18 times, each in a different word, against 3), so the pair ꯗ/ꯘ keeps
+35-36 errors per run. ꯗ/ꯘ remains the hardest pair (as for the first paper's isolated
+characters: the development networks read ꯗ as ꯘ 48 times); on the synthetic sets it rests
+on five words, and the real set, with prompts holding ꯘ in varied words, is where it can be
+measured. The second round is the final recipe (the owner's decision, the ꯘ images read
+better, overall no worse).
+
+*Test plan.* One pass (section 7) over the four second-round runs, the three first-round
+runs (so that the effect of the scrambled words can be reported on test) and the baseline
+(released networks, language-model weights chosen with the development networks).

@@ -279,9 +279,9 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
 ## Phase 2: recogniser (details in `docs/phase2_recogniser.md`)
 
 Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **First round run by the
-owner (26 September 2026): three runs, validation, baseline on validation; the synthetic
-test set untouched. Second round decided and prepared** (`docs/phase2_recogniser.md`,
-sections 6 and 7).
+owner (26 September 2026): three runs, validation, baseline on validation. Second round
+(scrambled words) run and validated the same day; the synthetic test set untouched**
+(`docs/phase2_recogniser.md`, sections 6 and 7).
 
 - **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
   (`lexicon.scramble`: a lexicon word with each letter, lonsum letter and vowel sign replaced
@@ -293,6 +293,15 @@ sections 6 and 7).
   (3) No real development set: to the owner the synthetic words look as realistic as
   actual writing, so the first check on real handwriting is the Phase 3 set.
 
+- **Second round, synthetic validation (`results/phase2_val_round2_*.json`):** with the
+  language model CER 0.253% / 0.253% / 0.268% / 0.259% and WER 1.68% / 1.64% / 1.78% / 1.70%
+  (ConvNeXt-T from TUMMHCD seeds 0 and 1, from ImageNet, small CNN): slightly better than the
+  first round but within the difference between two seeds; the seeds agree closely. The
+  network alone reads the failing ꯘ words better (ꯃꯘ꯭ꯔꯦꯕꯤ misread 4-5 of 13 instead of 12,
+  ꯇꯃꯟꯘꯁꯦꯠ 10-15 of 19 instead of 19, greedy), the language model pulls most back, and ꯗ is
+  now read as ꯘ more often, so ꯗ/ꯘ keeps 35-36 errors: the hardest pair, to be measured on
+  the real set. Second round = final recipe. Next: the test, once, over all seven runs and
+  the baseline (notebook section 7).
 - **First round, synthetic validation (5,000 words; `results/phase2_val_*.json`):** CER
   0.30% / 0.29% / 0.32% and WER 2.0% / 1.9% / 2.1% greedy for ConvNeXt-T from TUMMHCD, from
   ImageNet and the small CNN from scratch; with the language model (order 6, every
