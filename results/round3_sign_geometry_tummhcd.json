@@ -8,6 +8,7 @@
  "sets": {
   "real": {
    "path": "real_test.tar",
+   "words": 100,
    "words_with_signs": 76,
    "measured": 59,
    "skipped": {
@@ -276,6 +277,7 @@
   },
   "print": {
    "path": "val_0",
+   "words": 1000,
    "words_with_signs": 635,
    "measured": 191,
    "skipped": {
@@ -547,6 +549,7 @@
   },
   "beside": {
    "path": "val_1",
+   "words": 1000,
    "words_with_signs": 635,
    "measured": 170,
    "skipped": {

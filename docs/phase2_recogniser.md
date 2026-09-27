@@ -377,8 +377,10 @@ classify.)
    times and ꯨ/ꯁ 115 times; the recogniser 0 times for both (every run). ꯗ/ꯘ: 6-17 swaps per
    run and decoding (ensemble 51).
 3. *No measurable differences between the runs:* word by word (exact binomial test on the
-   words one run reads and the other misreads) the rounds, the seeds and the encoders
-   differ with p of 0.16 or more, greedy and with the language model. The scrambled words
+   words one run reads and the other misreads) the rounds, the seeds and the encoders do not
+   differ measurably: over all 21 pairs of the seven runs, p of 0.12 or more greedy and 0.18
+   or more with the language model (`results/phase2_test_comparison.json`, from the runs'
+   test predictions; `scripts/compare_runs.py`). The scrambled words
    neither help nor hurt measurably on synthetic words; the TUMMHCD start, the ImageNet
    start and the small CNN from scratch are equal on them. Synthetic words cannot rank the
    encoders; the real set may.

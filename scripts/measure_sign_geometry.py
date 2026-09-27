@@ -125,7 +125,8 @@ def measure_set(path, limit=None):
             skipped[why] = skipped.get(why, 0) + 1
         else:
             rows.extend(m)
-    report = {"words_with_signs": words, "measured": words - sum(skipped.values()), "skipped": skipped, "signs": {}}
+    report = {"words": len(texts), "words_with_signs": words, "measured": words - sum(skipped.values()),
+              "skipped": skipped, "signs": {}}
     for ch in SIGNS:
         r = [x for x in rows if x["char"] == ch]
         if r:

@@ -295,7 +295,8 @@ evaluation, on real handwriting, waits for the Phase 3 set.
   zones and the language model (not attainable): 0.17%, 1.1%; the ensemble alone on
   isolated images: 1.20%, 7.6%. Swaps ꯦ/꯰ and ꯨ/ꯁ: ensemble on isolated images 94 and 115,
   recogniser 0 and 0 (every run); ꯗ/ꯘ 6-17 (ensemble 51). Rounds, seeds and encoders do not
-  differ measurably (paired tests p >= 0.16). The figures are in-distribution (same
+  differ measurably (paired exact tests over all 21 pairs of runs: p >= 0.12 greedy, >= 0.18 with
+  the language model; `results/phase2_test_comparison.json`). The figures are in-distribution (same
   synthesiser, same TUMMHCD writers): real handwriting will be harder.
 
 - **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
@@ -523,6 +524,26 @@ here; the owner trains next.**
   numbers, 56 with a sign above), read once by round 2 and round 3, two seeds each
   (`phase3_real2_*`). Synthetic: choices on `val.tar` as before; `val_beside.tar` (the same
   5,000 words, every sign above beside) for the effect alone; synthetic test once.
+
+## The paper (draft, 27 September 2026)
+
+"Whole words from isolated characters: handwritten Meitei Mayek word recognition trained on
+synthetic words" (title proposed): 16 pages, `article` class, XeLaTeX (the Meitei Mayek text is
+shaped by HarfBuzz with the bundled Noto font). **Kept out of the public repository**, as the first
+paper's source is: sent to the owner as `paper_draft_20260927.zip` (source, figures, fonts, the
+scripts) and a PDF; the owner decides whether it goes into the repository.
+
+- Every number is a macro written by the draft's `make_numbers.py` from `results/*.json` (none
+  typed by hand except the first paper's and the thesis's own figures, cited to them); sentences
+  saying "never" are guarded (the script stops if the result under them changes). Round 3 prints
+  as red "tbd"/"[pending]" until its results exist; then run `make_numbers.py` and write its text.
+- Sections: introduction; related work; the script and the spelling of i; data; synthetic words;
+  the recogniser; baselines; synthetic results; real words (collection, results, errors, where
+  the signs stand); round 3; discussion; declarations (code and data, use of AI tools, ethics).
+- 26 of the 41 cited references are marked "[to check]" (abstracts or memory only): check each
+  against its full text before submission (list in the draft's README).
+- Owner to decide: venue and template, title, release of the real word set, funding statement,
+  whether the draft goes into the repository.
 
 ## Working rules
 
