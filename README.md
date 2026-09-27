@@ -73,6 +73,7 @@ A100 GPU (about 2.5 hours per run).
 | `notebooks/4_real_words_and_demo.ipynb` | the real test, and the Hugging Face model and demo |
 | `notebooks/5_signs_beside.ipynb` | training with the signs above placed as the real writer places them |
 | `notebooks/collect_results.ipynb` | gathers the small result files from Drive in one zip |
+| `notebooks/update_hf_cards.ipynb` | rewrites the Hugging Face model card, Space card and demo text from `results/` and uploads them (no GPU, no Drive) |
 
 Tests: `pip install -r requirements-dev.txt -r requirements-htr.txt && pytest -q`.
 
