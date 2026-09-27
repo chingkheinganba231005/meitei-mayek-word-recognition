@@ -2,3 +2,6 @@
 # Colab; elsewhere install the build for your machine from pytorch.org. The baseline
 # (scripts/oracle_baseline.py) also needs the first project's package, as in the Phase 2 notebook.
 timm
+# the browser demo (mayek_htr/web.py): export and check
+onnx
+onnxruntime

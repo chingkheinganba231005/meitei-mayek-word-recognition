@@ -74,6 +74,14 @@ def syllables(word):
     return out
 
 
+def standard_spelling(text):
+    """Everyday spelling -> the standard spelling's i: ꯢ for the i right after ꯥ, ꯣ or ꯨ,
+    ꯏ elsewhere (the rule the ꯢ-writing Wikipedia pages follow for 95.7% of their i's;
+    Phase 0). The recogniser reads everyday spelling; this renders its output the other way."""
+    return "".join(I_LONSUM if ch == I_LETTER and i and text[i - 1] in CODA_I_AFTER else ch
+                   for i, ch in enumerate(text))
+
+
 NUNG = chr(0xABEA)
 VOWEL_SIGNS = SIGNS - {NUNG}
 SYLLABLE_TYPES = ("C", "CV", "CVC", "CC")

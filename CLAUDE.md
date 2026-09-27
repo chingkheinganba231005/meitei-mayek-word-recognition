@@ -378,9 +378,10 @@ evaluation, on real handwriting, waits for the Phase 3 set.
 ## Phase 3: the real word set (details in `docs/phase3_real_words.md`)
 
 Module `mayek_htr/pages.py`, scripts `make_writing_pages.py`, `cut_writing_pages.py` and
-`measure_strokes.py`. **Status (27 September 2026): proposals confirmed by the owner; trial
-page written and cut; the 29 test pages made and with the owner; the pen width to settle
-before writing.**
+`measure_strokes.py`; the demo: `mayek_htr/web.py`, `mayek_htr/reader.py`, `web/`, `space/`,
+`scripts/build_demo.py`; notebook `notebooks/phase3_real_words_and_demo.ipynb`. **Status (27
+September 2026): the real set is the 100 words written (owner's decision); the test over all
+seven runs, once, and the Hugging Face demo are ready to run in the notebook.**
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and
@@ -425,6 +426,40 @@ before writing.**
   and sign at least 8 times except ꯘ (5: every test word that has it), digits 4-10 times
   (`results/phase3_pages.json`). The PDF (its words embedded) stays off the repository:
   Drive `WORK/real/real_words_pages.pdf`.
+
+- **Owner's decision (27 September 2026):** "I have done 100 words . So i wanna only test using
+  100 words and launch a similar hugging face space demo for my final model as the character
+  model which hit 98% accuracy . And in the future , i can collect more real data and improve
+  it. For now this is okay." The real test set is items 1-100 (pages 1-6; items 101-500 not
+  written, kept for later). 100 words give wide intervals (at 80% of words right, the 95%
+  interval is about 71-87%): a first check on real handwriting, not yet a benchmark.
+  Contribution (3) needs rewording again; proposed (to confirm): "a first real handwritten
+  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
+  fixed protocol and the tools to extend it".
+- **The real set (`results/phase3_real_set.json`, `results/phase3_real_strokes.json`):** 100
+  words (90 from the lexicon, 10 numbers), 593 characters, 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
+  for the pairs ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1. All cut whole (20 flagged `outside`, all
+  complete on the contact sheets). One pen throughout, as the training words at the
+  recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7% (synthetic 4.0 px,
+  0.121, 13.5%). The set (`real_test.tar`, with its manifest) goes on Drive in `WORK/real/`;
+  not in the repository.
+- **Test protocol:** the notebook's section 1 (`RUN_REAL_TEST`): all seven Phase 2 runs read
+  the 100 words once (`eval_recogniser.py --tuned`, the settings of synthetic validation),
+  greedy and with the language model: `results/phase3_real_<run>.json`.
+- **Demo (as the first project's):** a static Hugging Face Space where everything runs in the
+  visitor's browser (ONNX Runtime Web 1.30.0), and a model repository
+  (`Chingkheinganba/handwritten-meitei-mayek-word-recognition`, both). The network exported to
+  ONNX (float16 weights; one word of any width; checked against PyTorch on synthetic
+  validation words), the language model written in back-off form (`web/lm.bin.gz`, the exact
+  probabilities of `CharLM`), preprocessing and CTC beam search ported to JavaScript: on
+  test inputs the page's images and readings are identical to Python's (`tests/test_web.py`,
+  Node; checked end to end in headless Chromium). The page shows the reading with and
+  without the language model, the alternatives, and the standard spelling on request
+  (`charset.standard_spelling`: ꯢ after ꯥ, ꯣ, ꯨ). The demo's network: of the final
+  recipe's two seeds, the better on synthetic validation (CER tied at 0.253%, WER 1.64%
+  against 1.68%): `round2_convnext_tummhcd_seed1`, alpha 0.5, beta 0. Python use:
+  `mayek_htr.reader.Reader`. The language model is built from CC BY-SA 4.0 (Wikipedia) and
+  ODC-By (FineWeb-2) text: released under CC BY-SA 4.0 with attribution (model card).
 
 ## Working rules
 

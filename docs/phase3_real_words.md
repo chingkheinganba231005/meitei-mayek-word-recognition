@@ -1,9 +1,9 @@
 # Phase 3: the real word set
 
-Started 26 September 2026. **Status (27 September): the owner confirmed the proposals
-(section 5) and wrote the trial page, which cut cleanly (section 6); the 29 test pages are
-made (section 7) and with the owner. Before writing them, the pen width is to be settled
-(section 6).**
+Started 26 September 2026. **Status (27 September): the owner wrote 100 of the 500 items
+and decided that these 100 words are the real test set for now (section 9); the test over
+the seven Phase 2 runs, once, and a Hugging Face demo like the first project's (section 10)
+are ready to run in `notebooks/phase3_real_words_and_demo.ipynb`.**
 
 ## 1. The owner's decision (26 September 2026)
 
@@ -159,3 +159,72 @@ repository: Drive `WORK/real/real_words_pages.pdf`.
    not cross it out. Leave a box empty to skip a word.
 5. Export the whole PDF (Share, then Save to Files, or the app's PDF export) and send it;
    page 1 first, to check the pen.
+
+## 9. The real test set: 100 words (owner's decision, 27 September 2026)
+
+> "I have done 100 words . So i wanna only test using 100 words and launch a similar hugging
+> face space demo for my final model as the character model which hit 98% accuracy . And in
+> the future , i can collect more real data and improve it. For now this is okay."
+
+- **Written:** items 1 to 100 of the test pages (pages 1-6; items 101-106 on page 6 and
+  pages 7-29 not written, kept for later), with the pen chosen in section 6 throughout, also
+  for items 1-2 (rewritten). Exported from the iPad's Markup as one PDF; pages 1-6 cut
+  (`cut_writing_pages.py`).
+- **The set (`results/phase3_real_set.json`):** 100 words, 90 from the lexicon and 10
+  numbers; 593 characters; 52 of the 54 characters (not ꯳ and ꯓ; ꯘ, ꯙ, ꯚ and ꯴ once). For
+  the confusable pairs: ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1, so ꯗ/ꯘ and ꯰ can hardly be measured
+  here. Every word cut whole; 20 flagged `outside` (a stroke over a box line), all complete
+  on the contact sheets; no stray ink. The owner checks on the sheets that each word matches
+  its printed word before the test.
+- **The pen (`results/phase3_real_strokes.json`):** the same on all six pages and as the
+  training words at the recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7%
+  of the image (synthetic words 4.0 px, 0.121, 13.5%); about 1.1 mm on the page.
+- **What 100 words can show:** a first measure on real handwriting. The intervals are wide:
+  at 80 words right of 100 the 95% interval is 71-87%. Runs that differ by a few words cannot
+  be told apart; the final recipe's two seeds are reported with their mean.
+- **Contribution (3), to reword (proposal, owner to confirm):** "a first real handwritten
+  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
+  fixed protocol and the tools to extend it".
+- **Protocol:** the notebook's section 1, with `RUN_REAL_TEST = True`, once: every Phase 2 run
+  (the four of the second round, the three of the first) reads the 100 words with the
+  settings it was given on the synthetic validation set (`eval_recogniser.py --tuned`),
+  greedily and with the language model. Writes `results/phase3_real_<run>.json`, and per run
+  `real_predictions.tsv` and `real_errors.png`. A run already read is not read again.
+
+## 10. The demo (Hugging Face, as the first project's)
+
+The first project's demo is a static Space: the network runs in the visitor's browser with
+ONNX Runtime Web, nothing is uploaded, and the weights sit in a model repository. The word
+demo does the same (`Chingkheinganba/handwritten-meitei-mayek-word-recognition`, model
+repository and Space):
+
+- **Network:** of the final recipe's two seeds, the one better on synthetic validation (lower
+  CER with the language model, then WER): `round2_convnext_tummhcd_seed1` (CER 0.253% for
+  both, WER 1.64% against 1.68%), with its decoding weights (alpha 0.5, beta 0). Exported to
+  ONNX for one word of any width (`mayek_htr.web.export_onnx`: the word padded with paper to
+  a multiple of 32 px, the LSTM reading only the word's own columns, as in the evaluation);
+  weights stored as float16 (about 33 MB) unless that changes more than 1% of the greedy
+  readings of synthetic validation words.
+- **Language model in the browser:** `CharLM` written in back-off form (every n-gram seen with
+  its log probability, every context seen with its log back-off weight), which gives exactly
+  its probabilities; about 0.74 MB compressed for the development word list, expected about
+  7-8 MB for the full one.
+- **Page (`web/`):** write a word on a wide canvas (pen about a tenth of the letter height) or
+  upload a photo; the reading with the language model, the network's own reading, the
+  alternatives kept by the beam search, what the network sees, and the standard spelling on
+  request (`charset.standard_spelling`: ꯢ after ꯥ, ꯣ, ꯨ). Preprocessing (`images.py`, with
+  Pillow's resampling) and decoding (`decode.py`, `lm.py`) are ported to JavaScript.
+- **Checks:** on test inputs the JavaScript gives the same normalised images, pixel for pixel
+  (seven sizes, Pillow's reduce and resize and the width limit), the same language model
+  probabilities and the same readings (40 test inputs, greedy and beam search with and
+  without the language model) as Python (`tests/test_web.py`, with Node); the ONNX network
+  matches PyTorch; in headless Chromium, writing on the page gives the reading Python gives
+  for the same image. The notebook was dry-run end to end with stand-in networks.
+- **Python:** `mayek_htr.reader.Reader("word_model").read("word.jpg")`, as in the model card.
+- **Build and upload:** the notebook's sections 3 and 4 (`scripts/build_demo.py`; upload with
+  a Hugging Face token in Colab secrets, `UPLOAD = True`). The cards quote the synthetic test
+  and, after section 1, the real words.
+- **Licences:** network MIT (as the code and the first project's weights); the language model
+  is built from Wikipedia (CC BY-SA 4.0) and FineWeb-2 (ODC-By 1.0) and is released under
+  CC BY-SA 4.0 with attribution, as the model card says.
+

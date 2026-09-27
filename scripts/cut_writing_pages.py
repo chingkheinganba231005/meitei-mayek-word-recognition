@@ -28,6 +28,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mayek_htr.pages import Cutter, meitei_font, read_pages  # noqa: E402
+from mayek_words.charset import ALPHABET  # noqa: E402
 
 TILE_W, TILE_H, CROP_H = 800, 124, 84
 
@@ -127,6 +128,8 @@ def main():
                "items": len(items), "status": dict(status),
                "written_by_kind": dict(Counter(it["kind"] for it in written)),
                "characters_written": sum(len(it["text"]) for it in written),
+               "character_counts": {ch: n for ch, n in sorted(Counter(ch for it in written for ch in it["text"]).items(),
+                                                             key=lambda kv: ALPHABET.index(kv[0]))},
                "flagged": dict(Counter(f for it in written for f in it["flags"])),
                "stray_pieces": sum(len(p["stray"]) for p in pages),
                "image_px": {"median_height": int(np.median([it["size"][0] for it in written])) if written else None,

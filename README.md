@@ -20,7 +20,8 @@ This follows the character-level work in
   same characters cut from the words); the real-handwriting evaluation waits for Phase 3,
   [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
 - Phase 3, the real word set (words written by hand on printed pages, cut out
-  automatically): tools ready, pages being written,
+  automatically): 100 words written by the owner; the test, once, and a Hugging Face demo
+  that runs in the browser (like the first project's) are ready to run,
   [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
 
 ## Layout
@@ -44,6 +45,10 @@ mayek_htr/           the word recogniser (Phase 2)
   decode.py          greedy and beam search decoding
   metrics.py         CER, WER, confusable pairs
   pages.py           pages for writing words by hand, and cutting the written words out (Phase 3)
+  reader.py          reading word images with a trained recogniser (Python use)
+  web.py             the browser demo: ONNX export, the language model for the browser, the site
+web/                 the demo page: preprocessing and decoding ported to JavaScript, runs in the browser
+space/               cards for the Hugging Face Space and model repository
 scripts/
   audit_tummhcd.py   writer information in TUMMHCD: folders, file names, side files, hidden grouping
   corpus_stats.py    size of Meitei Mayek text corpora and how often the ꯢ / ꯏ rule holds
@@ -63,13 +68,15 @@ scripts/
   make_writing_pages.py  the pages the real words are written on (a PDF)
   cut_writing_pages.py   the written words cut out of the pages, as a word set
   measure_strokes.py     how thick the strokes of word sets are, as the recogniser sees them
+  build_demo.py          the Hugging Face model repository and the Space from a trained run
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
   phase2_recogniser.ipynb       Phase 2 on Colab (A100)
+  phase3_real_words_and_demo.ipynb  the real words read once by every run; the demo built and uploaded
   collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
 results/             JSON files written by the code; every reported number comes from here
-docs/                Phase 0 report, Phase 1 and Phase 2 design, AI use log
+docs/                Phase 0 report, Phase 1, 2 and 3 design, AI use log
 tests/               pytest
 ```
 
