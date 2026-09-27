@@ -295,7 +295,8 @@ evaluation, on real handwriting, waits for the Phase 3 set.
   zones and the language model (not attainable): 0.17%, 1.1%; the ensemble alone on
   isolated images: 1.20%, 7.6%. Swaps ꯦ/꯰ and ꯨ/ꯁ: ensemble on isolated images 94 and 115,
   recogniser 0 and 0 (every run); ꯗ/ꯘ 6-17 (ensemble 51). Rounds, seeds and encoders do not
-  differ measurably (paired tests p >= 0.16). The figures are in-distribution (same
+  differ measurably (paired exact tests over all 21 pairs of runs: p >= 0.12 greedy, >= 0.18 with
+  the language model; `results/phase2_test_comparison.json`). The figures are in-distribution (same
   synthesiser, same TUMMHCD writers): real handwriting will be harder.
 
 - **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
@@ -385,22 +386,34 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
 
 - **Real test, used once (`results/phase3_real_*.json`, `results/phase3_real_comparison.json`;
   100 words, one writer, iPad):** final recipe (ConvNeXt-T from TUMMHCD, second round), mean of
-  two seeds: CER 3.79%, WER 21.0% greedy; **CER 3.12%, WER 17.0% with the language model**
-  (seeds 2.36% / 3.88%, 13% / 21%: 87 and 79 words right). The same runs on the synthetic test:
-  0.24%, 1.57%, so real handwriting brings about 13 times the character errors. Other runs with
-  the language model: ImageNet 2.53% / 14%, small CNN 3.03% / 17% (first round 2.87% / 17%,
-  2.53% / 15%, 4.05% / 21%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
+  two seeds: CER 3.63%, WER 20.0% greedy; **CER 2.96%, WER 16.0% with the language model**
+  (seeds 2.20% / 3.72%, 12% / 20%: 88 and 80 words right; item 35's label corrected, below).
+  The same runs on the synthetic test: 0.24%, 1.57%, so real handwriting brings about 12 times
+  the character errors. Other runs with the language model: ImageNet 2.37% / 13%, small CNN
+  2.87% / 16% (first round 2.70% / 16%, 2.37% / 14%, 3.89% / 20%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
   the language model the two seeds differ (9 words against 1, p = 0.02; greedy p = 0.18), seed
   0 reads more than the first round's small CNN (10 against 2, p = 0.04) and seed 1 fewer than
   ImageNet (1 against 8, p = 0.04); every other pair p >= 0.07. Greedy, the second round's
   small CNN is below both of its ConvNeXt runs (4 against 14, p = 0.03). Seeds differ far more
   on real words than on synthetic ones: report their mean. The language model puts 3-11
   words right per run and wrong only once in all seven (p = 0.001 for the second round's small
-  CNN). 69 words read right by every run, 7 by none. Numbers 10 of 10 everywhere.
+  CNN). 70 words read right by every run, 6 by none. Numbers 10 of 10 everywhere.
+- **Item 35 corrected (owner, 27 September 2026: "Check it for me . Correct the label"):** its
+  printed full stop was not written (the image has none, no stray ink), so every run's
+  reading without it was right. `scripts/rescore_real.py` scored the saved readings against
+  the corrected label (after checking that they reproduce every stored result exactly) and
+  rewrote `results/phase3_real_*.json`; `compare_runs.py` again on them. Each run: one word
+  more right, one character error fewer; pairwise tests unchanged. The HF cards still quote
+  the demo's figures before the correction (3.88% / 21%; now 3.72% / 20%) until the next
+  `build_demo.py`.
+- **Released (owner, 27 September 2026: "release the real word dataset"):** `real_words/`
+  (`scripts/release_real_set.py`): 100 images, `labels.tsv`, `manifest.json` (written items
+  only, the correction recorded), card; CC BY 4.0. The 400 unwritten items stay private.
+  Counts: `results/phase3_real_release.json` (100 words, 592 characters).
 - **Where the errors are:** the pairs that trouble isolated characters are read without a
   swap (ꯦ/꯰ 32 of 32, ꯨ/ꯁ 55 of 55, ꯗ/ꯘ 20 of 20; but ꯰ occurs 3 times, ꯘ once). Nearly every
   error is a sign written above the letter: of the 56 words without ꯥ or ꯩ, 0-2 are misread
-  (seed 0: 1); of the 44 with one, 12-20. ꯥ is misread 17-36% of its 47 times (dropped, or
+  (seed 0: 1); of the 44 with one, 11-19. ꯥ is misread 17-36% of its 47 times (dropped, or
   read as ꯣ or ꯦ); ꯩ is read as ꯧ in 3-5 of its 5 words. This writer draws ꯥ as a long
   slanted stroke at the upper right of the letter, unlike the training words' ꯥ (TUMMHCD
   shapes at the font's place): the gap is in the synthetic signs, not in the letters. A fix
@@ -410,7 +423,8 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   validation before the test; on the real words it is the weaker seed). ONNX with float16
   weights: the same greedy reading as PyTorch for 300 of 300 validation words (largest log
   probability difference 0.053), 32.7 MB; the language model for the browser 669,149
-  entries, 3.19 MB compressed. The cards quote its own real-word scores (CER 3.88%, WER 21%).
+  entries, 3.19 MB compressed. The cards quote its own real-word scores (CER 3.88%, WER 21%,
+  before item 35's correction; 3.72% and 20% after).
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and
@@ -424,7 +438,8 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   the layout embedded in the PDF (`manifest.json`).
 - **Words:** distinct test-split words (hash, so never training words), 2-14 characters,
   count >= 2, drawn by count ** 0.5 without replacement; every letter and sign 8 times where
-  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed.
+  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed,
+  except the 100 written words, released in `real_words/` (owner, 27 September 2026).
 - **Cutting:** corner squares -> projective alignment (photos too, paper flattened); page
   identified by its printed ink; handwriting = darker than the printed page nearby, any pen
   colour; each piece of ink to its box (`outside`, `shared` flags; words over a box line kept
@@ -466,12 +481,13 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   handwritten word set, 100 words by a native writer on a tablet, text-disjoint from
   training, with a fixed protocol and the tools to extend it" (novelty statement above).
 - **The real set (`results/phase3_real_set.json`, `results/phase3_real_strokes.json`):** 100
-  words (90 from the lexicon, 10 numbers), 593 characters, 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
+  words (90 from the lexicon, 10 numbers), 592 characters (593 before item 35's correction), 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
   for the pairs ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1. All cut whole (20 flagged `outside`, all
   complete on the contact sheets). One pen throughout, as the training words at the
   recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7% (synthetic 4.0 px,
-  0.121, 13.5%). The set (`real_test.tar`, with its manifest) goes on Drive in `WORK/real/`;
-  not in the repository.
+  0.121, 13.5%). The set as cut (`real_test.tar`, with its manifest of all 500 items) goes on
+  Drive in `WORK/real/`, not in the repository; the 100 written words are released in
+  `real_words/` (below).
 - **Test protocol:** the notebook's section 1 (`RUN_REAL_TEST`): all seven Phase 2 runs read
   the 100 words once (`eval_recogniser.py --tuned`, the settings of synthetic validation),
   greedy and with the language model: `results/phase3_real_<run>.json`.
@@ -496,30 +512,75 @@ Owner's request (27 September 2026, after testing the demo: "it works pretty gre
 pointed out some errors and said we could include them in our training data and train again.
 So lets do that ... Create synthetic data which imitates the new patterns . And finally write
 the paper." **Status: code and notebook (`notebooks/round3_signs_beside.ipynb`) ready and dry-run
-here; the owner trains next.**
+here; not trained.** Owner's decision (27 September 2026): "i dont wanna do the retraining with
+the new patters for now. I will do that after submitting this paper." The paper presents the
+diagnosis and the new placement (its Section 9.4), with training left to future work.
 
 - **The errors (all seven runs on the 100 real words, `top_errors` in
-  `results/phase3_real_*.json`):** 118 of 126 character errors (94%) are ꯥ, ꯩ, ꯪ: ꯥ left out
-  45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other 8: item 35's full stop 7 (every
-  run; the writer left it out: proposed to correct the label, owner to decide) and ꯨ 1.
+  `results/phase3_real_*.json`):** 118 of 119 character errors (99%) are ꯥ, ꯩ, ꯪ: ꯥ left out
+  45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other: ꯨ left out once. (Before
+  item 35's correction: 126, of which 7 its unwritten full stop.)
 - **Measured (`results/round3_sign_geometry_real.json`, `scripts/measure_sign_geometry.py`):**
-  the writer's ꯥ is a straight stroke falling to the right (52°, as print's 46°) but after the
-  letter at the top: centred 0.18 L past its letter's right edge, top 0.18 L above the letter's
-  top, bottom 0.19 L below it, where ꯣ (0.28 L past) and ꯦ (0.36) stand; ꯩ and ꯪ likewise.
-  Print and every synthetic word so far put it over the letter (font characters: centre 0.34 L
-  before the edge, wholly above the top line; `results/round3_sign_geometry_font.json`).
+  the writer's ꯥ is a straight stroke falling to the right (52°; TUMMHCD's ꯥ images too: 97%
+  fall to the right, median 51°) but after the letter at the top: centred 0.18 L past its
+  letter's right edge, top 0.18 L above the letter's top, bottom 0.19 L below it, where ꯣ (0.28 L
+  past) and ꯦ (0.36) stand; ꯩ and ꯪ likewise. Print and every synthetic word so far put it over
+  the letter (TUMMHCD characters: centre 0.29 L before the edge, bottom 0.07 L above the top
+  line; with the new placement 0.20 L past, bottom 0.27 L below, 52°:
+  `results/round3_sign_geometry_tummhcd.json`, 1,000 validation words each way).
 - **Change:** `synth.Config.p_marks_beside` (per word, every ꯥ ꯩ ꯪ on the line after its
   letter at the top: left end -0.1 to 0.1 L from its right edge, top 0.06-0.30 L above, at most
   0.5 L deep; then placed like ꯣ). Default 0: every word renders as before (byte for byte), so
-  the fixed sets and earlier runs stay valid. Rules hold (`results/sign_placement_beside_font.json`).
+  the fixed sets and earlier runs stay valid. Rules hold (`results/sign_placement_beside_tummhcd.json`:
+  a sign above nearer the next letter than its own in 1 of 839 words, never touched by it).
   **Round 3** = round 2's final recipe + `marks_beside 0.5` (runs `round3_convnext_tummhcd` and
   `round3_convnext_tummhcd_seed1`), nothing else changed.
-- **Protocol (proposed, to confirm):** the first 100 real words stay round 2's test (used
-  once) and become round 3's development set (`round3_dev_*`), since their errors shaped it.
+- **Protocol (proposed, for when round 3 is trained; to confirm):** the first 100 real words
+  stay round 2's test (used once) and become round 3's development set (`round3_dev_*`), since
+  their errors shaped it.
   Round 3's test: new words by the same writer, pages 7-12 (items 107-209: 100 words, 3
   numbers, 56 with a sign above), read once by round 2 and round 3, two seeds each
   (`phase3_real2_*`). Synthetic: choices on `val.tar` as before; `val_beside.tar` (the same
   5,000 words, every sign above beside) for the effect alone; synthetic test once.
+
+## The paper (final, 27 September 2026)
+
+"Whole words from isolated characters: handwritten Meitei Mayek word recognition", for The
+Visual Computer (Springer): the Springer Nature template (`sn-jnl.cls` 2.1, numbered
+Math and Physical Sciences references), following the owner's first paper; XeLaTeX (the
+Meitei Mayek text shaped by HarfBuzz); 22 pages. **Kept out of the public repository**, as the
+first paper's source is: sent to the owner as `Rajkumar_TVC_word_recognition_source.zip` and
+the PDF.
+
+- **Owner's answers (27 September 2026), applied:** the everyday sign names aatap, yetnap,
+  otnap (not Unicode's anap, yenap, onap); the script facts checked by the owner; the first
+  project cited as its GitHub repository with its Zenodo archive, not as the paper under
+  review; the six spacing samples are Figs. 3 and 4 of Laishram et al., IEEE ICCIC 2014
+  (doi 10.1109/ICCIC.2014.7238510) and the four photographs of Fig. 11 of Inunganbi et al.
+  (The Visual Computer 37, 2021), now cited; TUMMHCD allows showing its images; the real word
+  set released (CC BY 4.0, `real_words/`); item 35 corrected (Phase 3 above); the MIT
+  `LICENSE` added; Figure 6 is the owner's screenshot of the demo reading the owner's name
+  (taken from the session record, cropped); declarations in the first paper's form
+  ("Statements and Declarations"; funding: none, as in the first paper). Title shortened
+  (the owner allowed it): "trained on synthetic words" dropped.
+- **References:** all 45 checked on 27 September 2026 by web search against publisher,
+  proceedings or preprint records (Crossref and publisher pages are blocked from the
+  session); seven confirmed by the first paper's reference list.
+- **Final literature search (27 September 2026):** no other handwritten Meitei Mayek word or
+  line recogniser. NE-OCR reads print; UniLipi (arXiv 2608.28195, manuscript OCR) covers 13
+  Indic scripts, not Meitei Mayek; IIIT-Indic-HW-UC writes Manipuri in Bengali script.
+- **AI use:** the owner asked for "claude was used to optimise and polish the code in the
+  method section". The paper's Implementation paragraph (Section 6) says Claude Code was used
+  "to write, optimise and polish the source code and to draft and edit this manuscript".
+  Springer Nature asks for LLM use to be documented in the Methods, and the public
+  `docs/ai_use_log.md` records that the manuscript was drafted with Claude Code. Owner to
+  confirm the wording.
+- **Numbers:** every one from the results files (`make_numbers.py`, rounded halves up);
+  `check_numbers.py` recomputes the abstract's figures and every table value independently:
+  all agree.
+- **Before submitting (owner):** read it through; update the Hugging Face cards (they quote
+  the demo's real-word figures before item 35's correction); optionally archive this
+  repository on Zenodo for a DOI.
 
 ## Working rules
 

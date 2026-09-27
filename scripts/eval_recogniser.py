@@ -65,15 +65,7 @@ def decode_grid(settings, idx, beam, processes):
     return out
 
 
-def by_kind(refs, hyps, kinds):
-    if kinds is None:
-        return None
-    out = {}
-    for kind in sorted(set(kinds)):
-        idx = [i for i, k in enumerate(kinds) if k == kind]
-        s = metrics.score([refs[i] for i in idx], [hyps[i] for i in idx])
-        out[kind] = {k: s[k] for k in ("words", "characters", "cer", "wer", "word_accuracy", "word_accuracy_95ci")}
-    return out
+by_kind = metrics.by_kind
 
 
 def meitei_font(size):

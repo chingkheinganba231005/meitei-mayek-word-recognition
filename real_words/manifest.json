@@ -1,0 +1,1299 @@
+{
+ "format": "mayek-real-words/1",
+ "title": "Meitei Mayek words",
+ "selection": {
+  "split": "test",
+  "n": 500,
+  "seed": 0,
+  "numbers": 0.05,
+  "stop": 0.02,
+  "min_count": 2,
+  "max_len": 14,
+  "cover": 8
+ },
+ "pages": [
+  {
+   "page": 1,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  },
+  {
+   "page": 2,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  },
+  {
+   "page": 3,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  },
+  {
+   "page": 4,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  },
+  {
+   "page": 5,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  },
+  {
+   "page": 6,
+   "corner_squares": true,
+   "printed_ink_missing": 0.0
+  }
+ ],
+ "words": 100,
+ "characters": 592,
+ "corrections": [
+  {
+   "item": 35,
+   "file": "000035.png",
+   "was": "ꯂꯥꯏꯔꯤꯀꯁꯤꯡꯅꯤ꯫",
+   "now": "ꯂꯥꯏꯔꯤꯀꯁꯤꯡꯅꯤ",
+   "reason": "the full stop printed on the writing page was not written: the image has none, and no stray ink on the page (checked by the writer, 27 September 2026)"
+  }
+ ],
+ "items": [
+  {
+   "item": 1,
+   "page": 1,
+   "file": "000001.png",
+   "text": "ꯄꯥꯡꯏ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    415
+   ]
+  },
+  {
+   "item": 2,
+   "page": 1,
+   "file": "000002.png",
+   "text": "ꯇꯥꯀꯄꯒꯦ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    153,
+    639
+   ]
+  },
+  {
+   "item": 3,
+   "page": 1,
+   "file": "000003.png",
+   "text": "ꯍꯥꯏꯍꯧꯏꯗꯣ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    167,
+    636
+   ]
+  },
+  {
+   "item": 4,
+   "page": 1,
+   "file": "000004.png",
+   "text": "ꯃꯔꯨ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    173,
+    250
+   ]
+  },
+  {
+   "item": 5,
+   "page": 1,
+   "file": "000005.png",
+   "text": "ꯊꯥꯗ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    177,
+    277
+   ]
+  },
+  {
+   "item": 6,
+   "page": 1,
+   "file": "000006.png",
+   "text": "ꯀ꯭ꯔꯤꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    186,
+    423
+   ]
+  },
+  {
+   "item": 7,
+   "page": 1,
+   "file": "000007.png",
+   "text": "ꯑꯣꯜꯍꯥ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    178,
+    424
+   ]
+  },
+  {
+   "item": 8,
+   "page": 1,
+   "file": "000008.png",
+   "text": "ꯆꯥꯎꯏ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    194,
+    363
+   ]
+  },
+  {
+   "item": 9,
+   "page": 1,
+   "file": "000009.png",
+   "text": "ꯑꯣꯟꯊꯣꯛꯅꯕ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    733
+   ]
+  },
+  {
+   "item": 10,
+   "page": 1,
+   "file": "000010.png",
+   "text": "ꯁꯪꯁꯥꯂꯣꯟ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    151,
+    541
+   ]
+  },
+  {
+   "item": 11,
+   "page": 1,
+   "file": "000011.png",
+   "text": "ꯆꯥꯏꯂꯝꯄ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    150,
+    564
+   ]
+  },
+  {
+   "item": 12,
+   "page": 1,
+   "file": "000012.png",
+   "text": "ꯏꯄꯤꯛ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    161,
+    452
+   ]
+  },
+  {
+   "item": 13,
+   "page": 1,
+   "file": "000013.png",
+   "text": "ꯆꯤꯟꯖꯥꯛ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    176,
+    494
+   ]
+  },
+  {
+   "item": 14,
+   "page": 1,
+   "file": "000014.png",
+   "text": "ꯄꯥꯋꯔ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    152,
+    411
+   ]
+  },
+  {
+   "item": 15,
+   "page": 1,
+   "file": "000015.png",
+   "text": "ꯃꯀꯩ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    167,
+    287
+   ]
+  },
+  {
+   "item": 16,
+   "page": 1,
+   "file": "000016.png",
+   "text": "ꯆꯠꯅꯀꯥꯡꯂꯣꯟ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    155,
+    783
+   ]
+  },
+  {
+   "item": 17,
+   "page": 1,
+   "file": "000017.png",
+   "text": "ꯀꯥꯄꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    164,
+    365
+   ]
+  },
+  {
+   "item": 18,
+   "page": 1,
+   "file": "000018.png",
+   "text": "ꯃꯔꯛꯇꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    126,
+    466
+   ]
+  },
+  {
+   "item": 19,
+   "page": 1,
+   "file": "000019.png",
+   "text": "ꯔꯦꯟꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    151,
+    525
+   ]
+  },
+  {
+   "item": 20,
+   "page": 2,
+   "file": "000020.png",
+   "text": "ꯃꯃꯥꯡꯗꯒꯤ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    170,
+    595
+   ]
+  },
+  {
+   "item": 21,
+   "page": 2,
+   "file": "000021.png",
+   "text": "ꯀ꯭ꯔꯣꯅꯥꯁꯀꯥ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    190,
+    691
+   ]
+  },
+  {
+   "item": 22,
+   "page": 2,
+   "file": "000022.png",
+   "text": "ꯍꯥꯎꯁꯇꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    173,
+    431
+   ]
+  },
+  {
+   "item": 23,
+   "page": 2,
+   "file": "000023.png",
+   "text": "ꯒꯨꯝꯕꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    181,
+    346
+   ]
+  },
+  {
+   "item": 24,
+   "page": 2,
+   "file": "000024.png",
+   "text": "ꯒꯦꯠ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    134,
+    271
+   ]
+  },
+  {
+   "item": 25,
+   "page": 2,
+   "file": "000025.png",
+   "text": "ꯙꯔꯃꯒꯤ꯫",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    179,
+    575
+   ]
+  },
+  {
+   "item": 26,
+   "page": 2,
+   "file": "000026.png",
+   "text": "ꯂꯣꯏꯔꯕꯗꯤ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    160,
+    641
+   ]
+  },
+  {
+   "item": 27,
+   "page": 2,
+   "file": "000027.png",
+   "text": "ꯑꯦꯕꯁ꯭ꯠꯔꯦꯛꯇ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    151,
+    798
+   ]
+  },
+  {
+   "item": 28,
+   "page": 2,
+   "file": "000028.png",
+   "text": "ꯃꯗꯨꯒ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    164,
+    358
+   ]
+  },
+  {
+   "item": 29,
+   "page": 2,
+   "file": "000029.png",
+   "text": "ꯑꯁꯨꯇꯣꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    186,
+    527
+   ]
+  },
+  {
+   "item": 30,
+   "page": 2,
+   "file": "000030.png",
+   "text": "ꯕꯔꯖꯟ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    136,
+    438
+   ]
+  },
+  {
+   "item": 31,
+   "page": 2,
+   "file": "000031.png",
+   "text": "ꯄ꯭ꯔꯣꯁꯤꯗꯤꯡꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    193,
+    825
+   ]
+  },
+  {
+   "item": 32,
+   "page": 2,
+   "file": "000032.png",
+   "text": "ꯂꯤꯗꯨꯅꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    180,
+    402
+   ]
+  },
+  {
+   "item": 33,
+   "page": 2,
+   "file": "000033.png",
+   "text": "ꯐ꯭ꯂꯥꯏꯠꯁꯤꯡꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    195,
+    824
+   ]
+  },
+  {
+   "item": 34,
+   "page": 2,
+   "file": "000034.png",
+   "text": "꯵꯷",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    168,
+    215
+   ]
+  },
+  {
+   "item": 35,
+   "page": 2,
+   "file": "000035.png",
+   "text": "ꯂꯥꯏꯔꯤꯀꯁꯤꯡꯅꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    159,
+    820
+   ]
+  },
+  {
+   "item": 36,
+   "page": 2,
+   "file": "000036.png",
+   "text": "ꯇꯆ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    125,
+    226
+   ]
+  },
+  {
+   "item": 37,
+   "page": 3,
+   "file": "000037.png",
+   "text": "ꯍꯥꯏꯔꯤꯕꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    154,
+    537
+   ]
+  },
+  {
+   "item": 38,
+   "page": 3,
+   "file": "000038.png",
+   "text": "ꯁ꯭ꯇꯦꯠꯇ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    193,
+    496
+   ]
+  },
+  {
+   "item": 39,
+   "page": 3,
+   "file": "000039.png",
+   "text": "ꯋꯥꯂꯁꯤꯡꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    179,
+    629
+   ]
+  },
+  {
+   "item": 40,
+   "page": 3,
+   "file": "000040.png",
+   "text": "ꯁꯤꯇꯣꯛꯀꯦ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    138,
+    612
+   ]
+  },
+  {
+   "item": 41,
+   "page": 3,
+   "file": "000041.png",
+   "text": "ꯑꯦꯔꯅꯦꯁ꯭ꯇꯣ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    181,
+    637
+   ]
+  },
+  {
+   "item": 42,
+   "page": 3,
+   "file": "000042.png",
+   "text": "ꯂꯩꯃꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    167,
+    454
+   ]
+  },
+  {
+   "item": 43,
+   "page": 3,
+   "file": "000043.png",
+   "text": "ꯑꯦꯡꯒꯦꯡꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    152,
+    617
+   ]
+  },
+  {
+   "item": 44,
+   "page": 3,
+   "file": "000044.png",
+   "text": "ꯃꯤꯇꯩꯀꯤ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    169,
+    490
+   ]
+  },
+  {
+   "item": 45,
+   "page": 3,
+   "file": "000045.png",
+   "text": "ꯈꯉꯅꯤꯡꯕꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    161,
+    550
+   ]
+  },
+  {
+   "item": 46,
+   "page": 3,
+   "file": "000046.png",
+   "text": "ꯊꯣꯏꯄꯤ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    164,
+    482
+   ]
+  },
+  {
+   "item": 47,
+   "page": 3,
+   "file": "000047.png",
+   "text": "ꯁꯔꯨꯀꯁꯤꯡꯗꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    187,
+    746
+   ]
+  },
+  {
+   "item": 48,
+   "page": 3,
+   "file": "000048.png",
+   "text": "꯷꯸꯸꯵",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    154,
+    367
+   ]
+  },
+  {
+   "item": 49,
+   "page": 3,
+   "file": "000049.png",
+   "text": "ꯀꯟꯅꯦꯛꯇꯤꯀꯠ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    851
+   ]
+  },
+  {
+   "item": 50,
+   "page": 3,
+   "file": "000050.png",
+   "text": "ꯇꯨꯠ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    150,
+    210
+   ]
+  },
+  {
+   "item": 51,
+   "page": 3,
+   "file": "000051.png",
+   "text": "ꯇꯥꯕꯗꯒꯤ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    195,
+    543
+   ]
+  },
+  {
+   "item": 52,
+   "page": 3,
+   "file": "000052.png",
+   "text": "ꯄꯨꯝꯅꯃꯛ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    169,
+    584
+   ]
+  },
+  {
+   "item": 53,
+   "page": 4,
+   "file": "000053.png",
+   "text": "꯷꯹꯱",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    172,
+    297
+   ]
+  },
+  {
+   "item": 54,
+   "page": 4,
+   "file": "000054.png",
+   "text": "ꯃꯤꯠꯂꯨ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    181,
+    344
+   ]
+  },
+  {
+   "item": 55,
+   "page": 4,
+   "file": "000055.png",
+   "text": "ꯊꯣꯡꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    410
+   ]
+  },
+  {
+   "item": 56,
+   "page": 4,
+   "file": "000056.png",
+   "text": "ꯕꯥꯑꯥꯊ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    178,
+    365
+   ]
+  },
+  {
+   "item": 57,
+   "page": 4,
+   "file": "000057.png",
+   "text": "꯴",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    138,
+    117
+   ]
+  },
+  {
+   "item": 58,
+   "page": 4,
+   "file": "000058.png",
+   "text": "ꯃꯨꯡꯌꯥꯝꯕ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    190,
+    544
+   ]
+  },
+  {
+   "item": 59,
+   "page": 4,
+   "file": "000059.png",
+   "text": "ꯆꯪꯁꯤꯜꯂꯛꯄꯒ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    158,
+    844
+   ]
+  },
+  {
+   "item": 60,
+   "page": 4,
+   "file": "000060.png",
+   "text": "ꯋꯤꯀꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    143,
+    371
+   ]
+  },
+  {
+   "item": 61,
+   "page": 4,
+   "file": "000061.png",
+   "text": "ꯀꯣꯆꯨꯕꯦꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    188,
+    734
+   ]
+  },
+  {
+   "item": 62,
+   "page": 4,
+   "file": "000062.png",
+   "text": "꯶꯰",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    141,
+    220
+   ]
+  },
+  {
+   "item": 63,
+   "page": 4,
+   "file": "000063.png",
+   "text": "ꯄ꯭ꯔꯣꯁꯦꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    670
+   ]
+  },
+  {
+   "item": 64,
+   "page": 4,
+   "file": "000064.png",
+   "text": "ꯌꯥꯎꯔꯦ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    171,
+    431
+   ]
+  },
+  {
+   "item": 65,
+   "page": 4,
+   "file": "000065.png",
+   "text": "ꯗꯤꯛꯇꯦꯇꯔꯁꯤꯞ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    151,
+    866
+   ]
+  },
+  {
+   "item": 66,
+   "page": 4,
+   "file": "000066.png",
+   "text": "ꯍꯥꯏꯅ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    160,
+    330
+   ]
+  },
+  {
+   "item": 67,
+   "page": 4,
+   "file": "000067.png",
+   "text": "ꯗꯦꯀꯣꯔꯦꯇꯦꯗ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    178,
+    787
+   ]
+  },
+  {
+   "item": 68,
+   "page": 4,
+   "file": "000068.png",
+   "text": "ꯄꯨꯟꯁꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    180,
+    469
+   ]
+  },
+  {
+   "item": 69,
+   "page": 4,
+   "file": "000069.png",
+   "text": "ꯇꯝꯐꯝꯁꯪꯂꯦꯟ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    178,
+    846
+   ]
+  },
+  {
+   "item": 70,
+   "page": 4,
+   "file": "000070.png",
+   "text": "꯹꯸꯹꯱",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    161,
+    399
+   ]
+  },
+  {
+   "item": 71,
+   "page": 5,
+   "file": "000071.png",
+   "text": "ꯑꯦꯅꯤꯃꯦꯠ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    160,
+    618
+   ]
+  },
+  {
+   "item": 72,
+   "page": 5,
+   "file": "000072.png",
+   "text": "ꯇꯧꯕꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    169,
+    545
+   ]
+  },
+  {
+   "item": 73,
+   "page": 5,
+   "file": "000073.png",
+   "text": "ꯀꯨꯝꯃꯩꯁꯤꯡꯗꯥ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    193,
+    765
+   ]
+  },
+  {
+   "item": 74,
+   "page": 5,
+   "file": "000074.png",
+   "text": "ꯂꯩꯔꯃꯗꯦ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    169,
+    507
+   ]
+  },
+  {
+   "item": 75,
+   "page": 5,
+   "file": "000075.png",
+   "text": "ꯁꯧꯒꯠꯄꯅ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    163,
+    650
+   ]
+  },
+  {
+   "item": 76,
+   "page": 5,
+   "file": "000076.png",
+   "text": "ꯀꯟꯊꯧꯕ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    169,
+    540
+   ]
+  },
+  {
+   "item": 77,
+   "page": 5,
+   "file": "000077.png",
+   "text": "ꯈꯥꯏꯗꯣꯛꯄꯒꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    170,
+    846
+   ]
+  },
+  {
+   "item": 78,
+   "page": 5,
+   "file": "000078.png",
+   "text": "ꯃꯌꯥꯝꯕ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    141,
+    451
+   ]
+  },
+  {
+   "item": 79,
+   "page": 5,
+   "file": "000079.png",
+   "text": "ꯍꯤꯐꯦꯏꯁꯇꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    144,
+    719
+   ]
+  },
+  {
+   "item": 80,
+   "page": 5,
+   "file": "000080.png",
+   "text": "ꯈꯝꯅꯨꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    162,
+    405
+   ]
+  },
+  {
+   "item": 81,
+   "page": 5,
+   "file": "000081.png",
+   "text": "ꯊꯋꯥꯏꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    155,
+    578
+   ]
+  },
+  {
+   "item": 82,
+   "page": 5,
+   "file": "000082.png",
+   "text": "ꯆꯥꯝꯉꯥꯒ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    133,
+    490
+   ]
+  },
+  {
+   "item": 83,
+   "page": 5,
+   "file": "000083.png",
+   "text": "ꯄ꯭ꯔꯚꯥꯁ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    151,
+    506
+   ]
+  },
+  {
+   "item": 84,
+   "page": 5,
+   "file": "000084.png",
+   "text": "ꯁꯦꯠꯂꯤꯕ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    145,
+    538
+   ]
+  },
+  {
+   "item": 85,
+   "page": 5,
+   "file": "000085.png",
+   "text": "ꯐ꯭ꯂꯥꯏꯠꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    196,
+    702
+   ]
+  },
+  {
+   "item": 86,
+   "page": 5,
+   "file": "000086.png",
+   "text": "꯲꯰",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    158,
+    222
+   ]
+  },
+  {
+   "item": 87,
+   "page": 6,
+   "file": "000087.png",
+   "text": "ꯏꯇꯥꯂꯤꯗꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    158,
+    497
+   ]
+  },
+  {
+   "item": 88,
+   "page": 6,
+   "file": "000088.png",
+   "text": "ꯑꯜꯗꯣ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    153,
+    365
+   ]
+  },
+  {
+   "item": 89,
+   "page": 6,
+   "file": "000089.png",
+   "text": "ꯐꯦꯟ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    128,
+    274
+   ]
+  },
+  {
+   "item": 90,
+   "page": 6,
+   "file": "000090.png",
+   "text": "ꯁ꯭ꯇꯦꯞ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    155,
+    397
+   ]
+  },
+  {
+   "item": 91,
+   "page": 6,
+   "file": "000091.png",
+   "text": "ꯕꯦꯏꯂꯤ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    161,
+    398
+   ]
+  },
+  {
+   "item": 92,
+   "page": 6,
+   "file": "000092.png",
+   "text": "ꯆꯥꯛ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    160,
+    297
+   ]
+  },
+  {
+   "item": 93,
+   "page": 6,
+   "file": "000093.png",
+   "text": "ꯘꯗꯤꯒꯥ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    167,
+    415
+   ]
+  },
+  {
+   "item": 94,
+   "page": 6,
+   "file": "000094.png",
+   "text": "꯶꯷꯷꯲",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    168,
+    417
+   ]
+  },
+  {
+   "item": 95,
+   "page": 6,
+   "file": "000095.png",
+   "text": "꯶꯰",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    159,
+    219
+   ]
+  },
+  {
+   "item": 96,
+   "page": 6,
+   "file": "000096.png",
+   "text": "ꯅꯨꯡꯉꯥꯏꯇꯕꯁꯤꯡ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    196,
+    859
+   ]
+  },
+  {
+   "item": 97,
+   "page": 6,
+   "file": "000097.png",
+   "text": "꯱꯵",
+   "kind": "number",
+   "flags": [],
+   "size": [
+    162,
+    193
+   ]
+  },
+  {
+   "item": 98,
+   "page": 6,
+   "file": "000098.png",
+   "text": "ꯕꯤꯄꯤꯟ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    162,
+    488
+   ]
+  },
+  {
+   "item": 99,
+   "page": 6,
+   "file": "000099.png",
+   "text": "ꯁꯦꯟꯇꯁꯤꯡꯕꯨ",
+   "kind": "lexicon",
+   "flags": [],
+   "size": [
+    187,
+    786
+   ]
+  },
+  {
+   "item": 100,
+   "page": 6,
+   "file": "000100.png",
+   "text": "ꯃꯔꯣꯃꯗꯣꯝ",
+   "kind": "lexicon",
+   "flags": [
+    "outside"
+   ],
+   "size": [
+    170,
+    665
+   ]
+  }
+ ]
+}

@@ -2,50 +2,50 @@
  "words": 100,
  "runs": {
   "round2_convnext_tummhcd": {
-   "misread_greedy": 18,
-   "misread_with_lm": 13,
+   "misread_greedy": 17,
+   "misread_with_lm": 12,
    "lm_puts_right": 5,
    "lm_puts_wrong": 0,
    "p": 0.0625
   },
   "round2_convnext_tummhcd_seed1": {
-   "misread_greedy": 24,
-   "misread_with_lm": 21,
+   "misread_greedy": 23,
+   "misread_with_lm": 20,
    "lm_puts_right": 3,
    "lm_puts_wrong": 0,
    "p": 0.25
   },
   "round2_convnext_imagenet": {
+   "misread_greedy": 17,
+   "misread_with_lm": 13,
+   "lm_puts_right": 4,
+   "lm_puts_wrong": 0,
+   "p": 0.125
+  },
+  "round2_crnn_scratch": {
+   "misread_greedy": 27,
+   "misread_with_lm": 16,
+   "lm_puts_right": 11,
+   "lm_puts_wrong": 0,
+   "p": 0.001
+  },
+  "convnext_tummhcd": {
+   "misread_greedy": 23,
+   "misread_with_lm": 16,
+   "lm_puts_right": 7,
+   "lm_puts_wrong": 0,
+   "p": 0.0156
+  },
+  "convnext_imagenet": {
    "misread_greedy": 18,
    "misread_with_lm": 14,
    "lm_puts_right": 4,
    "lm_puts_wrong": 0,
    "p": 0.125
   },
-  "round2_crnn_scratch": {
-   "misread_greedy": 28,
-   "misread_with_lm": 17,
-   "lm_puts_right": 11,
-   "lm_puts_wrong": 0,
-   "p": 0.001
-  },
-  "convnext_tummhcd": {
-   "misread_greedy": 24,
-   "misread_with_lm": 17,
-   "lm_puts_right": 7,
-   "lm_puts_wrong": 0,
-   "p": 0.0156
-  },
-  "convnext_imagenet": {
-   "misread_greedy": 19,
-   "misread_with_lm": 15,
-   "lm_puts_right": 4,
-   "lm_puts_wrong": 0,
-   "p": 0.125
-  },
   "crnn_scratch": {
-   "misread_greedy": 25,
-   "misread_with_lm": 21,
+   "misread_greedy": 24,
+   "misread_with_lm": 20,
    "lm_puts_right": 5,
    "lm_puts_wrong": 1,
    "p": 0.2188
@@ -311,31 +311,31 @@
    "words_without": 60,
    "misread_with_lm": {
     "round2_convnext_tummhcd": [
-     8,
+     7,
      5
     ],
     "round2_convnext_tummhcd_seed1": [
-     16,
+     15,
      5
     ],
     "round2_convnext_imagenet": [
-     9,
+     8,
      5
     ],
     "round2_crnn_scratch": [
-     14,
+     13,
      3
     ],
     "convnext_tummhcd": [
-     12,
+     11,
      5
     ],
     "convnext_imagenet": [
-     10,
+     9,
      5
     ],
     "crnn_scratch": [
-     16,
+     15,
      5
     ]
    }
@@ -346,31 +346,31 @@
    "misread_with_lm": {
     "round2_convnext_tummhcd": [
      4,
-     9
+     8
     ],
     "round2_convnext_tummhcd_seed1": [
      4,
-     17
+     16
     ],
     "round2_convnext_imagenet": [
      4,
-     10
+     9
     ],
     "round2_crnn_scratch": [
      4,
-     13
+     12
     ],
     "convnext_tummhcd": [
      3,
-     14
+     13
     ],
     "convnext_imagenet": [
      5,
-     10
+     9
     ],
     "crnn_scratch": [
      4,
-     17
+     16
     ]
    }
   },
@@ -379,36 +379,36 @@
    "words_without": 56,
    "misread_with_lm": {
     "round2_convnext_tummhcd": [
-     12,
+     11,
      1
     ],
     "round2_convnext_tummhcd_seed1": [
-     20,
+     19,
      1
     ],
     "round2_convnext_imagenet": [
-     13,
+     12,
      1
     ],
     "round2_crnn_scratch": [
-     17,
+     16,
      0
     ],
     "convnext_tummhcd": [
-     15,
+     14,
      2
     ],
     "convnext_imagenet": [
-     14,
+     13,
      1
     ],
     "crnn_scratch": [
-     20,
+     19,
      1
     ]
    }
   }
  },
- "misread_by_every_run": 7,
- "read_right_by_every_run": 69
+ "misread_by_every_run": 6,
+ "read_right_by_every_run": 70
 }

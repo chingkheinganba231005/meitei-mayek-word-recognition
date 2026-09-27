@@ -8,6 +8,7 @@
  "sets": {
   "real": {
    "path": "real_test.tar",
+   "words": 100,
    "words_with_signs": 76,
    "measured": 59,
    "skipped": {
