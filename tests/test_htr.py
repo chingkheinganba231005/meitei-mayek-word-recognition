@@ -39,6 +39,19 @@ def test_image_normalisation():
     assert crop.shape[0] < 640 and crop.shape[1] < 2000 and crop.min() == 20
 
 
+
+def test_stroke_width():
+    for w in (1, 2, 3, 5):
+        g = np.full((64, 200), 255, np.uint8)
+        g[10:54, 20:20 + w] = 0                    # upright strokes
+        g[30:30 + w, 100:180] = 0                  # a level one
+        width, band, ink = images.strokes(g)
+        assert width == w and ink == pytest.approx(((44 + 80) * w) / (64 * 200), rel=0.05)
+    g = np.full((128, 400), 255, np.uint8)
+    g[20:108, 40:46] = 0                           # twice the size: half the width at 64 px high
+    assert images.strokes(g)[0] == 3 and images.strokes(g, None)[0] == 6
+    assert images.strokes(np.full((64, 64), 255, np.uint8)) is None
+
 def test_alignment_and_scores():
     assert metrics.distance("abcd", "abcd") == 0
     assert metrics.distance("abcd", "abd") == 1 and metrics.distance("abc", "xabc") == 1

@@ -62,6 +62,7 @@ scripts/
   oracle_baseline.py   the baseline: perfect segmentation and the first paper's ensemble
   make_writing_pages.py  the pages the real words are written on (a PDF)
   cut_writing_pages.py   the written words cut out of the pages, as a word set
+  measure_strokes.py     how thick the strokes of word sets are, as the recogniser sees them
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab

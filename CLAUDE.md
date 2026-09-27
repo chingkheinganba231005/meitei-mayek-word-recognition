@@ -94,7 +94,8 @@ metrics.
 Found by web search only (no full-text access in that session): every paper still has to be
 checked against its full text before citing.
 
-**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026).**
+**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026;
+(3) reworded for one writer and confirmed, 27 September 2026).**
 No published work recognises handwritten Meitei Mayek words or lines end to end. Earlier work
 classifies isolated characters, segments handwritten pages into lines and words without
 recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
@@ -105,8 +106,9 @@ Jawahar, ICPR 2024), is in Bengali script. Meitei Mayek text recognition exists 
 (NE-OCR 2026 preprint); for scene text there is character recognition, and EMBiL only detects
 text and identifies its language. No handwriting generation model exists for the script. We
 contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
-synthetic words from TUMMHCD at scale; (3) a public, consented, writer-disjoint real word set
-(50+ writers) with a fixed protocol (CER, WER, accuracy on the confusable pairs); (4) evidence that
+synthetic words from TUMMHCD at scale; (3) a real handwritten word set, about 500 words written
+by a native writer on a tablet, text-disjoint from training, with a fixed protocol (CER, WER,
+the confusable pairs), released with the tools to add writers; (4) evidence that
 ꯢ versus ꯏ, the largest error source of isolated-character recognition (78 of 241 errors), is a
 spelling convention, not a visual distinction (everyday writing uses ꯏ throughout; the standard
 spelling's ꯢ after ꯥ, ꯣ, ꯨ follows a rule for 95–99% of words), so the recogniser reads one letter
@@ -375,10 +377,10 @@ evaluation, on real handwriting, waits for the Phase 3 set.
 
 ## Phase 3: the real word set (details in `docs/phase3_real_words.md`)
 
-Module `mayek_htr/pages.py`, scripts `make_writing_pages.py` and `cut_writing_pages.py`.
-**Status (27 September 2026): tools ready and tested on simulated pages; a trial page is with
-the owner; the test pages wait for `WORK/lexicon/test.tsv` and the owner's confirmation of
-the proposals below.**
+Module `mayek_htr/pages.py`, scripts `make_writing_pages.py`, `cut_writing_pages.py` and
+`measure_strokes.py`. **Status (27 September 2026): proposals confirmed by the owner; trial
+page written and cut; the 29 test pages made and with the owner; the pen width to settle
+before writing.**
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and
@@ -400,13 +402,26 @@ the proposals below.**
   the fixed-set form (`images/`, `labels.tsv`) with `manifest.json` (kinds, flags), and a
   contact sheet per page. On simulated pages every page found, foreign pages refused, words
   keep 1.00-1.01 of their ink on exported pages (0.89-1.04 on a phone photo).
-- **Proposed, to confirm:** (1) 500 items, about 28 pages; (2) the trial page first (17
+- **Confirmed by the owner (27 September 2026):** (1) 500 items; (2) the trial page first (17
   validation words, to check the iPad export and the cutting; never scored); (3) contribution
-  (3) reworded: "a real handwritten word set, about 500 words written by a native writer on a
-  tablet, text-disjoint from training, with a fixed protocol (CER, WER, the confusable
-  pairs), released with the tools to add writers"; (4) evaluation: all seven Phase 2 runs,
-  greedy and with the language model at the alpha and beta chosen on synthetic validation,
-  the set used once (the oracle baseline cannot run on real words: it needs character boxes).
+  (3) reworded (novelty statement above); (4) evaluation: all seven Phase 2 runs, greedy and
+  with the language model at the alpha and beta chosen on synthetic validation, the set used
+  once (the oracle baseline cannot run on real words: it needs character boxes).
+- **Trial page (27 September):** the iPad's Markup export (iOS 18.5) works as it is: the page
+  keeps its size and embedded layout, the drawing is one annotation rendered with the page;
+  17 of 17 words cut whole, 3 flagged `outside` (a stroke over a box line), all complete.
+  Letters about 12 mm high, strokes about 0.5 mm (0.043 of the letter height): at the
+  recogniser's input the strokes are half as thick as the training words' (2.0 px against
+  4.0 px; ink 6.7% of the image against 13.5%; `results/phase3_trial_strokes.json`), below
+  the synthesiser's pens (0.06-0.14 L). Proposed (owner to decide): a pen about twice as
+  wide (strokes about 1 mm at this size: a ballpoint's proportion on paper); with the thin
+  pen the test would measure thinner strokes than any training word.
+- **Test pages (27 September):** 500 items on 29 pages (15-20 a page) from the test lexicon
+  (3,761 words, all test split by hash; 3,725 usable, 1,834 seen at least twice): 475 words
+  and 25 numbers, 7 ending with a full stop, 3,110 characters (6.2 an item); every letter
+  and sign at least 8 times except ꯘ (5: every test word that has it), digits 4-10 times
+  (`results/phase3_pages.json`). The PDF (its words embedded) stays off the repository:
+  Drive `WORK/real/real_words_pages.pdf`.
 
 ## Working rules
 

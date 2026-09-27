@@ -1,8 +1,9 @@
 # Phase 3: the real word set
 
-Started 26 September 2026. **Status (27 September): tools ready and tested; a trial page is
-with the owner.** The pages of the test set are made once the owner sends the test lexicon
-(`WORK/lexicon/test.tsv`) and confirms the proposals in section 5.
+Started 26 September 2026. **Status (27 September): the owner confirmed the proposals
+(section 5) and wrote the trial page, which cut cleanly (section 6); the 29 test pages are
+made (section 7) and with the owner. Before writing them, the pen width is to be settled
+(section 6).**
 
 ## 1. The owner's decision (26 September 2026)
 
@@ -96,9 +97,9 @@ words, median 1.003), 0.99 to 1.01 on the scaled image, 0.89 to 1.04 on the phot
 resampling move pixels across the threshold). The planted cases: a word partly over a
 printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
 
-## 5. Proposals awaiting the owner
+## 5. Decisions (proposed 26 September, confirmed by the owner 27 September 2026)
 
-1. **Size:** 500 items (about 28 pages; about two hours of writing).
+1. **Size:** 500 items (29 pages; about two hours of writing).
 2. **Trial page first:** 17 validation words (never test words), to check the iPad's export
    and the cutting on real writing before the long pages; never scored.
 3. **Contribution (3), reworded:** "a real handwritten word set, about 500 words written by
@@ -108,16 +109,47 @@ printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
    and beta chosen on synthetic validation; the set used once. The baseline cannot run on
    real words: it needs the synthesiser's character boxes.
 
-## 6. Writing the pages (for the owner)
+## 6. The trial page (written by the owner, 27 September 2026)
+
+- **Export:** written in the iPad's Files app (Markup, iOS 18.5) and shared as a PDF. The
+  page keeps its size and the embedded manifest; the drawing is saved as one annotation,
+  which PyMuPDF renders with the page. Corner squares found, the page matched.
+- **Cutting:** 17 of 17 words cut whole; 3 flagged `outside` (a stroke of a sign or of apun
+  over a box line), all complete on the contact sheet; no stray ink.
+- **Pen (`scripts/measure_strokes.py`, `results/phase3_trial_strokes.json`):** letters about
+  12 mm high on the page, strokes about 0.5 mm (4 px at 200 dpi): 0.043 of the letter
+  height, where the synthesiser's pens are 0.06-0.14 L. As the recogniser sees a word
+  (64 px high) the strokes are half as thick as those of synthetic words: median 2.0 px
+  against 4.0 px (synthetic 10th percentile 3.0), 0.061 against 0.121 of the ink band, ink
+  6.7% of the image against 13.5% (500 synthetic words rendered here from the TUMMHCD
+  validation characters). Writing on glass, letters come out large; a ballpoint on paper
+  gives strokes about a tenth of the letter height.
+- **Proposed (owner to decide):** a pen about twice as wide for the test pages (strokes
+  about 1 mm at this letter size, 0.08-0.09 of the letter height, inside the training
+  range), the same pen throughout; page 1 sent first to check it. Keeping the thin pen is
+  possible, but the test would then measure strokes thinner than any the recogniser was
+  trained on, on top of the change of writer.
+
+## 7. The test pages (27 September 2026)
+
+From the owner's test lexicon (`WORK/lexicon/test.tsv`: 3,761 words, all in the test split
+by the hash; 3,725 usable, 1,834 seen at least twice), seed 0: 500 items on 29 pages (15 to
+20 a page): 475 words and 25 numbers, 7 ending with a full stop, 3,110 characters (6.2 an
+item, at most 14). Every letter and sign at least 8 times, except ꯘ: 5, every test word that
+has it (ꯗ/ꯘ will rest on few ꯘ); ꯓ and ꯙ 8; digits 4 to 10 times each
+(`results/phase3_pages.json`). The PDF carries the words (its manifest), so it stays off the
+repository: Drive `WORK/real/real_words_pages.pdf`.
+
+## 8. Writing the pages (for the owner)
 
 1. Open the PDF on the iPad (Files, then Markup; or import it into GoodNotes or
    Notability).
-2. Pen tool, black, a thin or medium width, as a ballpoint would write; the same pen for
-   every page. Write at your normal size with the page fitting the screen; zooming in to
-   write is fine if it keeps your size.
+2. Pen tool, black, about twice as wide as on the trial page (section 6), the same pen for
+   every page. Write at your normal size with the page fitting the screen.
 3. Copy each printed word into the box under it, as you write every day; copy it exactly,
    even if a word looks unfamiliar.
 4. Stay inside the box where you can (a stroke over the line is recovered, but check it on
    the contact sheet). To correct a word, erase it with the eraser and write it again; do
    not cross it out. Leave a box empty to skip a word.
-5. Export the whole PDF (Share, then Save to Files, or the app's PDF export) and send it.
+5. Export the whole PDF (Share, then Save to Files, or the app's PDF export) and send it;
+   page 1 first, to check the pen.
