@@ -389,7 +389,7 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   two seeds: CER 3.79%, WER 21.0% greedy; **CER 3.12%, WER 17.0% with the language model**
   (seeds 2.36% / 3.88%, 13% / 21%: 87 and 79 words right). The same runs on the synthetic test:
   0.24%, 1.57%, so real handwriting brings about 13 times the character errors. Other runs with
-  the language model: ImageNet 2.53% / 14%, small CNN 3.03% / 17% (first round 2.87% / 17%,
+  the language model: ImageNet 2.53% / 14%, small CNN 3.04% / 17% (first round 2.87% / 17%,
   2.53% / 15%, 4.05% / 21%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
   the language model the two seeds differ (9 words against 1, p = 0.02; greedy p = 0.18), seed
   0 reads more than the first round's small CNN (10 against 2, p = 0.04) and seed 1 fewer than
@@ -497,7 +497,9 @@ Owner's request (27 September 2026, after testing the demo: "it works pretty gre
 pointed out some errors and said we could include them in our training data and train again.
 So lets do that ... Create synthetic data which imitates the new patterns . And finally write
 the paper." **Status: code and notebook (`notebooks/round3_signs_beside.ipynb`) ready and dry-run
-here; the owner trains next.**
+here; not trained.** Owner's decision (27 September 2026): "i dont wanna do the retraining with
+the new patters for now. I will do that after submitting this paper." The paper presents the
+diagnosis and the new placement (its Section 9.4), with training left to future work.
 
 - **The errors (all seven runs on the 100 real words, `top_errors` in
   `results/phase3_real_*.json`):** 118 of 126 character errors (94%) are ꯥ, ꯩ, ꯪ: ꯥ left out
@@ -518,8 +520,9 @@ here; the owner trains next.**
   a sign above nearer the next letter than its own in 1 of 839 words, never touched by it).
   **Round 3** = round 2's final recipe + `marks_beside 0.5` (runs `round3_convnext_tummhcd` and
   `round3_convnext_tummhcd_seed1`), nothing else changed.
-- **Protocol (proposed, to confirm):** the first 100 real words stay round 2's test (used
-  once) and become round 3's development set (`round3_dev_*`), since their errors shaped it.
+- **Protocol (proposed, for when round 3 is trained; to confirm):** the first 100 real words
+  stay round 2's test (used once) and become round 3's development set (`round3_dev_*`), since
+  their errors shaped it.
   Round 3's test: new words by the same writer, pages 7-12 (items 107-209: 100 words, 3
   numbers, 56 with a sign above), read once by round 2 and round 3, two seeds each
   (`phase3_real2_*`). Synthetic: choices on `val.tar` as before; `val_beside.tar` (the same
@@ -528,22 +531,30 @@ here; the owner trains next.**
 ## The paper (draft, 27 September 2026)
 
 "Whole words from isolated characters: handwritten Meitei Mayek word recognition trained on
-synthetic words" (title proposed): 16 pages, `article` class, XeLaTeX (the Meitei Mayek text is
-shaped by HarfBuzz with the bundled Noto font). **Kept out of the public repository**, as the first
-paper's source is: sent to the owner as `paper_draft_20260927.zip` (source, figures, fonts, the
+synthetic words" (title proposed): 14 pages to the declarations, then the references and a
+draft-only appendix mapping every number to its results file (20 pages in all); `article`
+class, XeLaTeX (the Meitei Mayek text is shaped by HarfBuzz with the bundled Noto font). **Kept
+out of the public repository**, as the first paper's source is: sent to the owner as `paper_draft_20260927.zip` (source, figures, fonts, the
 scripts) and a PDF; the owner decides whether it goes into the repository.
 
 - Every number is a macro written by the draft's `make_numbers.py` from `results/*.json` (none
   typed by hand except the first paper's and the thesis's own figures, cited to them); sentences
-  saying "never" are guarded (the script stops if the result under them changes). Round 3 prints
-  as red "tbd"/"[pending]" until its results exist; then run `make_numbers.py` and write its text.
+  saying "never" are guarded (the script stops if the result under them changes). Numbers are
+  rounded halves up from the value the results file prints, so a check by hand gives the same
+  digits (this corrected one figure: the second round's small CNN on the real words with the
+  language model, 18 errors in 593 characters, is 3.04%, not 3.03%).
 - Sections: introduction; related work; the script and the spelling of i; data; synthetic words;
   the recogniser; baselines; synthetic results; real words (collection, results, errors, where
-  the signs stand); round 3; discussion; declarations (code and data, use of AI tools, ethics).
-- 26 of the 41 cited references are marked "[to check]" (abstracts or memory only): check each
-  against its full text before submission (list in the draft's README).
+  the signs stand, and the new placement of the signs above, its training left to future work);
+  reading in the browser (the demo; Figure 6 is the owner's screenshot of it reading the owner's
+  name, the owner's request of 27 September 2026); discussion; conclusion; declarations (code and
+  data, use of AI tools, ethics).
+- 25 of the 45 cited references are marked "[to check]" (abstracts or memory only): check each
+  against its full text before submission. The draft's README lists everything to verify before
+  submission (references, the first paper's figures, the script facts, a last novelty search,
+  TUMMHCD's terms for showing its images, the missing LICENSE file, the venue).
 - Owner to decide: venue and template, title, release of the real word set, funding statement,
-  whether the draft goes into the repository.
+  whether the draft goes into the repository; owner to send: the demo screenshot as a file.
 
 ## Working rules
 

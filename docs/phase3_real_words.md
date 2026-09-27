@@ -240,7 +240,7 @@ predictions, which stay on Drive with the set). 100 words, 593 characters; error
 | ConvNeXt-T from TUMMHCD, seed 0 (final recipe) | 3.20 | 18 | 2.36 | 13 | 87 (79-92) |
 | ConvNeXt-T from TUMMHCD, seed 1 (final recipe; demo) | 4.38 | 24 | 3.88 | 21 | 79 (70-86) |
 | ConvNeXt-T from ImageNet | 3.20 | 18 | 2.53 | 14 | 86 (78-91) |
-| small CNN from scratch | 5.40 | 28 | 3.03 | 17 | 83 (74-89) |
+| small CNN from scratch | 5.40 | 28 | 3.04 | 17 | 83 (74-89) |
 | first round: ConvNeXt-T from TUMMHCD | 4.05 | 24 | 2.87 | 17 | 83 (74-89) |
 | first round: ConvNeXt-T from ImageNet | 3.20 | 19 | 2.53 | 15 | 85 (77-91) |
 | first round: small CNN | 4.55 | 25 | 4.05 | 21 | 79 (70-86) |

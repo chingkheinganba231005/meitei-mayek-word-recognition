@@ -5,6 +5,11 @@ errors and said we could include them in our training data and train again. So l
 so that our model becomes even more better. Create synthetic data which imitates the new
 patterns."
 
+**Status (27 September 2026): ready, not trained.** The owner: "i dont wanna do the retraining
+with the new patters for now. I will do that after submitting this paper." The paper presents
+the errors, the measurement and the new placement (sections 1-3 here); the training, the
+protocol of section 4 and the notebook wait until after submission.
+
 ## 1. The errors
 
 The 100 real words, read once by every Phase 2 run (`results/phase3_real_<run>.json`, the

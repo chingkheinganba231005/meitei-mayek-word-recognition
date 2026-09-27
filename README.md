@@ -27,9 +27,9 @@ This follows the character-level work in
   the first project's, [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
 - Round 3, the signs above written as the real writer writes them: 94% of the real words'
   character errors are ꯥ, ꯩ or ꯪ, which the writer puts after the letter at the top, where
-  print puts ꯣ and ꯦ, not over the letter. The synthesiser now writes them that way in some
-  words; the final recipe is trained again with half its words so, and tested on new real
-  words, [`docs/round3_signs_beside.md`](docs/round3_signs_beside.md).
+  print puts ꯣ and ꯦ, not over the letter. The synthesiser can now write them that way in some
+  words (off by default); training with it and a test on new real words come after the paper,
+  [`docs/round3_signs_beside.md`](docs/round3_signs_beside.md).
 
 ## Layout
 
