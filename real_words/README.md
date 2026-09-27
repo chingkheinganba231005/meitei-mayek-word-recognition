@@ -42,4 +42,5 @@ writers: the 95% interval of a word accuracy of 80% on 100 words is about 71% to
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (see `LICENSE`). The writer is the
 author, and the set contains no other person's data. Please cite the paper and the
-repository, https://github.com/chingkheinganba231005/meitei-mayek-word-recognition.
+repository, https://github.com/chingkheinganba231005/meitei-mayek-word-recognition
+(archived on Zenodo with the code, https://doi.org/10.5281/zenodo.23002147).
