@@ -1,0 +1,298 @@
+{
+ "checkpoint": "round2_crnn_scratch/best.pt",
+ "step": 54000,
+ "cfg": {
+  "encoder": "small_cnn",
+  "init": "none",
+  "steps": 60000,
+  "batch": 64,
+  "lr": 0.0003,
+  "lr_min": 0.01,
+  "warmup": 2000,
+  "wd": 0.05,
+  "ema": 0.999,
+  "clip": 5.0,
+  "aug": "full",
+  "hidden": 256,
+  "layers": 2,
+  "dropout": 0.2,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "log_every": 200,
+  "workers": 10,
+  "pool": 8,
+  "seed": 0,
+  "data_seed": 1000,
+  "scrambled": 0.1
+ },
+ "set": "real_test.tar",
+ "words": 100,
+ "set_info": null,
+ "greedy": {
+  "words": 100,
+  "characters": 593,
+  "cer": 0.05396,
+  "wer": 0.28,
+  "word_accuracy": 0.72,
+  "word_accuracy_95ci": [
+   0.62512,
+   0.7986
+  ],
+  "substitutions": 15,
+  "deletions": 17,
+  "insertions": 0,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 32,
+    "correct": 32,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 55,
+    "correct": 55,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   }
+  },
+  "top_errors": [
+   [
+    "ꯥ",
+    "(deleted)",
+    16
+   ],
+   [
+    "ꯥ",
+    "ꯣ",
+    9
+   ],
+   [
+    "ꯩ",
+    "ꯧ",
+    4
+   ],
+   [
+    "ꯪ",
+    "ꯣ",
+    2
+   ],
+   [
+    "꯫",
+    "(deleted)",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯥ",
+    0.5319,
+    47
+   ],
+   [
+    "ꯡ",
+    0.0,
+    23
+   ],
+   [
+    "ꯇ",
+    0.0,
+    24
+   ],
+   [
+    "ꯦ",
+    0.0,
+    29
+   ],
+   [
+    "ꯣ",
+    0.0,
+    21
+   ],
+   [
+    "ꯔ",
+    0.0,
+    22
+   ],
+   [
+    "ꯤ",
+    0.0,
+    52
+   ],
+   [
+    "ꯁ",
+    0.0,
+    39
+   ]
+  ]
+ },
+ "greedy_by_kind": {
+  "lexicon": {
+   "words": 90,
+   "characters": 567,
+   "cer": 0.05644,
+   "wer": 0.31111,
+   "word_accuracy": 0.68889,
+   "word_accuracy_95ci": [
+    0.58717,
+    0.77514
+   ]
+  },
+  "number": {
+   "words": 10,
+   "characters": 26,
+   "cer": 0.0,
+   "wer": 0.0,
+   "word_accuracy": 1.0,
+   "word_accuracy_95ci": [
+    0.72247,
+    1.0
+   ]
+  }
+ },
+ "lm": {
+  "file": "char_lm.pkl",
+  "order": 6,
+  "alpha": 0.25,
+  "beta": 1.5,
+  "beam": 16,
+  "chosen_on": "phase2_val_round2_crnn_scratch.json",
+  "grid": null
+ },
+ "with_lm": {
+  "words": 100,
+  "characters": 593,
+  "cer": 0.03035,
+  "wer": 0.17,
+  "word_accuracy": 0.83,
+  "word_accuracy_95ci": [
+   0.74452,
+   0.89106
+  ],
+  "substitutions": 10,
+  "deletions": 8,
+  "insertions": 0,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 32,
+    "correct": 32,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 55,
+    "correct": 55,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   }
+  },
+  "top_errors": [
+   [
+    "ꯥ",
+    "(deleted)",
+    7
+   ],
+   [
+    "ꯥ",
+    "ꯣ",
+    5
+   ],
+   [
+    "ꯩ",
+    "ꯧ",
+    4
+   ],
+   [
+    "ꯪ",
+    "ꯣ",
+    1
+   ],
+   [
+    "꯫",
+    "(deleted)",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯥ",
+    0.2553,
+    47
+   ],
+   [
+    "ꯡ",
+    0.0,
+    23
+   ],
+   [
+    "ꯇ",
+    0.0,
+    24
+   ],
+   [
+    "ꯦ",
+    0.0,
+    29
+   ],
+   [
+    "ꯣ",
+    0.0,
+    21
+   ],
+   [
+    "ꯔ",
+    0.0,
+    22
+   ],
+   [
+    "ꯤ",
+    0.0,
+    52
+   ],
+   [
+    "ꯁ",
+    0.0,
+    39
+   ]
+  ]
+ },
+ "with_lm_by_kind": {
+  "lexicon": {
+   "words": 90,
+   "characters": 567,
+   "cer": 0.03175,
+   "wer": 0.18889,
+   "word_accuracy": 0.81111,
+   "word_accuracy_95ci": [
+    0.71816,
+    0.87859
+   ]
+  },
+  "number": {
+   "words": 10,
+   "characters": 26,
+   "cer": 0.0,
+   "wer": 0.0,
+   "word_accuracy": 1.0,
+   "word_accuracy_95ci": [
+    0.72247,
+    1.0
+   ]
+  }
+ },
+ "seconds": {
+  "network": 23.3,
+  "decoding": 1.5
+ }
+}

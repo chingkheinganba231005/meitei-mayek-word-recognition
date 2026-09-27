@@ -1,9 +1,8 @@
 # Phase 3: the real word set
 
-Started 26 September 2026. **Status (27 September): the owner wrote 100 of the 500 items
-and decided that these 100 words are the real test set for now (section 9); the test over
-the seven Phase 2 runs, once, and a Hugging Face demo like the first project's (section 10)
-are ready to run in `notebooks/phase3_real_words_and_demo.ipynb`.**
+Started 26 September 2026. **Status (27 September): the real test done, once, by the owner:
+the seven Phase 2 runs read the 100 words the owner wrote (section 11); the demo built for
+Hugging Face (section 10).**
 
 ## 1. The owner's decision (26 September 2026)
 
@@ -22,7 +21,8 @@ or more volunteer writers. What it means for the evaluation:
 - Digital ink differs from TUMMHCD's scans of paper: even strokes of the app's pen on white,
   no paper texture. This is a second change of domain besides the writer's.
 - Contribution (3) of the novelty statement ("a public, consented, writer-disjoint real word
-  set (50+ writers)") no longer holds as written; a rewording is proposed in section 5.
+  set (50+ writers)") no longer holds as written; reworded in section 5, and again for the
+  100 words written in section 9.
 - The same pages can be printed, written on paper and photographed: the cutter lines up
   photos too (section 4). More writers can be added later without changing anything.
 
@@ -104,7 +104,8 @@ printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
    and the cutting on real writing before the long pages; never scored.
 3. **Contribution (3), reworded:** "a real handwritten word set, about 500 words written by
    a native writer on a tablet, text-disjoint from training, with a fixed protocol (CER,
-   WER, the confusable pairs), released with the tools to add writers".
+   WER, the confusable pairs), released with the tools to add writers" (reworded again for
+   the 100 words written: section 9).
 4. **Evaluation:** all seven Phase 2 runs, greedy and with the language model at the alpha
    and beta chosen on synthetic validation; the set used once. The baseline cannot run on
    real words: it needs the synthesiser's character boxes.
@@ -182,9 +183,9 @@ repository: Drive `WORK/real/real_words_pages.pdf`.
 - **What 100 words can show:** a first measure on real handwriting. The intervals are wide:
   at 80 words right of 100 the 95% interval is 71-87%. Runs that differ by a few words cannot
   be told apart; the final recipe's two seeds are reported with their mean.
-- **Contribution (3), to reword (proposal, owner to confirm):** "a first real handwritten
-  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
-  fixed protocol and the tools to extend it".
+- **Contribution (3), reworded (confirmed by the owner, 27 September 2026):** "a first real
+  handwritten word set, 100 words by a native writer on a tablet, text-disjoint from
+  training, with a fixed protocol and the tools to extend it".
 - **Protocol:** the notebook's section 1, with `RUN_REAL_TEST = True`, once: every Phase 2 run
   (the four of the second round, the three of the first) reads the 100 words with the
   settings it was given on the synthetic validation set (`eval_recogniser.py --tuned`),
@@ -227,4 +228,54 @@ repository and Space):
 - **Licences:** network MIT (as the code and the first project's weights); the language model
   is built from Wikipedia (CC BY-SA 4.0) and FineWeb-2 (ODC-By 1.0) and is released under
   CC BY-SA 4.0 with attribution, as the model card says.
+
+## 11. The real test, used once (owner's run, 27 September 2026)
+
+`results/phase3_real_<run>.json` (each run with the alpha and beta of its synthetic
+validation), `results/phase3_real_comparison.json` (`scripts/compare_runs.py` on the runs'
+predictions, which stay on Drive with the set). 100 words, 593 characters; error rates in %.
+
+| Run | CER | WER | CER with LM | WER with LM | words right (95% CI) |
+|---|---:|---:|---:|---:|---|
+| ConvNeXt-T from TUMMHCD, seed 0 (final recipe) | 3.20 | 18 | 2.36 | 13 | 87 (79-92) |
+| ConvNeXt-T from TUMMHCD, seed 1 (final recipe; demo) | 4.38 | 24 | 3.88 | 21 | 79 (70-86) |
+| ConvNeXt-T from ImageNet | 3.20 | 18 | 2.53 | 14 | 86 (78-91) |
+| small CNN from scratch | 5.40 | 28 | 3.03 | 17 | 83 (74-89) |
+| first round: ConvNeXt-T from TUMMHCD | 4.05 | 24 | 2.87 | 17 | 83 (74-89) |
+| first round: ConvNeXt-T from ImageNet | 3.20 | 19 | 2.53 | 15 | 85 (77-91) |
+| first round: small CNN | 4.55 | 25 | 4.05 | 21 | 79 (70-86) |
+
+- **Final recipe, mean of the two seeds:** CER 3.79%, WER 21.0% greedy; CER 3.12%, WER 17.0%
+  with the language model. On the synthetic test the same runs had 0.24% and 1.57%: about 13
+  times fewer character errors than on this writer's words.
+- **Seeds:** on real words the two seeds differ (with the language model 9 words read right
+  only by seed 0, 1 only by seed 1: p = 0.02; greedy 10 against 4, p = 0.18), although they
+  agreed on the synthetic test (1.52% and 1.62% WER). Report the mean and both.
+- **Runs:** of 21 pairs, three differ at p < 0.05 with the language model (seed 0 against seed
+  1, seed 0 against the first round's small CNN, seed 1 against ImageNet), all near the level
+  one expects by chance among 21 tests; greedy, the second round's small CNN is below both
+  ConvNeXt runs of its round (4 against 14, p = 0.03). Encoders and rounds cannot be ranked on
+  100 words.
+- **The language model** puts 3-11 words right per run and one wrong in all seven (the first
+  round's small CNN): 5 of 5 for seed 0 (p = 0.06), 11 of 11 for the second round's small
+  CNN (p = 0.001).
+- **The pairs:** ꯦ/꯰ 32 of 32, ꯨ/ꯁ 55 of 55 (54 for one run), ꯗ/ꯘ 20 of 20, in every run, with
+  no swap; ꯰ occurs 3 times and ꯘ once, so the harder halves are barely tested. Numbers: 10 of
+  10 in every run.
+- **The errors:** 69 words are read right by every run and 7 by none. Nearly all errors are in
+  the signs written above a letter: the 56 words with neither ꯥ nor ꯩ are misread 0-2 times
+  per run (seed 0: 1), the 44 words with one of them 12-20 times. ꯥ is misread 17-36% of its
+  47 times (dropped, or read as ꯣ or ꯦ); ꯩ is read as ꯧ in 3-5 of its 5 words. On the error
+  sheets the writer's ꯥ is a long straight stroke slanting down to the right at the upper
+  right of its letter, where the training words have TUMMHCD's ꯥ at the font's place above
+  the letter. The letters, the confusable pairs and the numbers carry over from the synthetic
+  words; the signs above the letter do not, for this writer.
+- **What follows:** better synthetic signs (shapes and places from more writers), or Phase 4's
+  generated styles, may close the gap; any such change must be judged on real words not used
+  here (the 400 items not yet written can give a real development set and a new test set).
+- **The demo** is `round2_convnext_tummhcd_seed1`, chosen on validation before the test; on the
+  real words it is the weaker seed. Its ONNX export gives the same greedy reading as PyTorch
+  for all 300 validation words checked (largest log probability difference 0.053; 32.7 MB with
+  float16 weights); the language model for the browser has 669,149 entries (3.19 MB
+  compressed). The cards quote its own scores on the real words (CER 3.88%, WER 21%).
 

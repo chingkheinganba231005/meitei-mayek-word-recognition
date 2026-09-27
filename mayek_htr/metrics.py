@@ -54,6 +54,17 @@ def wilson(k, n, z=1.959964):
     return (round(float(c - h), 5), round(float(c + h), 5))
 
 
+
+def paired_exact(b, c):
+    """Two-sided exact (McNemar) test of two readers on the same words: b words read right
+    by the first only, c by the second only -> p value."""
+    from math import comb
+
+    n = b + c
+    if n == 0:
+        return 1.0
+    return min(1.0, 2 * sum(comb(n, i) for i in range(min(b, c) + 1)) / 2 ** n)
+
 def score(refs, hyps, pairs=CONFUSABLE, top=20):
     """Lists of reference and recognised texts -> a JSON-friendly summary."""
     assert len(refs) == len(hyps)

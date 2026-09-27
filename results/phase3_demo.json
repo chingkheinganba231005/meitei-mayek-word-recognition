@@ -1,0 +1,23 @@
+{
+ "run": "round2_convnext_tummhcd_seed1",
+ "decoding": {
+  "alpha": 0.5,
+  "beta": 0.0,
+  "beam": 16,
+  "chosen_on": "phase2_val_round2_convnext_tummhcd_seed1.json (synthetic validation, 5000 words)"
+ },
+ "onnx": {
+  "float16": true,
+  "same_greedy_reading": 1.0,
+  "max_logprob_diff": 0.05329,
+  "checked_on": 300,
+  "mb": 32.7
+ },
+ "lm_in_browser": {
+  "entries": 669149,
+  "mb": 8.03,
+  "file_mb": 3.19
+ },
+ "hf_id": "Chingkheinganba/handwritten-meitei-mayek-word-recognition",
+ "results_quoted": "On 5,000 synthetic test words (TUMMHCD test characters) it reaches a character error rate of 0.25% and a word error rate of 1.62% with the language model (0.37% and 2.32% without). On 100 real handwritten words (one native writer, on a tablet; words it never saw in training): character error rate 3.88%, word error rate 21.00% with the language model (words read right 79.00%, 95% interval 70.02%-85.83%); without it 4.38% and 24.00%."
+}

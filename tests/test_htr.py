@@ -116,3 +116,9 @@ def test_beam_search_with_lm_fixes_an_ambiguous_frame():
     assert dec.greedy(lp) == K + INAP
     assert dec.beam_search(lp, lm=None) == K + INAP
     assert dec.beam_search(lp, lm=lm, alpha=1.0) == K + AA
+
+
+def test_paired_exact():
+    assert metrics.paired_exact(0, 0) == 1.0
+    assert metrics.paired_exact(9, 1) == pytest.approx(22 / 1024)      # 2 * P(X <= 1), X ~ Bin(10, 0.5)
+    assert metrics.paired_exact(5, 5) == 1.0 and metrics.paired_exact(1, 9) == metrics.paired_exact(9, 1)
