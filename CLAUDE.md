@@ -95,7 +95,7 @@ Found by web search only (no full-text access in that session): every paper stil
 checked against its full text before citing.
 
 **Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026;
-(3) reworded for one writer and confirmed, 27 September 2026).**
+(3) reworded for one writer and then for 100 words, confirmed by the owner, 27 September 2026).**
 No published work recognises handwritten Meitei Mayek words or lines end to end. Earlier work
 classifies isolated characters, segments handwritten pages into lines and words without
 recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
@@ -106,9 +106,9 @@ Jawahar, ICPR 2024), is in Bengali script. Meitei Mayek text recognition exists 
 (NE-OCR 2026 preprint); for scene text there is character recognition, and EMBiL only detects
 text and identifies its language. No handwriting generation model exists for the script. We
 contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
-synthetic words from TUMMHCD at scale; (3) a real handwritten word set, about 500 words written
-by a native writer on a tablet, text-disjoint from training, with a fixed protocol (CER, WER,
-the confusable pairs), released with the tools to add writers; (4) evidence that
+synthetic words from TUMMHCD at scale; (3) a first real handwritten word set, 100 words by a
+native writer on a tablet, text-disjoint from training, with a fixed protocol and the tools to
+extend it; (4) evidence that
 ꯢ versus ꯏ, the largest error source of isolated-character recognition (78 of 241 errors), is a
 spelling convention, not a visual distinction (everyday writing uses ꯏ throughout; the standard
 spelling's ꯢ after ꯥ, ꯣ, ꯨ follows a rule for 95–99% of words), so the recogniser reads one letter
@@ -462,9 +462,9 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   it. For now this is okay." The real test set is items 1-100 (pages 1-6; items 101-500 not
   written, kept for later). 100 words give wide intervals (at 80% of words right, the 95%
   interval is about 71-87%): a first check on real handwriting, not yet a benchmark.
-  Contribution (3) needs rewording again; proposed (to confirm): "a first real handwritten
-  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
-  fixed protocol and the tools to extend it".
+  Contribution (3) reworded to match, confirmed by the owner the same day: "a first real
+  handwritten word set, 100 words by a native writer on a tablet, text-disjoint from
+  training, with a fixed protocol and the tools to extend it" (novelty statement above).
 - **The real set (`results/phase3_real_set.json`, `results/phase3_real_strokes.json`):** 100
   words (90 from the lexicon, 10 numbers), 593 characters, 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
   for the pairs ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1. All cut whole (20 flagged `outside`, all

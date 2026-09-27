@@ -21,7 +21,8 @@ or more volunteer writers. What it means for the evaluation:
 - Digital ink differs from TUMMHCD's scans of paper: even strokes of the app's pen on white,
   no paper texture. This is a second change of domain besides the writer's.
 - Contribution (3) of the novelty statement ("a public, consented, writer-disjoint real word
-  set (50+ writers)") no longer holds as written; a rewording is proposed in section 5.
+  set (50+ writers)") no longer holds as written; reworded in section 5, and again for the
+  100 words written in section 9.
 - The same pages can be printed, written on paper and photographed: the cutter lines up
   photos too (section 4). More writers can be added later without changing anything.
 
@@ -103,7 +104,8 @@ printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
    and the cutting on real writing before the long pages; never scored.
 3. **Contribution (3), reworded:** "a real handwritten word set, about 500 words written by
    a native writer on a tablet, text-disjoint from training, with a fixed protocol (CER,
-   WER, the confusable pairs), released with the tools to add writers".
+   WER, the confusable pairs), released with the tools to add writers" (reworded again for
+   the 100 words written: section 9).
 4. **Evaluation:** all seven Phase 2 runs, greedy and with the language model at the alpha
    and beta chosen on synthetic validation; the set used once. The baseline cannot run on
    real words: it needs the synthesiser's character boxes.
@@ -181,9 +183,9 @@ repository: Drive `WORK/real/real_words_pages.pdf`.
 - **What 100 words can show:** a first measure on real handwriting. The intervals are wide:
   at 80 words right of 100 the 95% interval is 71-87%. Runs that differ by a few words cannot
   be told apart; the final recipe's two seeds are reported with their mean.
-- **Contribution (3), to reword (proposal, owner to confirm):** "a first real handwritten
-  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
-  fixed protocol and the tools to extend it".
+- **Contribution (3), reworded (confirmed by the owner, 27 September 2026):** "a first real
+  handwritten word set, 100 words by a native writer on a tablet, text-disjoint from
+  training, with a fixed protocol and the tools to extend it".
 - **Protocol:** the notebook's section 1, with `RUN_REAL_TEST = True`, once: every Phase 2 run
   (the four of the second round, the three of the first) reads the 100 words with the
   settings it was given on the synthetic validation set (`eval_recogniser.py --tuned`),
