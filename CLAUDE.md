@@ -82,7 +82,8 @@ confusable pairs (ꯢ/ꯏ turned out to be a spelling convention: see Phase 0 fi
 **Phase 3: real test set.** Collect real handwritten words from volunteers with written consent
 (what is collected, how it is used and licensed). Target roughly 50+ writers. This set is the main
 evaluation; synthetic data is only for training. Releasing it publicly would be a contribution in
-itself.
+itself. **Changed by the owner (26 September 2026): no volunteers; the owner writes the set
+alone on an iPad** (see the Phase 3 section below).
 
 **Phase 4: generation (project 2).** Diffusion model conditioned on text and writer style. Evaluate
 by training the recogniser on generated data and testing on the real set, plus standard image
@@ -371,6 +372,41 @@ evaluation, on real handwriting, waits for the Phase 3 set.
 - **Protocol:** choices on the synthetic validation set; the synthetic test set once (the
   notebook's `RUN_TEST`); two or more seeds for final numbers; the Phase 3 real set is the
   main evaluation (no real development set: owner, 26 September 2026).
+
+## Phase 3: the real word set (details in `docs/phase3_real_words.md`)
+
+Module `mayek_htr/pages.py`, scripts `make_writing_pages.py` and `cut_writing_pages.py`.
+**Status (27 September 2026): tools ready and tested on simulated pages; a trial page is with
+the owner; the test pages wait for `WORK/lexicon/test.tsv` and the owner's confirmation of
+the proposals below.**
+
+- **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
+  me. I want to do it myself. I can write on my ipad many words in one page for many pages and
+  you can crop them into the required real word test dataset." One writer (the owner, a
+  native writer), Apple Pencil on an iPad. The set stays text-disjoint (test-split words) and
+  its writer is not one of TUMMHCD's, but one writer cannot show the spread across writers,
+  and digital ink is a second change of domain (even strokes on white, no paper). Contribution
+  (3) of the novelty statement no longer holds as written.
+- **Pages:** A4 at 200 dpi; each word printed (shaped, Noto Sans Meetei Mayek) above an empty
+  box 2.2 cm high and as wide as the word needs; about 18 words a page; four corner squares;
+  the layout embedded in the PDF (`manifest.json`).
+- **Words:** distinct test-split words (hash, so never training words), 2-14 characters,
+  count >= 2, drawn by count ** 0.5 without replacement; every letter and sign 8 times where
+  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed.
+- **Cutting:** corner squares -> projective alignment (photos too, paper flattened); page
+  identified by its printed ink; handwriting = darker than the printed page nearby, any pen
+  colour; each piece of ink to its box (`outside`, `shared` flags; words over a box line kept
+  whole); word cut from its own ink with margin 0.15 x height; empty boxes skipped. Output in
+  the fixed-set form (`images/`, `labels.tsv`) with `manifest.json` (kinds, flags), and a
+  contact sheet per page. On simulated pages every page found, foreign pages refused, words
+  keep 1.00-1.01 of their ink on exported pages (0.89-1.04 on a phone photo).
+- **Proposed, to confirm:** (1) 500 items, about 28 pages; (2) the trial page first (17
+  validation words, to check the iPad export and the cutting; never scored); (3) contribution
+  (3) reworded: "a real handwritten word set, about 500 words written by a native writer on a
+  tablet, text-disjoint from training, with a fixed protocol (CER, WER, the confusable
+  pairs), released with the tools to add writers"; (4) evaluation: all seven Phase 2 runs,
+  greedy and with the language model at the alpha and beta chosen on synthetic validation,
+  the set used once (the oracle baseline cannot run on real words: it needs character boxes).
 
 ## Working rules
 

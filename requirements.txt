@@ -3,3 +3,4 @@ pillow
 pandas
 pyarrow
 scipy
+pymupdf
