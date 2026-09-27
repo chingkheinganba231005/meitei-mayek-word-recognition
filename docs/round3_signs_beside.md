@@ -14,8 +14,9 @@ protocol of section 4 and the notebook wait until after submission.
 
 The 100 real words, read once by every Phase 2 run (`results/phase3_real_<run>.json`, the
 `top_errors` of each run with the language model; every error of every run is listed there):
-over the seven runs, 126 character errors, of which 118 (94%) are the three signs that print
-places above the letter:
+over the seven runs, 126 character errors as first scored, of which 118 (94%) are the three
+signs that print places above the letter; with item 35's label corrected (below), 119, of
+which 118 (99%):
 
 | error | runs' total |
 |---|---|
@@ -29,8 +30,9 @@ places above the letter:
 
 The seven ꯫ are one word (item 35) read the same way by every run: the writer left out its
 full stop (no stray ink on the page, no flag from the cutter), so the reading follows the ink
-and the label does not. Proposed: correct that label (owner to decide); every run's word error
-rate would fall by one point, no reading changes.
+and the label does not. The owner checked it and the label was corrected (27 September 2026;
+`docs/phase3_real_words.md`, section 12): every run's word error rate fell by one point, and
+no reading changed.
 
 ## 2. Where the writer puts the signs (`scripts/measure_sign_geometry.py`)
 

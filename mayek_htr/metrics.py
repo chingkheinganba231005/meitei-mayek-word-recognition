@@ -106,3 +106,15 @@ def score(refs, hyps, pairs=CONFUSABLE, top=20):
     per = {ch: round(1 - correct[ch] / ref_count[ch], 4) for ch in ref_count if ref_count[ch] >= 20}
     out["worst_characters"] = sorted(([ch, e, ref_count[ch]] for ch, e in per.items()), key=lambda r: -r[1])[:top]
     return out
+
+
+def by_kind(refs, hyps, kinds):
+    """Scores for each kind of word (lexicon, syllables, number); None without kinds."""
+    if kinds is None:
+        return None
+    out = {}
+    for kind in sorted(set(kinds)):
+        idx = [i for i, k in enumerate(kinds) if k == kind]
+        s = score([refs[i] for i in idx], [hyps[i] for i in idx])
+        out[kind] = {k: s[k] for k in ("words", "characters", "cer", "wer", "word_accuracy", "word_accuracy_95ci")}
+    return out

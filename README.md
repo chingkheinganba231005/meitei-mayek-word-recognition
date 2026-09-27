@@ -21,11 +21,12 @@ This follows the character-level work in
   [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
 - Phase 3, the real word set (words written by hand on printed pages, cut out
   automatically): 100 words written by one native writer on a tablet, read once by every
-  run. Final recipe, mean of two seeds: CER 3.1%, WER 17% with the language model (seeds 13%
-  and 21%); the confusable pairs are read without a swap, and nearly all errors are in the
-  signs written above a letter (ꯥ, ꯩ). A Hugging Face demo that runs in the browser, like
-  the first project's, [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
-- Round 3, the signs above written as the real writer writes them: 94% of the real words'
+  run. Final recipe, mean of two seeds: CER 3.0%, WER 16% with the language model (seeds 12%
+  and 20%); the confusable pairs are read without a swap, and nearly all errors are in the
+  signs written above a letter (ꯥ, ꯩ). The set is released in [`real_words/`](real_words)
+  (CC BY 4.0). A Hugging Face demo that runs in the browser, like the first project's,
+  [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
+- Round 3, the signs above written as the real writer writes them: 99% of the real words'
   character errors are ꯥ, ꯩ or ꯪ, which the writer puts after the letter at the top, where
   print puts ꯣ and ꯦ, not over the letter. The synthesiser can now write them that way in some
   words (off by default); training with it and a test on new real words come after the paper,
@@ -78,6 +79,8 @@ scripts/
   build_demo.py          the Hugging Face model repository and the Space from a trained run
   compare_runs.py        runs compared word by word (paired exact tests), from their predictions
   measure_sign_geometry.py  where the small vowel signs stand and how they are shaped, on the ink of word sets
+  release_real_set.py    the public release of the real word set (written items, corrected labels)
+  rescore_real.py        saved readings scored again after a label correction (networks not run again)
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
@@ -85,6 +88,7 @@ notebooks/
   phase3_real_words_and_demo.ipynb  the real words read once by every run; the demo built and uploaded
   round3_signs_beside.ipynb     round 3: the signs above beside their letter, training, validation, new real words
   collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
+real_words/          the real word set: 100 handwritten words, their labels and a card (CC BY 4.0)
 results/             JSON files written by the code; every reported number comes from here
 docs/                Phase 0 report, Phase 1, 2 and 3 design, round 3, AI use log
 tests/               pytest
@@ -107,3 +111,10 @@ test once); its tests need PyTorch (`pip install -r requirements-htr.txt` after 
 
 TUMMHCD comes from its authors, <http://agnigarh.tezu.ernet.in/~sarat/resources.html>, under
 their own terms.
+
+## Licence
+
+Code: MIT ([`LICENSE`](LICENSE)). The real word set in [`real_words/`](real_words): CC BY 4.0.
+The bundled font (`mayek_words/assets/NotoSansMeeteiMayek-Regular.ttf`): SIL Open Font
+Licence 1.1. The language model on Hugging Face: CC BY-SA 4.0 (built from Wikipedia and
+FineWeb-2 text). TUMMHCD is not included; it is available from its authors.

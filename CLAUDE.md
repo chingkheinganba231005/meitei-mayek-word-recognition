@@ -386,22 +386,34 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
 
 - **Real test, used once (`results/phase3_real_*.json`, `results/phase3_real_comparison.json`;
   100 words, one writer, iPad):** final recipe (ConvNeXt-T from TUMMHCD, second round), mean of
-  two seeds: CER 3.79%, WER 21.0% greedy; **CER 3.12%, WER 17.0% with the language model**
-  (seeds 2.36% / 3.88%, 13% / 21%: 87 and 79 words right). The same runs on the synthetic test:
-  0.24%, 1.57%, so real handwriting brings about 13 times the character errors. Other runs with
-  the language model: ImageNet 2.53% / 14%, small CNN 3.04% / 17% (first round 2.87% / 17%,
-  2.53% / 15%, 4.05% / 21%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
+  two seeds: CER 3.63%, WER 20.0% greedy; **CER 2.96%, WER 16.0% with the language model**
+  (seeds 2.20% / 3.72%, 12% / 20%: 88 and 80 words right; item 35's label corrected, below).
+  The same runs on the synthetic test: 0.24%, 1.57%, so real handwriting brings about 12 times
+  the character errors. Other runs with the language model: ImageNet 2.37% / 13%, small CNN
+  2.87% / 16% (first round 2.70% / 16%, 2.37% / 14%, 3.89% / 20%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
   the language model the two seeds differ (9 words against 1, p = 0.02; greedy p = 0.18), seed
   0 reads more than the first round's small CNN (10 against 2, p = 0.04) and seed 1 fewer than
   ImageNet (1 against 8, p = 0.04); every other pair p >= 0.07. Greedy, the second round's
   small CNN is below both of its ConvNeXt runs (4 against 14, p = 0.03). Seeds differ far more
   on real words than on synthetic ones: report their mean. The language model puts 3-11
   words right per run and wrong only once in all seven (p = 0.001 for the second round's small
-  CNN). 69 words read right by every run, 7 by none. Numbers 10 of 10 everywhere.
+  CNN). 70 words read right by every run, 6 by none. Numbers 10 of 10 everywhere.
+- **Item 35 corrected (owner, 27 September 2026: "Check it for me . Correct the label"):** its
+  printed full stop was not written (the image has none, no stray ink), so every run's
+  reading without it was right. `scripts/rescore_real.py` scored the saved readings against
+  the corrected label (after checking that they reproduce every stored result exactly) and
+  rewrote `results/phase3_real_*.json`; `compare_runs.py` again on them. Each run: one word
+  more right, one character error fewer; pairwise tests unchanged. The HF cards still quote
+  the demo's figures before the correction (3.88% / 21%; now 3.72% / 20%) until the next
+  `build_demo.py`.
+- **Released (owner, 27 September 2026: "release the real word dataset"):** `real_words/`
+  (`scripts/release_real_set.py`): 100 images, `labels.tsv`, `manifest.json` (written items
+  only, the correction recorded), card; CC BY 4.0. The 400 unwritten items stay private.
+  Counts: `results/phase3_real_release.json` (100 words, 592 characters).
 - **Where the errors are:** the pairs that trouble isolated characters are read without a
   swap (ꯦ/꯰ 32 of 32, ꯨ/ꯁ 55 of 55, ꯗ/ꯘ 20 of 20; but ꯰ occurs 3 times, ꯘ once). Nearly every
   error is a sign written above the letter: of the 56 words without ꯥ or ꯩ, 0-2 are misread
-  (seed 0: 1); of the 44 with one, 12-20. ꯥ is misread 17-36% of its 47 times (dropped, or
+  (seed 0: 1); of the 44 with one, 11-19. ꯥ is misread 17-36% of its 47 times (dropped, or
   read as ꯣ or ꯦ); ꯩ is read as ꯧ in 3-5 of its 5 words. This writer draws ꯥ as a long
   slanted stroke at the upper right of the letter, unlike the training words' ꯥ (TUMMHCD
   shapes at the font's place): the gap is in the synthetic signs, not in the letters. A fix
@@ -411,7 +423,8 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   validation before the test; on the real words it is the weaker seed). ONNX with float16
   weights: the same greedy reading as PyTorch for 300 of 300 validation words (largest log
   probability difference 0.053), 32.7 MB; the language model for the browser 669,149
-  entries, 3.19 MB compressed. The cards quote its own real-word scores (CER 3.88%, WER 21%).
+  entries, 3.19 MB compressed. The cards quote its own real-word scores (CER 3.88%, WER 21%,
+  before item 35's correction; 3.72% and 20% after).
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and
@@ -425,7 +438,8 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   the layout embedded in the PDF (`manifest.json`).
 - **Words:** distinct test-split words (hash, so never training words), 2-14 characters,
   count >= 2, drawn by count ** 0.5 without replacement; every letter and sign 8 times where
-  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed.
+  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed,
+  except the 100 written words, released in `real_words/` (owner, 27 September 2026).
 - **Cutting:** corner squares -> projective alignment (photos too, paper flattened); page
   identified by its printed ink; handwriting = darker than the printed page nearby, any pen
   colour; each piece of ink to its box (`outside`, `shared` flags; words over a box line kept
@@ -467,12 +481,13 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   handwritten word set, 100 words by a native writer on a tablet, text-disjoint from
   training, with a fixed protocol and the tools to extend it" (novelty statement above).
 - **The real set (`results/phase3_real_set.json`, `results/phase3_real_strokes.json`):** 100
-  words (90 from the lexicon, 10 numbers), 593 characters, 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
+  words (90 from the lexicon, 10 numbers), 592 characters (593 before item 35's correction), 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
   for the pairs ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1. All cut whole (20 flagged `outside`, all
   complete on the contact sheets). One pen throughout, as the training words at the
   recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7% (synthetic 4.0 px,
-  0.121, 13.5%). The set (`real_test.tar`, with its manifest) goes on Drive in `WORK/real/`;
-  not in the repository.
+  0.121, 13.5%). The set as cut (`real_test.tar`, with its manifest of all 500 items) goes on
+  Drive in `WORK/real/`, not in the repository; the 100 written words are released in
+  `real_words/` (below).
 - **Test protocol:** the notebook's section 1 (`RUN_REAL_TEST`): all seven Phase 2 runs read
   the 100 words once (`eval_recogniser.py --tuned`, the settings of synthetic validation),
   greedy and with the language model: `results/phase3_real_<run>.json`.
@@ -502,9 +517,9 @@ the new patters for now. I will do that after submitting this paper." The paper 
 diagnosis and the new placement (its Section 9.4), with training left to future work.
 
 - **The errors (all seven runs on the 100 real words, `top_errors` in
-  `results/phase3_real_*.json`):** 118 of 126 character errors (94%) are ꯥ, ꯩ, ꯪ: ꯥ left out
-  45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other 8: item 35's full stop 7 (every
-  run; the writer left it out: proposed to correct the label, owner to decide) and ꯨ 1.
+  `results/phase3_real_*.json`):** 118 of 119 character errors (99%) are ꯥ, ꯩ, ꯪ: ꯥ left out
+  45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other: ꯨ left out once. (Before
+  item 35's correction: 126, of which 7 its unwritten full stop.)
 - **Measured (`results/round3_sign_geometry_real.json`, `scripts/measure_sign_geometry.py`):**
   the writer's ꯥ is a straight stroke falling to the right (52°; TUMMHCD's ꯥ images too: 97%
   fall to the right, median 51°) but after the letter at the top: centred 0.18 L past its
@@ -542,7 +557,7 @@ scripts) and a PDF; the owner decides whether it goes into the repository.
   saying "never" are guarded (the script stops if the result under them changes). Numbers are
   rounded halves up from the value the results file prints, so a check by hand gives the same
   digits (this corrected one figure: the second round's small CNN on the real words with the
-  language model, 18 errors in 593 characters, is 3.04%, not 3.03%).
+  language model, then 18 errors in 593 characters, was 3.04%, not 3.03%).
 - Sections: introduction; related work; the script and the spelling of i; data; synthetic words;
   the recogniser; baselines; synthetic results; real words (collection, results, errors, where
   the signs stand, and the new placement of the signs above, its training left to future work);

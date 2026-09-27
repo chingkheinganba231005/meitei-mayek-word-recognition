@@ -30,16 +30,16 @@
  "set_info": null,
  "greedy": {
   "words": 100,
-  "characters": 593,
-  "cer": 0.05396,
-  "wer": 0.28,
-  "word_accuracy": 0.72,
+  "characters": 592,
+  "cer": 0.05236,
+  "wer": 0.27,
+  "word_accuracy": 0.73,
   "word_accuracy_95ci": [
-   0.62512,
-   0.7986
+   0.63568,
+   0.8073
   ],
   "substitutions": 15,
-  "deletions": 17,
+  "deletions": 16,
   "insertions": 0,
   "pairs": {
    "ꯦ/꯰": {
@@ -81,11 +81,6 @@
     "ꯪ",
     "ꯣ",
     2
-   ],
-   [
-    "꯫",
-    "(deleted)",
-    1
    ]
   ],
   "worst_characters": [
@@ -134,13 +129,13 @@
  "greedy_by_kind": {
   "lexicon": {
    "words": 90,
-   "characters": 567,
-   "cer": 0.05644,
-   "wer": 0.31111,
-   "word_accuracy": 0.68889,
+   "characters": 566,
+   "cer": 0.05477,
+   "wer": 0.3,
+   "word_accuracy": 0.7,
    "word_accuracy_95ci": [
-    0.58717,
-    0.77514
+    0.59873,
+    0.78489
    ]
   },
   "number": {
@@ -166,16 +161,16 @@
  },
  "with_lm": {
   "words": 100,
-  "characters": 593,
-  "cer": 0.03035,
-  "wer": 0.17,
-  "word_accuracy": 0.83,
+  "characters": 592,
+  "cer": 0.02872,
+  "wer": 0.16,
+  "word_accuracy": 0.84,
   "word_accuracy_95ci": [
-   0.74452,
-   0.89106
+   0.7558,
+   0.89905
   ],
   "substitutions": 10,
-  "deletions": 8,
+  "deletions": 7,
   "insertions": 0,
   "pairs": {
    "ꯦ/꯰": {
@@ -216,11 +211,6 @@
    [
     "ꯪ",
     "ꯣ",
-    1
-   ],
-   [
-    "꯫",
-    "(deleted)",
     1
    ]
   ],
@@ -270,13 +260,13 @@
  "with_lm_by_kind": {
   "lexicon": {
    "words": 90,
-   "characters": 567,
-   "cer": 0.03175,
-   "wer": 0.18889,
-   "word_accuracy": 0.81111,
+   "characters": 566,
+   "cer": 0.03004,
+   "wer": 0.17778,
+   "word_accuracy": 0.82222,
    "word_accuracy_95ci": [
-    0.71816,
-    0.87859
+    0.73056,
+    0.8875
    ]
   },
   "number": {
@@ -294,5 +284,14 @@
  "seconds": {
   "network": 23.3,
   "decoding": 1.5
+ },
+ "labels": {
+  "corrected": [
+   {
+    "file": "000035.png",
+    "reason": "the full stop printed on the writing page was not written: the image has none, and no stray ink on the page (checked by the writer, 27 September 2026)"
+   }
+  ],
+  "rescored_by": "scripts/rescore_real.py (readings unchanged)"
  }
 }

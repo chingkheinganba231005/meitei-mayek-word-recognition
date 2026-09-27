@@ -57,7 +57,8 @@ or more volunteer writers. What it means for the evaluation:
 - 5% numbers (`lexicon.number`, 1 to 4 digits; each digit at least 4 times), 2% of the
   words ending with a full stop (꯫), as in the synthetic sets; items in random order.
 - `--summary` records the counts only (the pages, the kinds, each character's count), never
-  the words: word lists stay out of the repository.
+  the words: word lists stay out of the repository (the 100 written words are the exception,
+  released by the owner's decision in `real_words/`, section 12).
 
 ## 4. Cutting (`pages.Cutter`, `scripts/cut_writing_pages.py`)
 
@@ -172,7 +173,7 @@ repository: Drive `WORK/real/real_words_pages.pdf`.
   for items 1-2 (rewritten). Exported from the iPad's Markup as one PDF; pages 1-6 cut
   (`cut_writing_pages.py`).
 - **The set (`results/phase3_real_set.json`):** 100 words, 90 from the lexicon and 10
-  numbers; 593 characters; 52 of the 54 characters (not ꯳ and ꯓ; ꯘ, ꯙ, ꯚ and ꯴ once). For
+  numbers; 593 characters as cut, 592 after item 35's correction (section 12); 52 of the 54 characters (not ꯳ and ꯓ; ꯘ, ꯙ, ꯚ and ꯴ once). For
   the confusable pairs: ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1, so ꯗ/ꯘ and ꯰ can hardly be measured
   here. Every word cut whole; 20 flagged `outside` (a stroke over a box line), all complete
   on the contact sheets; no stray ink. The owner checks on the sheets that each word matches
@@ -233,20 +234,21 @@ repository and Space):
 
 `results/phase3_real_<run>.json` (each run with the alpha and beta of its synthetic
 validation), `results/phase3_real_comparison.json` (`scripts/compare_runs.py` on the runs'
-predictions, which stay on Drive with the set). 100 words, 593 characters; error rates in %.
+predictions, which stay on Drive with the set). 100 words, 592 characters, with item 35's
+label corrected (section 12); error rates in %.
 
 | Run | CER | WER | CER with LM | WER with LM | words right (95% CI) |
 |---|---:|---:|---:|---:|---|
-| ConvNeXt-T from TUMMHCD, seed 0 (final recipe) | 3.20 | 18 | 2.36 | 13 | 87 (79-92) |
-| ConvNeXt-T from TUMMHCD, seed 1 (final recipe; demo) | 4.38 | 24 | 3.88 | 21 | 79 (70-86) |
-| ConvNeXt-T from ImageNet | 3.20 | 18 | 2.53 | 14 | 86 (78-91) |
-| small CNN from scratch | 5.40 | 28 | 3.04 | 17 | 83 (74-89) |
-| first round: ConvNeXt-T from TUMMHCD | 4.05 | 24 | 2.87 | 17 | 83 (74-89) |
-| first round: ConvNeXt-T from ImageNet | 3.20 | 19 | 2.53 | 15 | 85 (77-91) |
-| first round: small CNN | 4.55 | 25 | 4.05 | 21 | 79 (70-86) |
+| ConvNeXt-T from TUMMHCD, seed 0 (final recipe) | 3.04 | 17 | 2.20 | 12 | 88 (80-93) |
+| ConvNeXt-T from TUMMHCD, seed 1 (final recipe; demo) | 4.22 | 23 | 3.72 | 20 | 80 (71-87) |
+| ConvNeXt-T from ImageNet | 3.04 | 17 | 2.37 | 13 | 87 (79-92) |
+| small CNN from scratch | 5.24 | 27 | 2.87 | 16 | 84 (76-90) |
+| first round: ConvNeXt-T from TUMMHCD | 3.89 | 23 | 2.70 | 16 | 84 (76-90) |
+| first round: ConvNeXt-T from ImageNet | 3.04 | 18 | 2.37 | 14 | 86 (78-91) |
+| first round: small CNN | 4.39 | 24 | 3.89 | 20 | 80 (71-87) |
 
-- **Final recipe, mean of the two seeds:** CER 3.79%, WER 21.0% greedy; CER 3.12%, WER 17.0%
-  with the language model. On the synthetic test the same runs had 0.24% and 1.57%: about 13
+- **Final recipe, mean of the two seeds:** CER 3.63%, WER 20.0% greedy; CER 2.96%, WER 16.0%
+  with the language model. On the synthetic test the same runs had 0.24% and 1.57%: about 12
   times fewer character errors than on this writer's words.
 - **Seeds:** on real words the two seeds differ (with the language model 9 words read right
   only by seed 0, 1 only by seed 1: p = 0.02; greedy 10 against 4, p = 0.18), although they
@@ -262,9 +264,9 @@ predictions, which stay on Drive with the set). 100 words, 593 characters; error
 - **The pairs:** ꯦ/꯰ 32 of 32, ꯨ/ꯁ 55 of 55 (54 for one run), ꯗ/ꯘ 20 of 20, in every run, with
   no swap; ꯰ occurs 3 times and ꯘ once, so the harder halves are barely tested. Numbers: 10 of
   10 in every run.
-- **The errors:** 69 words are read right by every run and 7 by none. Nearly all errors are in
+- **The errors:** 70 words are read right by every run and 6 by none. Nearly all errors are in
   the signs written above a letter: the 56 words with neither ꯥ nor ꯩ are misread 0-2 times
-  per run (seed 0: 1), the 44 words with one of them 12-20 times. ꯥ is misread 17-36% of its
+  per run (seed 0: 1), the 44 words with one of them 11-19 times. ꯥ is misread 17-36% of its
   47 times (dropped, or read as ꯣ or ꯦ); ꯩ is read as ꯧ in 3-5 of its 5 words. On the error
   sheets the writer's ꯥ is a long straight stroke slanting down to the right at the upper
   right of its letter, where the training words have TUMMHCD's ꯥ at the font's place above
@@ -277,5 +279,23 @@ predictions, which stay on Drive with the set). 100 words, 593 characters; error
   real words it is the weaker seed. Its ONNX export gives the same greedy reading as PyTorch
   for all 300 validation words checked (largest log probability difference 0.053; 32.7 MB with
   float16 weights); the language model for the browser has 669,149 entries (3.19 MB
-  compressed). The cards quote its own scores on the real words (CER 3.88%, WER 21%).
+  compressed). The cards quote its own scores on the real words as they were before the
+  correction of section 12 (CER 3.88%, WER 21%; now 3.72% and 20%); the next build of the demo
+  (`scripts/build_demo.py`) quotes the corrected ones.
+
+## 12. Item 35 corrected, and the set released (27 September 2026)
+
+- **Item 35:** its printed word ends with a full stop (꯫) that the writer did not write: the
+  image has none and the page no stray ink, and every run read the word without it, the
+  seven errors of ꯫ in the error tables. The owner checked it and asked for the label to be
+  corrected. `scripts/rescore_real.py` scored the runs' saved readings against the corrected
+  labels (the networks were not run again): it first checks that the readings reproduce every
+  stored result exactly, then rewrites `results/phase3_real_<run>.json` (with a `labels`
+  record of the change); `scripts/compare_runs.py` was run again on the corrected
+  predictions. Each run gains one word and loses one character error (tables of section 11);
+  the pairwise tests do not change, since every run misread the word before.
+- **Released (owner's decision):** `real_words/` (`scripts/release_real_set.py`): the 100
+  images, `labels.tsv`, `manifest.json` (the written items, the correction) and a card, under
+  CC BY 4.0; the items not yet written stay private. Counts: `results/phase3_real_release.json`
+  (100 words, 592 characters, one ending with a full stop).
 

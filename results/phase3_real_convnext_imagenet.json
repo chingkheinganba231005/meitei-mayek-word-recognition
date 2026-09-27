@@ -29,16 +29,16 @@
  "set_info": null,
  "greedy": {
   "words": 100,
-  "characters": 593,
-  "cer": 0.03204,
-  "wer": 0.19,
-  "word_accuracy": 0.81,
+  "characters": 592,
+  "cer": 0.03041,
+  "wer": 0.18,
+  "word_accuracy": 0.82,
   "word_accuracy_95ci": [
-   0.72221,
-   0.87485
+   0.73333,
+   0.883
   ],
   "substitutions": 12,
-  "deletions": 7,
+  "deletions": 6,
   "insertions": 0,
   "pairs": {
    "ꯦ/꯰": {
@@ -75,11 +75,6 @@
     "ꯥ",
     "ꯣ",
     5
-   ],
-   [
-    "꯫",
-    "(deleted)",
-    1
    ],
    [
     "ꯪ",
@@ -138,13 +133,13 @@
  "greedy_by_kind": {
   "lexicon": {
    "words": 90,
-   "characters": 567,
-   "cer": 0.03351,
-   "wer": 0.21111,
-   "word_accuracy": 0.78889,
+   "characters": 566,
+   "cer": 0.0318,
+   "wer": 0.2,
+   "word_accuracy": 0.8,
    "word_accuracy_95ci": [
-    0.69365,
-    0.86047
+    0.70586,
+    0.86958
    ]
   },
   "number": {
@@ -170,16 +165,16 @@
  },
  "with_lm": {
   "words": 100,
-  "characters": 593,
-  "cer": 0.0253,
-  "wer": 0.15,
-  "word_accuracy": 0.85,
+  "characters": 592,
+  "cer": 0.02365,
+  "wer": 0.14,
+  "word_accuracy": 0.86,
   "word_accuracy_95ci": [
-   0.76716,
-   0.90694
+   0.77863,
+   0.91474
   ],
   "substitutions": 10,
-  "deletions": 5,
+  "deletions": 4,
   "insertions": 0,
   "pairs": {
    "ꯦ/꯰": {
@@ -216,11 +211,6 @@
     "ꯥ",
     "(deleted)",
     4
-   ],
-   [
-    "꯫",
-    "(deleted)",
-    1
    ],
    [
     "ꯪ",
@@ -274,13 +264,13 @@
  "with_lm_by_kind": {
   "lexicon": {
    "words": 90,
-   "characters": 567,
-   "cer": 0.02646,
-   "wer": 0.16667,
-   "word_accuracy": 0.83333,
+   "characters": 566,
+   "cer": 0.02473,
+   "wer": 0.15556,
+   "word_accuracy": 0.84444,
    "word_accuracy_95ci": [
-    0.74306,
-    0.89632
+    0.75567,
+    0.90502
    ]
   },
   "number": {
@@ -298,5 +288,14 @@
  "seconds": {
   "network": 22.8,
   "decoding": 1.4
+ },
+ "labels": {
+  "corrected": [
+   {
+    "file": "000035.png",
+    "reason": "the full stop printed on the writing page was not written: the image has none, and no stray ink on the page (checked by the writer, 27 September 2026)"
+   }
+  ],
+  "rescored_by": "scripts/rescore_real.py (readings unchanged)"
  }
 }
