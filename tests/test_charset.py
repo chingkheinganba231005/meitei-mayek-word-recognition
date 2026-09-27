@@ -58,3 +58,13 @@ def test_problems():
     assert cs.problem(K + cs.APUN + cs.APUN + LAI) == "apun not between two consonants"
     assert cs.problem(K + "a") == "character outside the alphabet"
     assert cs.problem(K + chr(0xABEC)) == "character outside the alphabet"  # lum iyek: not in TUMMHCD
+
+
+def test_standard_spelling():
+    from mayek_words.charset import standard_spelling
+
+    assert standard_spelling("ꯑꯥꯏ") == "ꯑꯥꯢ"            # i after ꯥ
+    assert standard_spelling("ꯂꯣꯏꯅ") == "ꯂꯣꯢꯅ"          # after ꯣ
+    assert standard_spelling("ꯃꯤꯇꯩꯏ") == "ꯃꯤꯇꯩꯏ"        # after ꯩ: stays
+    assert standard_spelling("ꯏꯃꯥ") == "ꯏꯃꯥ"            # at the start: stays
+

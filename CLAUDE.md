@@ -94,7 +94,8 @@ metrics.
 Found by web search only (no full-text access in that session): every paper still has to be
 checked against its full text before citing.
 
-**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026).**
+**Novelty statement (draft; (3) and (4) revised and confirmed by the owner, 24 September 2026;
+(3) reworded for one writer and confirmed, 27 September 2026).**
 No published work recognises handwritten Meitei Mayek words or lines end to end. Earlier work
 classifies isolated characters, segments handwritten pages into lines and words without
 recognising them (Inunganbi, Choudhary, Manglem, The Visual Computer 2020,
@@ -105,8 +106,9 @@ Jawahar, ICPR 2024), is in Bengali script. Meitei Mayek text recognition exists 
 (NE-OCR 2026 preprint); for scene text there is character recognition, and EMBiL only detects
 text and identifies its language. No handwriting generation model exists for the script. We
 contribute: (1) the first segmentation-free handwritten Meitei Mayek word recogniser; (2) zone-aware
-synthetic words from TUMMHCD at scale; (3) a public, consented, writer-disjoint real word set
-(50+ writers) with a fixed protocol (CER, WER, accuracy on the confusable pairs); (4) evidence that
+synthetic words from TUMMHCD at scale; (3) a real handwritten word set, about 500 words written
+by a native writer on a tablet, text-disjoint from training, with a fixed protocol (CER, WER,
+the confusable pairs), released with the tools to add writers; (4) evidence that
 ꯢ versus ꯏ, the largest error source of isolated-character recognition (78 of 241 errors), is a
 spelling convention, not a visual distinction (everyday writing uses ꯏ throughout; the standard
 spelling's ꯢ after ꯥ, ꯣ, ꯨ follows a rule for 95–99% of words), so the recogniser reads one letter
@@ -375,10 +377,11 @@ evaluation, on real handwriting, waits for the Phase 3 set.
 
 ## Phase 3: the real word set (details in `docs/phase3_real_words.md`)
 
-Module `mayek_htr/pages.py`, scripts `make_writing_pages.py` and `cut_writing_pages.py`.
-**Status (27 September 2026): tools ready and tested on simulated pages; a trial page is with
-the owner; the test pages wait for `WORK/lexicon/test.tsv` and the owner's confirmation of
-the proposals below.**
+Module `mayek_htr/pages.py`, scripts `make_writing_pages.py`, `cut_writing_pages.py` and
+`measure_strokes.py`; the demo: `mayek_htr/web.py`, `mayek_htr/reader.py`, `web/`, `space/`,
+`scripts/build_demo.py`; notebook `notebooks/phase3_real_words_and_demo.ipynb`. **Status (27
+September 2026): the real set is the 100 words written (owner's decision); the test over all
+seven runs, once, and the Hugging Face demo are ready to run in the notebook.**
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and
@@ -400,13 +403,63 @@ the proposals below.**
   the fixed-set form (`images/`, `labels.tsv`) with `manifest.json` (kinds, flags), and a
   contact sheet per page. On simulated pages every page found, foreign pages refused, words
   keep 1.00-1.01 of their ink on exported pages (0.89-1.04 on a phone photo).
-- **Proposed, to confirm:** (1) 500 items, about 28 pages; (2) the trial page first (17
+- **Confirmed by the owner (27 September 2026):** (1) 500 items; (2) the trial page first (17
   validation words, to check the iPad export and the cutting; never scored); (3) contribution
-  (3) reworded: "a real handwritten word set, about 500 words written by a native writer on a
-  tablet, text-disjoint from training, with a fixed protocol (CER, WER, the confusable
-  pairs), released with the tools to add writers"; (4) evaluation: all seven Phase 2 runs,
-  greedy and with the language model at the alpha and beta chosen on synthetic validation,
-  the set used once (the oracle baseline cannot run on real words: it needs character boxes).
+  (3) reworded (novelty statement above); (4) evaluation: all seven Phase 2 runs, greedy and
+  with the language model at the alpha and beta chosen on synthetic validation, the set used
+  once (the oracle baseline cannot run on real words: it needs character boxes).
+- **Trial page (27 September):** the iPad's Markup export (iOS 18.5) works as it is: the page
+  keeps its size and embedded layout, the drawing is one annotation rendered with the page;
+  17 of 17 words cut whole, 3 flagged `outside` (a stroke over a box line), all complete.
+  Letters about 12 mm high, strokes about 0.5 mm (0.043 of the letter height): at the
+  recogniser's input the strokes are half as thick as the training words' (2.0 px against
+  4.0 px; ink 6.7% of the image against 13.5%; `results/phase3_trial_strokes.json`), below
+  the synthesiser's pens (0.06-0.14 L). Proposed: a pen about twice as wide.
+- **Pen (27 September):** the owner tried two widths on page 1 and asked which. The second
+  matches the training words (strokes 1.2 mm, 0.10 of the letter height; at the recogniser's
+  input 4.0 px, 0.129 of the ink band, ink 14.0%, against 4.0 px, 0.121, 13.5%); the first is
+  too thick (2.2 mm, 0.15 L; 6.0 px, 0.194, 23.1%) (`results/phase3_pen_choice.json`).
+  Recommended: the second pen for every page, items 1-2 rewritten with it.
+- **Test pages (27 September):** 500 items on 29 pages (15-20 a page) from the test lexicon
+  (3,761 words, all test split by hash; 3,725 usable, 1,834 seen at least twice): 475 words
+  and 25 numbers, 7 ending with a full stop, 3,110 characters (6.2 an item); every letter
+  and sign at least 8 times except ꯘ (5: every test word that has it), digits 4-10 times
+  (`results/phase3_pages.json`). The PDF (its words embedded) stays off the repository:
+  Drive `WORK/real/real_words_pages.pdf`.
+
+- **Owner's decision (27 September 2026):** "I have done 100 words . So i wanna only test using
+  100 words and launch a similar hugging face space demo for my final model as the character
+  model which hit 98% accuracy . And in the future , i can collect more real data and improve
+  it. For now this is okay." The real test set is items 1-100 (pages 1-6; items 101-500 not
+  written, kept for later). 100 words give wide intervals (at 80% of words right, the 95%
+  interval is about 71-87%): a first check on real handwriting, not yet a benchmark.
+  Contribution (3) needs rewording again; proposed (to confirm): "a first real handwritten
+  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
+  fixed protocol and the tools to extend it".
+- **The real set (`results/phase3_real_set.json`, `results/phase3_real_strokes.json`):** 100
+  words (90 from the lexicon, 10 numbers), 593 characters, 52 of the 54 (not ꯳, ꯓ; ꯘ, ꯙ, ꯚ, ꯴ once);
+  for the pairs ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1. All cut whole (20 flagged `outside`, all
+  complete on the contact sheets). One pen throughout, as the training words at the
+  recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7% (synthetic 4.0 px,
+  0.121, 13.5%). The set (`real_test.tar`, with its manifest) goes on Drive in `WORK/real/`;
+  not in the repository.
+- **Test protocol:** the notebook's section 1 (`RUN_REAL_TEST`): all seven Phase 2 runs read
+  the 100 words once (`eval_recogniser.py --tuned`, the settings of synthetic validation),
+  greedy and with the language model: `results/phase3_real_<run>.json`.
+- **Demo (as the first project's):** a static Hugging Face Space where everything runs in the
+  visitor's browser (ONNX Runtime Web 1.30.0), and a model repository
+  (`Chingkheinganba/handwritten-meitei-mayek-word-recognition`, both). The network exported to
+  ONNX (float16 weights; one word of any width; checked against PyTorch on synthetic
+  validation words), the language model written in back-off form (`web/lm.bin.gz`, the exact
+  probabilities of `CharLM`), preprocessing and CTC beam search ported to JavaScript: on
+  test inputs the page's images and readings are identical to Python's (`tests/test_web.py`,
+  Node; checked end to end in headless Chromium). The page shows the reading with and
+  without the language model, the alternatives, and the standard spelling on request
+  (`charset.standard_spelling`: ꯢ after ꯥ, ꯣ, ꯨ). The demo's network: of the final
+  recipe's two seeds, the better on synthetic validation (CER tied at 0.253%, WER 1.64%
+  against 1.68%): `round2_convnext_tummhcd_seed1`, alpha 0.5, beta 0. Python use:
+  `mayek_htr.reader.Reader`. The language model is built from CC BY-SA 4.0 (Wikipedia) and
+  ODC-By (FineWeb-2) text: released under CC BY-SA 4.0 with attribution (model card).
 
 ## Working rules
 

@@ -1,0 +1,28 @@
+{
+ "synthetic": {
+  "set": "syn_val",
+  "words": 500,
+  "stroke_px": {
+   "median": 4.0,
+   "p10": 3.0,
+   "p90": 5.0
+  },
+  "band_px": 30.0,
+  "stroke_per_band": 0.121,
+  "ink_share": 0.135,
+  "stroke_px_own_scale": 3.0
+ },
+ "real": {
+  "set": "real_test.tar",
+  "words": 100,
+  "stroke_px": {
+   "median": 4.0,
+   "p10": 3.0,
+   "p90": 4.0
+  },
+  "band_px": 31.0,
+  "stroke_per_band": 0.125,
+  "ink_share": 0.147,
+  "stroke_px_own_scale": 9.0
+ }
+}

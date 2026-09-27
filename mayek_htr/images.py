@@ -65,3 +65,30 @@ def pad_batch(images, multiple=32):
     for k, im in enumerate(images):
         out[k, :, :im.shape[1]] = im
     return out, widths
+
+
+
+def _runs(mask):
+    """For every pixel, the length of the horizontal run of True it lies in (0 elsewhere)."""
+    out = np.zeros(mask.shape, np.int32)
+    edges = np.diff(np.pad(mask.astype(np.int8), ((0, 0), (1, 1))), axis=1)
+    for r in range(mask.shape[0]):
+        for a, b in zip(np.flatnonzero(edges[r] == 1), np.flatnonzero(edges[r] == -1)):
+            out[r, a:b] = b - a
+    return out
+
+
+def strokes(gray, height=HEIGHT):
+    """How thick a word's strokes are as the recogniser sees it (normalised to `height`;
+    at the image's own scale if height is None): (median stroke width in px, height of
+    the ink band in px, share of ink pixels), or None for a word without ink. A pixel's
+    stroke width is the shorter of the horizontal and vertical runs of ink through it
+    (exact for straight strokes); the band runs from the 10th to the 90th percentile of
+    the ink's rows, so width / band compares pens across sets whatever the size of the
+    writing."""
+    ink = normalise(gray, height) > 127 if height else ink_image(gray) > 0.5
+    if ink.sum() < 20:
+        return None
+    width = np.minimum(_runs(ink), _runs(ink.T).T)[ink]
+    rows = np.nonzero(ink)[0]
+    return (float(np.median(width)), float(np.percentile(rows, 90) - np.percentile(rows, 10)), float(ink.mean()))

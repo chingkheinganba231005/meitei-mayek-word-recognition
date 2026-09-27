@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Handwritten Meitei Mayek word recognition</title>
+  <meta name="description" content="Write or upload a handwritten Meitei Mayek word and see what the recogniser reads, without cutting it into characters. Runs entirely in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Meetei+Mayek&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Handwritten Meitei Mayek word recognition</h1>
+    <p>Write a whole word, as you would on paper: the recogniser reads it without cutting it
+      into characters, and a character language model helps it choose between look-alikes.
+      Everything runs in your browser; nothing you write or upload leaves your device.</p>
+  </header>
+
+  <main>
+    <section class="input">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-mode="draw" aria-selected="true">Write</button>
+        <button role="tab" data-mode="upload" aria-selected="false">Upload</button>
+      </div>
+
+      <div id="draw-panel">
+        <canvas id="pad" width="900" height="300" aria-label="Writing canvas"></canvas>
+        <div class="row">
+          <label>Pen <input id="pen" type="range" min="3" max="24" value="9"> <span id="pen-value">9</span></label>
+          <button id="clear" class="secondary">Clear</button>
+        </div>
+        <p class="hint">One word, left to right, letters about a third as tall as the canvas. A pen about a
+          tenth of the letter height reads best, as with a ballpoint on paper.</p>
+      </div>
+
+      <div id="upload-panel" hidden>
+        <label class="file">Choose a photo or scan of one word
+          <input id="file" type="file" accept="image/*">
+        </label>
+        <canvas id="upload-preview" hidden></canvas>
+        <p class="hint">Dark ink on light paper works best. The word is cut out of the image automatically.</p>
+      </div>
+
+      <div class="row">
+        <label><input id="use-lm" type="checkbox" checked> Use the language model</label>
+        <label><input id="standard" type="checkbox"> Standard spelling (ꯢ after ꯥ, ꯣ, ꯨ)</label>
+        <label><input id="live" type="checkbox"> Read after every stroke</label>
+      </div>
+      <button id="recognise" disabled>Read the word</button>
+      <p id="status" role="status">Loading…</p>
+    </section>
+
+    <section class="output" aria-live="polite">
+      <div id="word" class="mayek"></div>
+      <p id="alone"></p>
+      <ol id="nbest"></ol>
+      <figure>
+        <canvas id="seen" width="256" height="64"></canvas>
+        <figcaption>What the network sees (64 px high)</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>
+    <p id="about"></p>
+    <p>Code, experiments and limitations:
+      <a id="repo" href="https://github.com/chingkheinganba231005/meitei-mayek-word-recognition">GitHub</a>.
+      Characters one at a time: <a href="https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition">the character demo</a>.</p>
+  </footer>
+</body>
+</html>

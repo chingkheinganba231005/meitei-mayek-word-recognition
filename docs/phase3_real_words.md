@@ -1,8 +1,9 @@
 # Phase 3: the real word set
 
-Started 26 September 2026. **Status (27 September): tools ready and tested; a trial page is
-with the owner.** The pages of the test set are made once the owner sends the test lexicon
-(`WORK/lexicon/test.tsv`) and confirms the proposals in section 5.
+Started 26 September 2026. **Status (27 September): the owner wrote 100 of the 500 items
+and decided that these 100 words are the real test set for now (section 9); the test over
+the seven Phase 2 runs, once, and a Hugging Face demo like the first project's (section 10)
+are ready to run in `notebooks/phase3_real_words_and_demo.ipynb`.**
 
 ## 1. The owner's decision (26 September 2026)
 
@@ -96,9 +97,9 @@ words, median 1.003), 0.99 to 1.01 on the scaled image, 0.89 to 1.04 on the phot
 resampling move pixels across the threshold). The planted cases: a word partly over a
 printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
 
-## 5. Proposals awaiting the owner
+## 5. Decisions (proposed 26 September, confirmed by the owner 27 September 2026)
 
-1. **Size:** 500 items (about 28 pages; about two hours of writing).
+1. **Size:** 500 items (29 pages; about two hours of writing).
 2. **Trial page first:** 17 validation words (never test words), to check the iPad's export
    and the cutting on real writing before the long pages; never scored.
 3. **Contribution (3), reworded:** "a real handwritten word set, about 500 words written by
@@ -108,16 +109,122 @@ printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
    and beta chosen on synthetic validation; the set used once. The baseline cannot run on
    real words: it needs the synthesiser's character boxes.
 
-## 6. Writing the pages (for the owner)
+## 6. The trial page (written by the owner, 27 September 2026)
+
+- **Export:** written in the iPad's Files app (Markup, iOS 18.5) and shared as a PDF. The
+  page keeps its size and the embedded manifest; the drawing is saved as one annotation,
+  which PyMuPDF renders with the page. Corner squares found, the page matched.
+- **Cutting:** 17 of 17 words cut whole; 3 flagged `outside` (a stroke of a sign or of apun
+  over a box line), all complete on the contact sheet; no stray ink.
+- **Pen (`scripts/measure_strokes.py`, `results/phase3_trial_strokes.json`):** letters about
+  12 mm high on the page, strokes about 0.5 mm (4 px at 200 dpi): 0.043 of the letter
+  height, where the synthesiser's pens are 0.06-0.14 L. As the recogniser sees a word
+  (64 px high) the strokes are half as thick as those of synthetic words: median 2.0 px
+  against 4.0 px (synthetic 10th percentile 3.0), 0.061 against 0.121 of the ink band, ink
+  6.7% of the image against 13.5% (500 synthetic words rendered here from the TUMMHCD
+  validation characters). Writing on glass, letters come out large; a ballpoint on paper
+  gives strokes about a tenth of the letter height.
+- **Proposed (owner to decide):** a pen about twice as wide for the test pages (strokes
+  about 1 mm at this letter size, 0.08-0.09 of the letter height, inside the training
+  range), the same pen throughout; page 1 sent first to check it. Keeping the thin pen is
+  possible, but the test would then measure strokes thinner than any the recogniser was
+  trained on, on top of the change of writer.
+- **Two pens tried on page 1 (owner, 27 September; `results/phase3_pen_choice.json`):** row
+  1 (items 1-2) with a wide pen: strokes 2.2 mm, 0.15 of the letter height; at the
+  recogniser's input 6.0 px, 0.194 of the ink band, ink 23.1%: thicker than nearly all
+  training words (their 90th percentile is 5 px). Row 2 (items 3-5): strokes 1.2 mm, 0.10 of
+  the letter height; 4.0 px, 0.129 of the band, ink 14.0%: as the training words (4.0 px,
+  0.121, 13.5%). Recommended: the second pen for every page, items 1 and 2 rewritten with it.
+
+## 7. The test pages (27 September 2026)
+
+From the owner's test lexicon (`WORK/lexicon/test.tsv`: 3,761 words, all in the test split
+by the hash; 3,725 usable, 1,834 seen at least twice), seed 0: 500 items on 29 pages (15 to
+20 a page): 475 words and 25 numbers, 7 ending with a full stop, 3,110 characters (6.2 an
+item, at most 14). Every letter and sign at least 8 times, except ꯘ: 5, every test word that
+has it (ꯗ/ꯘ will rest on few ꯘ); ꯓ and ꯙ 8; digits 4 to 10 times each
+(`results/phase3_pages.json`). The PDF carries the words (its manifest), so it stays off the
+repository: Drive `WORK/real/real_words_pages.pdf`.
+
+## 8. Writing the pages (for the owner)
 
 1. Open the PDF on the iPad (Files, then Markup; or import it into GoodNotes or
    Notability).
-2. Pen tool, black, a thin or medium width, as a ballpoint would write; the same pen for
-   every page. Write at your normal size with the page fitting the screen; zooming in to
-   write is fine if it keeps your size.
+2. Pen tool, black, about twice as wide as on the trial page (section 6), the same pen for
+   every page. Write at your normal size with the page fitting the screen.
 3. Copy each printed word into the box under it, as you write every day; copy it exactly,
    even if a word looks unfamiliar.
 4. Stay inside the box where you can (a stroke over the line is recovered, but check it on
    the contact sheet). To correct a word, erase it with the eraser and write it again; do
    not cross it out. Leave a box empty to skip a word.
-5. Export the whole PDF (Share, then Save to Files, or the app's PDF export) and send it.
+5. Export the whole PDF (Share, then Save to Files, or the app's PDF export) and send it;
+   page 1 first, to check the pen.
+
+## 9. The real test set: 100 words (owner's decision, 27 September 2026)
+
+> "I have done 100 words . So i wanna only test using 100 words and launch a similar hugging
+> face space demo for my final model as the character model which hit 98% accuracy . And in
+> the future , i can collect more real data and improve it. For now this is okay."
+
+- **Written:** items 1 to 100 of the test pages (pages 1-6; items 101-106 on page 6 and
+  pages 7-29 not written, kept for later), with the pen chosen in section 6 throughout, also
+  for items 1-2 (rewritten). Exported from the iPad's Markup as one PDF; pages 1-6 cut
+  (`cut_writing_pages.py`).
+- **The set (`results/phase3_real_set.json`):** 100 words, 90 from the lexicon and 10
+  numbers; 593 characters; 52 of the 54 characters (not ꯳ and ꯓ; ꯘ, ꯙ, ꯚ and ꯴ once). For
+  the confusable pairs: ꯦ 29, ꯰ 3, ꯨ 16, ꯁ 39, ꯗ 19, ꯘ 1, so ꯗ/ꯘ and ꯰ can hardly be measured
+  here. Every word cut whole; 20 flagged `outside` (a stroke over a box line), all complete
+  on the contact sheets; no stray ink. The owner checks on the sheets that each word matches
+  its printed word before the test.
+- **The pen (`results/phase3_real_strokes.json`):** the same on all six pages and as the
+  training words at the recogniser's input: strokes 4.0 px, 0.125 of the ink band, ink 14.7%
+  of the image (synthetic words 4.0 px, 0.121, 13.5%); about 1.1 mm on the page.
+- **What 100 words can show:** a first measure on real handwriting. The intervals are wide:
+  at 80 words right of 100 the 95% interval is 71-87%. Runs that differ by a few words cannot
+  be told apart; the final recipe's two seeds are reported with their mean.
+- **Contribution (3), to reword (proposal, owner to confirm):** "a first real handwritten
+  word set, 100 words by a native writer on a tablet, text-disjoint from training, with a
+  fixed protocol and the tools to extend it".
+- **Protocol:** the notebook's section 1, with `RUN_REAL_TEST = True`, once: every Phase 2 run
+  (the four of the second round, the three of the first) reads the 100 words with the
+  settings it was given on the synthetic validation set (`eval_recogniser.py --tuned`),
+  greedily and with the language model. Writes `results/phase3_real_<run>.json`, and per run
+  `real_predictions.tsv` and `real_errors.png`. A run already read is not read again.
+
+## 10. The demo (Hugging Face, as the first project's)
+
+The first project's demo is a static Space: the network runs in the visitor's browser with
+ONNX Runtime Web, nothing is uploaded, and the weights sit in a model repository. The word
+demo does the same (`Chingkheinganba/handwritten-meitei-mayek-word-recognition`, model
+repository and Space):
+
+- **Network:** of the final recipe's two seeds, the one better on synthetic validation (lower
+  CER with the language model, then WER): `round2_convnext_tummhcd_seed1` (CER 0.253% for
+  both, WER 1.64% against 1.68%), with its decoding weights (alpha 0.5, beta 0). Exported to
+  ONNX for one word of any width (`mayek_htr.web.export_onnx`: the word padded with paper to
+  a multiple of 32 px, the LSTM reading only the word's own columns, as in the evaluation);
+  weights stored as float16 (about 33 MB) unless that changes more than 1% of the greedy
+  readings of synthetic validation words.
+- **Language model in the browser:** `CharLM` written in back-off form (every n-gram seen with
+  its log probability, every context seen with its log back-off weight), which gives exactly
+  its probabilities; about 0.74 MB compressed for the development word list, expected about
+  7-8 MB for the full one.
+- **Page (`web/`):** write a word on a wide canvas (pen about a tenth of the letter height) or
+  upload a photo; the reading with the language model, the network's own reading, the
+  alternatives kept by the beam search, what the network sees, and the standard spelling on
+  request (`charset.standard_spelling`: ꯢ after ꯥ, ꯣ, ꯨ). Preprocessing (`images.py`, with
+  Pillow's resampling) and decoding (`decode.py`, `lm.py`) are ported to JavaScript.
+- **Checks:** on test inputs the JavaScript gives the same normalised images, pixel for pixel
+  (seven sizes, Pillow's reduce and resize and the width limit), the same language model
+  probabilities and the same readings (40 test inputs, greedy and beam search with and
+  without the language model) as Python (`tests/test_web.py`, with Node); the ONNX network
+  matches PyTorch; in headless Chromium, writing on the page gives the reading Python gives
+  for the same image. The notebook was dry-run end to end with stand-in networks.
+- **Python:** `mayek_htr.reader.Reader("word_model").read("word.jpg")`, as in the model card.
+- **Build and upload:** the notebook's sections 3 and 4 (`scripts/build_demo.py`; upload with
+  a Hugging Face token in Colab secrets, `UPLOAD = True`). The cards quote the synthetic test
+  and, after section 1, the real words.
+- **Licences:** network MIT (as the code and the first project's weights); the language model
+  is built from Wikipedia (CC BY-SA 4.0) and FineWeb-2 (ODC-By 1.0) and is released under
+  CC BY-SA 4.0 with attribution, as the model card says.
+
