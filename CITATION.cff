@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this code or the real word set, please cite it as below."
+type: software
+title: "Handwritten Meitei Mayek word recognition: code, synthesiser, results and demonstration"
+abstract: >-
+  The first segmentation-free recogniser of handwritten Meitei Mayek words, trained on
+  synthetic words composed from the isolated characters of TUMMHCD. The repository holds the
+  word synthesiser, the recogniser and its training and evaluation code, the results files,
+  the browser demonstration, and a set of 100 real handwritten words (released under CC BY 4.0
+  in real_words/).
+authors:
+  - family-names: Rajkumar
+    given-names: Chingkheinganba
+    affiliation: "School of Computing and Data Science, The University of Hong Kong"
+    orcid: "https://orcid.org/0009-0002-2620-0281"
+repository-code: "https://github.com/chingkheinganba231005/meitei-mayek-word-recognition"
+url: "https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-word-recognition"
+license: MIT
+keywords:
+  - Meitei Mayek
+  - Manipuri
+  - handwritten text recognition
+  - synthetic training data
+  - connectionist temporal classification
+version: 1.0.0
