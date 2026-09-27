@@ -11,9 +11,8 @@ tags:
 
 # Handwritten Meitei Mayek word recognition
 
-A segmentation-free recogniser of handwritten Meitei Mayek words: the stem and first three
-stages of ConvNeXt-T (started from the first project's network trained on the TUMMHCD
-characters), a two-layer bidirectional LSTM and CTC over the 54 characters of everyday
+The first segmentation-free recogniser of handwritten Meitei Mayek words: the stem and first
+three stages of ConvNeXt-T (started from a network trained on the TUMMHCD characters), a two-layer bidirectional LSTM and CTC over the 54 characters of everyday
 spelling, decoded by beam search with a character 6-gram language model (interpolated
 Kneser-Ney). Trained only on synthetic words composed from TUMMHCD training characters.
 

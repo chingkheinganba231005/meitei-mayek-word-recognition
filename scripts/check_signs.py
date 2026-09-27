@@ -19,7 +19,7 @@ Signs above and below a letter (ꯥ, ꯩ, ꯪ, ꯨ, apun) are measured too: the 
 between the sign's ink and the ink of the character before it, in L.
 
 --marks-beside: every word has its signs above written after their letter at the top
-(``synth.Config.p_marks_beside`` = 1, round 3), and ꯥ, ꯩ, ꯪ are checked as signs beside.
+(``synth.Config.p_marks_beside`` = 1), and ꯥ, ꯩ, ꯪ are checked as signs beside.
 """
 
 import argparse
@@ -149,7 +149,7 @@ def main():
     ap.add_argument("--words", type=int, default=300, help="words per sign (the most frequent)")
     ap.add_argument("--seed", type=int, default=1000)
     ap.add_argument("--marks-beside", action="store_true",
-                    help="signs above written after their letter at the top (round 3), checked as signs beside")
+                    help="signs above written after their letter at the top, checked as signs beside")
     args = ap.parse_args()
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)

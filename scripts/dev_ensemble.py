@@ -1,4 +1,4 @@
-"""The first paper's ensemble as trained for its validation stage, in the released folder's
+"""The character-level ensemble as trained for its validation stage, in the released folder's
 format, for checking the baseline (scripts/oracle_baseline.py) on the synthetic validation
 set: the released networks were trained on TUMMHCD train including our validation part,
 the development ones without it.

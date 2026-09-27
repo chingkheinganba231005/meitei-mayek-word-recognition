@@ -1,5 +1,5 @@
-"""Pages for writing words by hand, and cutting the written words out of them (Phase 3:
-the real word set, written by the owner on an iPad).
+"""Pages for writing words by hand, and cutting the written words out of them (the real
+word set was written this way on an iPad).
 
 Template (``choose_items``, ``layout``, ``write_pdf``): A4 pages at 200 dpi (1654 x 2339
 px). Each word is printed above an empty box sized to it; the boxes are packed in rows and

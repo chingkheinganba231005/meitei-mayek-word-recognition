@@ -1,4 +1,4 @@
-"""Cut the handwritten words out of written pages (Phase 3) into a word set, in the form of
+"""Cut the handwritten words out of written pages into a word set, in the form of
 the synthetic sets (images/NNNNNN.png and labels.tsv, read by mayek_htr.data.FixedSet),
 with manifest.json in place of config.json, and contact sheets to check every word.
 

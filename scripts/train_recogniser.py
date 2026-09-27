@@ -11,7 +11,7 @@ The training words are drawn as the fixed sets were (scripts/render_words.py: nu
 full stops 2%, count ** 0.5, rare characters 10%, words composed of syllables 15%), plus
 --scrambled (10% by default) of lexicon words with their letters replaced by random ones of
 the same kind, from the training lexicon and the training characters, with their own seed
-(--data-seed). --marks-beside p (0 by default; round 3: 0.5): in a share p of the words the
+(--data-seed). --marks-beside p (0 by default): in a share p of the words the
 signs above (ꯥ ꯩ ꯪ) are written after their letter at the top (synth.Config.p_marks_beside).
 The run folder gets best.pt (the weights with the lowest validation CER), final.pt,
 last.pt (to resume) and history.json; --results gets a summary.
@@ -58,7 +58,7 @@ def main():
     ap.add_argument("--val", required=True, help="fixed validation set (folder or .tar)")
     ap.add_argument("--val-limit", type=int, help="use only the first n validation words (quick runs)")
     ap.add_argument("--run-dir", required=True)
-    ap.add_argument("--tummhcd-dir", help="the first paper's model folder, for --init tummhcd")
+    ap.add_argument("--tummhcd-dir", help="the character-level model folder, for --init tummhcd")
     ap.add_argument("--results", help="summary .json")
     ap.add_argument("--device")
     config_args(ap)

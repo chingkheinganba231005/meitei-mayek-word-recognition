@@ -4,7 +4,7 @@
         fineweb2=work/wordlists/fineweb2.tsv fineweb2_removed=work/wordlists/fineweb2_removed.tsv \\
         --out-dir work/lexicon --stats results/lexicon_stats.json [--exclude prompts.txt]
 
-Inputs are the word-frequency lists of the Phase 0 run (scripts/corpus_stats.py
+Inputs are the word-frequency lists of the corpus run (scripts/corpus_stats.py
 --words-out). Rules in mayek_words/lexicon.py. Writes train.tsv, val.tsv and test.tsv
 (word<TAB>count) to --out-dir, and the statistics to --stats. The word lists come from
 CC BY-SA and ODC-By text: keep them out of the repository; the statistics are fine.

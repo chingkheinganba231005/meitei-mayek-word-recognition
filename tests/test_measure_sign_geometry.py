@@ -28,7 +28,7 @@ def test_axes():
 
 
 def test_print_and_beside():
-    """Print puts ꯥ over its letter, round 3 after it; the measure tells them apart."""
+    """Print puts ꯥ over its letter, the beside placement after it; the measure tells them apart."""
     store = GlyphStore.from_font()
     for p, inside in ((0.0, True), (1.0, False)):
         synth = WordSynth(store, config=dataclasses.replace(PLAIN, p_marks_beside=p))

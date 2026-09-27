@@ -1,6 +1,6 @@
 """Recovering the size and proportions TUMMHCD lost, from stroke thickness.
 
-Every TUMMHCD image is the character's ink box stretched to 24 x 24 (Phase 0). The
+Every TUMMHCD image is the character's ink box stretched to 24 x 24 (scripts/audit_tummhcd.py). The
 stretch leaves a trace: a stroke drawn with a pen of width p becomes p * 24 / w pixels
 thick across a vertical stroke and p * 24 / h pixels across a horizontal one, where w and
 h are the character's original width and height. So, if writers use about the same pen for

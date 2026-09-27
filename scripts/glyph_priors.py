@@ -3,7 +3,7 @@
     python scripts/glyph_priors.py [font.ttf] \\
         --out mayek_words/assets/glyph_priors.json --glyphs mayek_words/assets/font_glyphs.npz
 
-TUMMHCD images are 24 x 24 with the ink stretched to fill the frame (Phase 0), so a
+TUMMHCD images are 24 x 24 with the ink stretched to fill the frame (scripts/audit_tummhcd.py), so a
 character's size, proportions and place in the word are lost. This script takes them
 from a font. Each character is shaped with HarfBuzz, alone, or (the vowel signs, nung and
 apun) after each of the 27 letters, and its ink box is measured in units of L, the height

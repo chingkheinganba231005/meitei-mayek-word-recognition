@@ -1,6 +1,6 @@
-"""Baseline: cut the word into characters, then classify each with the first paper's
+"""Baseline: cut the word into characters, then classify each with the character-level
 ensemble. The cuts are perfect (the synthesiser's own boxes), so this is the best a
-segment-then-classify recogniser built on the first paper could do on the same words.
+segment-then-classify recogniser built on the character-level networks could do on the same words.
 
     python scripts/oracle_baseline.py --model-dir work/weights --set work/synth/val.tar \\
         --glyphs work/glyphs/val.npz --lexicon work/lexicon/val.tsv --sizes results/glyph_sizes_tummhcd.json \\
@@ -14,7 +14,7 @@ The set's words are rendered again from its config.json (seed, shares and synthe
 settings) to recover every character's box and image; the text must come out the same and
 the image the same size (the script stops otherwise), and how many images are identical
 is reported. Each character is classified in two forms:
-- isolated: its original TUMMHCD image, as in the first paper (no neighbours, no resizing:
+- isolated: its original TUMMHCD image, as the character-level networks were tested (no neighbours, no resizing:
   an upper bound);
 - cut: its box cut from the word image and stretched to 24 x 24 like a TUMMHCD image
   (strokes of neighbours that reach into the box stay).
@@ -100,7 +100,7 @@ def decode_all(logp, lm, alpha, spans):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model-dir", required=True, help="the first paper's model folder (or a folder above it)")
+    ap.add_argument("--model-dir", required=True, help="the character-level model folder (or a folder above it)")
     ap.add_argument("--set", required=True, help="synthetic set rendered by scripts/render_words.py")
     ap.add_argument("--glyphs", required=True, help="the glyph store it was rendered with")
     ap.add_argument("--lexicon", required=True, help="the lexicon it was drawn from")
@@ -111,7 +111,7 @@ def main():
     ap.add_argument("--tune", action="store_true", help="choose the language model's weight on this set")
     ap.add_argument("--tuned", help="results .json of the validation set, for its weights")
     ap.add_argument("--alphas", type=float, nargs="+", default=[0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5])
-    ap.add_argument("--no-tta", action="store_true", help="without the test-time views of the first paper")
+    ap.add_argument("--no-tta", action="store_true", help="without the test-time views of the character-level ensemble")
     ap.add_argument("--batch", type=int, default=512)
     ap.add_argument("--predictions", help="per-word .tsv")
     ap.add_argument("--device")

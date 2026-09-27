@@ -53,7 +53,7 @@ def test_signs_sit_where_they_belong(store):
 
 
 def test_marks_beside(store):
-    """Round 3: in a word with marks_beside, ꯥ ꯩ ꯪ stand after their letter at the top, where ꯣ
+    """In a word with marks_beside, ꯥ ꯩ ꯪ stand after their letter at the top, where ꯣ
     stands, reaching down beside it, and the next letter comes after them."""
     import dataclasses
 
@@ -104,8 +104,7 @@ def test_boxes_inside_image(store):
 
 
 def test_letters_closer_than_in_print(store):
-    """Handwritten Meitei Mayek sets letters closer together than print (the owner's
-    observation); the default spacing must stay tighter than the font's."""
+    """Handwritten Meitei Mayek sets letters closer together than print; the default spacing must stay tighter than the font's."""
     words = [K + LAI + chr(0xABC3) + chr(0xABC4), LAI + INAP + K + chr(0xABC5)] * 150
     def median_gap(cfg):
         s = WordSynth(store, config=cfg)
@@ -170,7 +169,7 @@ def test_faint_strokes_kept():
 
 def test_signs_above_and_below_near_their_letter(store):
     """A sign above or below its letter keeps about the distance it has in print from the
-    letter's ink: never touching, never floating (owner, 25 September 2026)."""
+    letter's ink: never touching, never floating."""
     from scipy import ndimage
     s = WordSynth(store)
     for sign in (ANAP, chr(0xABE9), NUNG, UNAP):
@@ -190,7 +189,7 @@ def test_signs_above_and_below_near_their_letter(store):
 def test_sign_nearer_its_own_letter(store):
     """A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ) is never nearer the next letter than its own, on the
     ink as drawn, and the next letter never touches it. The gaps are about even; only ꯤ, in
-    unevenly spaced words, is closer to its letter (owner, 25 September 2026)."""
+    unevenly spaced words, is closer to its letter."""
     from scipy import ndimage
 
     def dist(a, b):

@@ -26,7 +26,7 @@ def test_alphabet_merges_the_two_i():
     assert not cs.renderable(K + cs.I_LONSUM) and cs.renderable(K + cs.I_LETTER)
 
 
-def test_syllables_follow_the_owners_rules():
+def test_syllables_follow_the_writing_rules():
     AA, NG, NUNG, I, HUK, INAP, RAI, BA = (chr(0xABE5), chr(0xABE1), chr(0xABEA), cs.I_LETTER, chr(0xABCD),
                                           chr(0xABE4), chr(0xABD4), chr(0xABD5))
     assert cs.syllables(K) == [0]                                     # onset, inherent vowel

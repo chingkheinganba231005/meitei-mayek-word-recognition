@@ -6,7 +6,7 @@
     python scripts/render_words.py --glyphs font --lexicon words.tsv --n 48 --sheet sheet.png
 
 --marks-beside p: in a share p of the words the signs above (ꯥ ꯩ ꯪ) are written after their
-letter at the top (``synth.Config.p_marks_beside``, round 3); 0, the default, renders every
+letter at the top (``synth.Config.p_marks_beside``); 0, the default, renders every
 word as the fixed sets were rendered.
 
 Writes out-dir/images/NNNNNN.png, out-dir/labels.tsv (file<TAB>text) and

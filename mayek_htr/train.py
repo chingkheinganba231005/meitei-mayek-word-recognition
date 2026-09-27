@@ -56,11 +56,11 @@ class TrainConfig:
     pool: int = 8                        # batches rendered at once by a worker, grouped by width
     seed: int = 0                        # weights, augmentation
     data_seed: int = 1000                # the training words (the fixed sets use seeds 1 and 2)
-    scrambled: float = 0.1               # share of training words with random letters of each kind (owner,
-    #                                      26 September 2026; the first round had none)
+    scrambled: float = 0.1               # share of training words with random letters of each kind (the first
+    #                                      round of training had none)
     marks_beside: float = 0.0            # share of training words whose signs above (ꯥ ꯩ ꯪ) are written after
     #                                      their letter at the top, as the writer of the real words does
-    #                                      (synth.Config.p_marks_beside; round 3; earlier rounds none)
+    #                                      (synth.Config.p_marks_beside; none in the reported runs)
 
 
 class EMA:

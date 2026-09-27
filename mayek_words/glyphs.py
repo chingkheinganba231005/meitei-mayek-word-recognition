@@ -3,7 +3,7 @@
 A GlyphStore holds, for every image, its class, an ink map (0 paper, 1 ink) and a style
 vector. Style features are measured on the 24 x 24 image and standardised within each
 class, so that they can be compared across classes: slant, stroke width in the frame,
-ink fraction and ink darkness. TUMMHCD has no writer information (Phase 0), so a word's
+ink fraction and ink darkness. TUMMHCD has no writer information (scripts/audit_tummhcd.py), so a word's
 characters are matched by style instead of taken from one writer: ``pick`` chooses among
 the k images of a class closest to the word's style anchor.
 
@@ -44,7 +44,7 @@ def ink_map(gray):
     The ink map is 0 on paper, 0.5 at the image's Otsu threshold and 1 for a typical ink
     pixel, so that pale writing is kept whole (a cut at half the darkest ink erased much of
     it: 1.3% of characters lost more than half their ink).
-    The polarity is fixed, not guessed: every TUMMHCD image is dark on light (Phase 0:
+    The polarity is fixed, not guessed: every TUMMHCD image is dark on light (the audit:
     paper level 247 or more in 95% of them), and a small sign stretched to the frame can
     be mostly ink. An image with (almost) no paper, such as apun, which is a line
     stretched to 24 x 24, counts as white paper under solid ink.
@@ -80,7 +80,7 @@ def path_key(path):
 
 
 def excluded_paths(duplicates_csv, split):
-    """Paths (as path_key) not to use for a split, from the Phase 0 duplicates file."""
+    """Paths (as path_key) not to use for a split, from the audit's duplicates file."""
     import pandas as pd
 
     d = pd.read_csv(duplicates_csv)
