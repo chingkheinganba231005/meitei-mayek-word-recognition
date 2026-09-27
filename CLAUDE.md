@@ -379,9 +379,38 @@ evaluation, on real handwriting, waits for the Phase 3 set.
 
 Module `mayek_htr/pages.py`, scripts `make_writing_pages.py`, `cut_writing_pages.py` and
 `measure_strokes.py`; the demo: `mayek_htr/web.py`, `mayek_htr/reader.py`, `web/`, `space/`,
-`scripts/build_demo.py`; notebook `notebooks/phase3_real_words_and_demo.ipynb`. **Status (27
-September 2026): the real set is the 100 words written (owner's decision); the test over all
-seven runs, once, and the Hugging Face demo are ready to run in the notebook.**
+`scripts/build_demo.py`, `scripts/compare_runs.py`; notebook
+`notebooks/phase3_real_words_and_demo.ipynb`. **Status (27 September 2026): the real test done,
+once, by the owner (100 words, all seven runs); the demo built for Hugging Face. Results below.**
+
+- **Real test, used once (`results/phase3_real_*.json`, `results/phase3_real_comparison.json`;
+  100 words, one writer, iPad):** final recipe (ConvNeXt-T from TUMMHCD, second round), mean of
+  two seeds: CER 3.79%, WER 21.0% greedy; **CER 3.12%, WER 17.0% with the language model**
+  (seeds 2.36% / 3.88%, 13% / 21%: 87 and 79 words right). The same runs on the synthetic test:
+  0.24%, 1.57%, so real handwriting brings about 13 times the character errors. Other runs with
+  the language model: ImageNet 2.53% / 14%, small CNN 3.03% / 17% (first round 2.87% / 17%,
+  2.53% / 15%, 4.05% / 21%). Paired tests (21 pairs, so p near 0.03 is weak evidence): with
+  the language model the two seeds differ (9 words against 1, p = 0.02; greedy p = 0.18), seed
+  0 reads more than the first round's small CNN (10 against 2, p = 0.04) and seed 1 fewer than
+  ImageNet (1 against 8, p = 0.04); every other pair p >= 0.07. Greedy, the second round's
+  small CNN is below both of its ConvNeXt runs (4 against 14, p = 0.03). Seeds differ far more
+  on real words than on synthetic ones: report their mean. The language model puts 3-11
+  words right per run and wrong only once in all seven (p = 0.001 for the second round's small
+  CNN). 69 words read right by every run, 7 by none. Numbers 10 of 10 everywhere.
+- **Where the errors are:** the pairs that trouble isolated characters are read without a
+  swap (ꯦ/꯰ 32 of 32, ꯨ/ꯁ 55 of 55, ꯗ/ꯘ 20 of 20; but ꯰ occurs 3 times, ꯘ once). Nearly every
+  error is a sign written above the letter: of the 56 words without ꯥ or ꯩ, 0-2 are misread
+  (seed 0: 1); of the 44 with one, 12-20. ꯥ is misread 17-36% of its 47 times (dropped, or
+  read as ꯣ or ꯦ); ꯩ is read as ꯧ in 3-5 of its 5 words. This writer draws ꯥ as a long
+  slanted stroke at the upper right of the letter, unlike the training words' ꯥ (TUMMHCD
+  shapes at the font's place): the gap is in the synthetic signs, not in the letters. A fix
+  (signs from more writers, their shapes and places; Phase 4) must be judged on new real
+  words (the 400 unwritten items), not on these 100.
+- **Demo (`results/phase3_demo.json`):** built from `round2_convnext_tummhcd_seed1` (chosen on
+  validation before the test; on the real words it is the weaker seed). ONNX with float16
+  weights: the same greedy reading as PyTorch for 300 of 300 validation words (largest log
+  probability difference 0.053), 32.7 MB; the language model for the browser 669,149
+  entries, 3.19 MB compressed. The cards quote its own real-word scores (CER 3.88%, WER 21%).
 
 - **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
   me. I want to do it myself. I can write on my ipad many words in one page for many pages and

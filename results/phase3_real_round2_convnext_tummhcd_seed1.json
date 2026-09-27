@@ -1,0 +1,318 @@
+{
+ "checkpoint": "round2_convnext_tummhcd_seed1/best.pt",
+ "step": 52000,
+ "cfg": {
+  "encoder": "convnext_tiny",
+  "init": "tummhcd",
+  "steps": 60000,
+  "batch": 64,
+  "lr": 0.0003,
+  "lr_min": 0.01,
+  "warmup": 2000,
+  "wd": 0.05,
+  "ema": 0.999,
+  "clip": 5.0,
+  "aug": "full",
+  "hidden": 256,
+  "layers": 2,
+  "dropout": 0.2,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "log_every": 200,
+  "workers": 10,
+  "pool": 8,
+  "seed": 1,
+  "data_seed": 1001,
+  "scrambled": 0.1
+ },
+ "set": "real_test.tar",
+ "words": 100,
+ "set_info": null,
+ "greedy": {
+  "words": 100,
+  "characters": 593,
+  "cer": 0.04384,
+  "wer": 0.24,
+  "word_accuracy": 0.76,
+  "word_accuracy_95ci": [
+   0.66768,
+   0.83309
+  ],
+  "substitutions": 16,
+  "deletions": 9,
+  "insertions": 1,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 32,
+    "correct": 32,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 55,
+    "correct": 55,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   }
+  },
+  "top_errors": [
+   [
+    "ꯥ",
+    "(deleted)",
+    8
+   ],
+   [
+    "ꯥ",
+    "ꯣ",
+    7
+   ],
+   [
+    "ꯩ",
+    "ꯧ",
+    5
+   ],
+   [
+    "ꯪ",
+    "ꯦ",
+    2
+   ],
+   [
+    "(inserted)",
+    "ꯣ",
+    1
+   ],
+   [
+    "꯫",
+    "(deleted)",
+    1
+   ],
+   [
+    "ꯈ",
+    "ꯏ",
+    1
+   ],
+   [
+    "ꯥ",
+    "ꯦ",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯥ",
+    0.3404,
+    47
+   ],
+   [
+    "ꯡ",
+    0.0,
+    23
+   ],
+   [
+    "ꯇ",
+    0.0,
+    24
+   ],
+   [
+    "ꯦ",
+    0.0,
+    29
+   ],
+   [
+    "ꯣ",
+    0.0,
+    21
+   ],
+   [
+    "ꯔ",
+    0.0,
+    22
+   ],
+   [
+    "ꯤ",
+    0.0,
+    52
+   ],
+   [
+    "ꯁ",
+    0.0,
+    39
+   ]
+  ]
+ },
+ "greedy_by_kind": {
+  "lexicon": {
+   "words": 90,
+   "characters": 567,
+   "cer": 0.04586,
+   "wer": 0.26667,
+   "word_accuracy": 0.73333,
+   "word_accuracy_95ci": [
+    0.6338,
+    0.81376
+   ]
+  },
+  "number": {
+   "words": 10,
+   "characters": 26,
+   "cer": 0.0,
+   "wer": 0.0,
+   "word_accuracy": 1.0,
+   "word_accuracy_95ci": [
+    0.72247,
+    1.0
+   ]
+  }
+ },
+ "lm": {
+  "file": "char_lm.pkl",
+  "order": 6,
+  "alpha": 0.5,
+  "beta": 0.0,
+  "beam": 16,
+  "chosen_on": "phase2_val_round2_convnext_tummhcd_seed1.json",
+  "grid": null
+ },
+ "with_lm": {
+  "words": 100,
+  "characters": 593,
+  "cer": 0.03879,
+  "wer": 0.21,
+  "word_accuracy": 0.79,
+  "word_accuracy_95ci": [
+   0.7002,
+   0.85834
+  ],
+  "substitutions": 12,
+  "deletions": 11,
+  "insertions": 0,
+  "pairs": {
+   "ꯦ/꯰": {
+    "reference": 32,
+    "correct": 32,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯨ/ꯁ": {
+    "reference": 55,
+    "correct": 55,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   },
+   "ꯗ/ꯘ": {
+    "reference": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "read_as_the_other": 0
+   }
+  },
+  "top_errors": [
+   [
+    "ꯥ",
+    "(deleted)",
+    10
+   ],
+   [
+    "ꯥ",
+    "ꯣ",
+    5
+   ],
+   [
+    "ꯩ",
+    "ꯧ",
+    4
+   ],
+   [
+    "ꯪ",
+    "ꯦ",
+    2
+   ],
+   [
+    "꯫",
+    "(deleted)",
+    1
+   ],
+   [
+    "ꯥ",
+    "ꯦ",
+    1
+   ]
+  ],
+  "worst_characters": [
+   [
+    "ꯥ",
+    0.3404,
+    47
+   ],
+   [
+    "ꯡ",
+    0.0,
+    23
+   ],
+   [
+    "ꯇ",
+    0.0,
+    24
+   ],
+   [
+    "ꯦ",
+    0.0,
+    29
+   ],
+   [
+    "ꯣ",
+    0.0,
+    21
+   ],
+   [
+    "ꯔ",
+    0.0,
+    22
+   ],
+   [
+    "ꯤ",
+    0.0,
+    52
+   ],
+   [
+    "ꯁ",
+    0.0,
+    39
+   ]
+  ]
+ },
+ "with_lm_by_kind": {
+  "lexicon": {
+   "words": 90,
+   "characters": 567,
+   "cer": 0.04056,
+   "wer": 0.23333,
+   "word_accuracy": 0.76667,
+   "word_accuracy_95ci": [
+    0.66948,
+    0.84202
+   ]
+  },
+  "number": {
+   "words": 10,
+   "characters": 26,
+   "cer": 0.0,
+   "wer": 0.0,
+   "word_accuracy": 1.0,
+   "word_accuracy_95ci": [
+    0.72247,
+    1.0
+   ]
+  }
+ },
+ "seconds": {
+  "network": 23.2,
+  "decoding": 1.2
+ }
+}

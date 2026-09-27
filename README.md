@@ -20,9 +20,11 @@ This follows the character-level work in
   same characters cut from the words); the real-handwriting evaluation waits for Phase 3,
   [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
 - Phase 3, the real word set (words written by hand on printed pages, cut out
-  automatically): 100 words written by the owner; the test, once, and a Hugging Face demo
-  that runs in the browser (like the first project's) are ready to run,
-  [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
+  automatically): 100 words written by one native writer on a tablet, read once by every
+  run. Final recipe, mean of two seeds: CER 3.1%, WER 17% with the language model (seeds 13%
+  and 21%); the confusable pairs are read without a swap, and nearly all errors are in the
+  signs written above a letter (ꯥ, ꯩ). A Hugging Face demo that runs in the browser, like
+  the first project's, [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
 
 ## Layout
 
@@ -69,6 +71,7 @@ scripts/
   cut_writing_pages.py   the written words cut out of the pages, as a word set
   measure_strokes.py     how thick the strokes of word sets are, as the recogniser sees them
   build_demo.py          the Hugging Face model repository and the Space from a trained run
+  compare_runs.py        runs compared word by word (paired exact tests), from their predictions
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
