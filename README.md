@@ -1,5 +1,7 @@
 # Handwritten Meitei Mayek word recognition
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23002147.svg)](https://doi.org/10.5281/zenodo.23002147)
+
 The first segmentation-free recogniser of handwritten Meitei Mayek words. It reads a whole
 word image without cutting it into characters, and it is trained only on synthetic words
 composed from the isolated characters of the Tezpur University Meitei Mayek Handwritten
@@ -8,6 +10,7 @@ Character Database (TUMMHCD).
 - **Demo** (runs in the browser): [huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-word-recognition](https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-word-recognition)
 - **Trained model and language model:** [huggingface.co/Chingkheinganba/handwritten-meitei-mayek-word-recognition](https://huggingface.co/Chingkheinganba/handwritten-meitei-mayek-word-recognition)
 - **Real handwritten word set:** [`real_words/`](real_words) (100 words, CC BY 4.0)
+- **Archive (code and real word set):** Zenodo, [doi:10.5281/zenodo.23002147](https://doi.org/10.5281/zenodo.23002147)
 
 ## Results
 
@@ -106,7 +109,8 @@ tests/         pytest
   author       = {Rajkumar, Chingkheinganba},
   title        = {Handwritten {Meitei Mayek} word recognition},
   year         = {2026},
-  howpublished = {\url{https://github.com/chingkheinganba231005/meitei-mayek-word-recognition}}
+  howpublished = {\url{https://github.com/chingkheinganba231005/meitei-mayek-word-recognition}},
+  doi          = {10.5281/zenodo.23002147}
 }
 ```
 
