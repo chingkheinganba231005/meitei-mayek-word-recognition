@@ -1,0 +1,54 @@
+{
+ "synthetic": {
+  "set": "syn_val",
+  "words": 500,
+  "stroke_px": {
+   "median": 4.0,
+   "p10": 3.0,
+   "p90": 5.0
+  },
+  "band_px": 30.0,
+  "stroke_per_band": 0.121,
+  "ink_share": 0.135,
+  "stroke_px_own_scale": 3.0
+ },
+ "trial": {
+  "set": "trial_words",
+  "words": 17,
+  "stroke_px": {
+   "median": 2.0,
+   "p10": 2.0,
+   "p90": 2.0
+  },
+  "band_px": 33.0,
+  "stroke_per_band": 0.061,
+  "ink_share": 0.067,
+  "stroke_px_own_scale": 4.0
+ },
+ "pen_1": {
+  "set": "pen_1",
+  "words": 2,
+  "stroke_px": {
+   "median": 6.0,
+   "p10": 6.0,
+   "p90": 6.0
+  },
+  "band_px": 31.0,
+  "stroke_per_band": 0.194,
+  "ink_share": 0.231,
+  "stroke_px_own_scale": 17.0
+ },
+ "pen_2": {
+  "set": "pen_2",
+  "words": 3,
+  "stroke_px": {
+   "median": 4.0,
+   "p10": 4.0,
+   "p90": 4.0
+  },
+  "band_px": 31.0,
+  "stroke_per_band": 0.129,
+  "ink_share": 0.14,
+  "stroke_px_own_scale": 10.0
+ }
+}

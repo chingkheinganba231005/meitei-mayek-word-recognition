@@ -413,9 +413,12 @@ before writing.**
   Letters about 12 mm high, strokes about 0.5 mm (0.043 of the letter height): at the
   recogniser's input the strokes are half as thick as the training words' (2.0 px against
   4.0 px; ink 6.7% of the image against 13.5%; `results/phase3_trial_strokes.json`), below
-  the synthesiser's pens (0.06-0.14 L). Proposed (owner to decide): a pen about twice as
-  wide (strokes about 1 mm at this size: a ballpoint's proportion on paper); with the thin
-  pen the test would measure thinner strokes than any training word.
+  the synthesiser's pens (0.06-0.14 L). Proposed: a pen about twice as wide.
+- **Pen (27 September):** the owner tried two widths on page 1 and asked which. The second
+  matches the training words (strokes 1.2 mm, 0.10 of the letter height; at the recogniser's
+  input 4.0 px, 0.129 of the ink band, ink 14.0%, against 4.0 px, 0.121, 13.5%); the first is
+  too thick (2.2 mm, 0.15 L; 6.0 px, 0.194, 23.1%) (`results/phase3_pen_choice.json`).
+  Recommended: the second pen for every page, items 1-2 rewritten with it.
 - **Test pages (27 September):** 500 items on 29 pages (15-20 a page) from the test lexicon
   (3,761 words, all test split by hash; 3,725 usable, 1,834 seen at least twice): 475 words
   and 25 numbers, 7 ending with a full stop, 3,110 characters (6.2 an item); every letter

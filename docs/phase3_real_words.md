@@ -129,6 +129,12 @@ printed word 0.97, the extra annotation 1.40. Tests: `tests/test_pages.py`.
   range), the same pen throughout; page 1 sent first to check it. Keeping the thin pen is
   possible, but the test would then measure strokes thinner than any the recogniser was
   trained on, on top of the change of writer.
+- **Two pens tried on page 1 (owner, 27 September; `results/phase3_pen_choice.json`):** row
+  1 (items 1-2) with a wide pen: strokes 2.2 mm, 0.15 of the letter height; at the
+  recogniser's input 6.0 px, 0.194 of the ink band, ink 23.1%: thicker than nearly all
+  training words (their 90th percentile is 5 px). Row 2 (items 3-5): strokes 1.2 mm, 0.10 of
+  the letter height; 4.0 px, 0.129 of the band, ink 14.0%: as the training words (4.0 px,
+  0.121, 13.5%). Recommended: the second pen for every page, items 1 and 2 rewritten with it.
 
 ## 7. The test pages (27 September 2026)
 
