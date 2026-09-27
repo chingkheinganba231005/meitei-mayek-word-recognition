@@ -1,7 +1,7 @@
 """Characters of handwritten Meitei Mayek words and the TUMMHCD classes that draw them.
 
 TUMMHCD has 55 classes, numbered as its folders train_000 ... train_054 (the first
-project's ``mayek.charset``). Words are written in everyday spelling (Phase 0 decision):
+project's ``mayek.charset``). Words are written in everyday spelling:
 ꯢ (i lonsum, class 44) is not used and every i is ꯏ (class 25). Images of both classes
 draw ꯏ, since they cannot be told apart. The recogniser's alphabet therefore has 54
 characters: every TUMMHCD class except 44.
@@ -76,8 +76,8 @@ def syllables(word):
 
 def standard_spelling(text):
     """Everyday spelling -> the standard spelling's i: ꯢ for the i right after ꯥ, ꯣ or ꯨ,
-    ꯏ elsewhere (the rule the ꯢ-writing Wikipedia pages follow for 95.7% of their i's;
-    Phase 0). The recogniser reads everyday spelling; this renders its output the other way."""
+    ꯏ elsewhere (the rule the ꯢ-writing Wikipedia pages follow for 95.7% of their i's,
+    results/i_exception_summary.json). The recogniser reads everyday spelling; this renders its output the other way."""
     return "".join(I_LONSUM if ch == I_LETTER and i and text[i - 1] in CODA_I_AFTER else ch
                    for i, ch in enumerate(text))
 
@@ -99,7 +99,7 @@ def split_syllables(word):
 
 
 def syllable_type(syllable):
-    """The owner's four kinds of syllable: 'C' (a letter alone, with its inherent vowel),
+    """Four kinds of syllable: 'C' (a letter alone, with its inherent vowel),
     'CV' (with a vowel sign), 'CVC' (a vowel sign and a final: lonsum, nung, or an i after
     ꯥ, ꯣ or ꯨ), 'CC' (a final right after the letter, with the inherent vowel). An apun
     cluster counts as one onset. Digits and cheikhei: 'other'."""

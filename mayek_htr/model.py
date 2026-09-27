@@ -3,10 +3,10 @@ output layer over the 54 characters and the blank.
 
 Encoders:
 - ``ConvNeXtEncoder``: the stem and first three stages of ConvNeXt-T (timm), one of the
-  first paper's three architectures. The third stage's downsampling is made to halve the
+  three architectures of the character-level recogniser (Handwritten-Meitei-Mayek-Recognition). The third stage's downsampling is made to halve the
   height only, so a 64 px word comes out as 4 rows of 384 channels, one column per 8 px:
   about four columns per letter, enough for a letter with signs above, below and beside
-  it (CTC needs a column per character). Initialised from the first paper's network
+  it (CTC needs a column per character). Initialised from the character-level network
   trained on TUMMHCD (``load_tummhcd``), from ImageNet, or at random.
 - ``SmallCNN``: a plain CNN trained from scratch, as in CRNN (Shi et al., TPAMI 2017), the
   usual baseline for Indic handwritten words (Gongidi and Jawahar's adds a spatial
@@ -43,7 +43,7 @@ class _PadRight(nn.Module):
         return self.conv(F.pad(x, (0, 1, 0, 0)))
 
 
-# the ImageNet weights the first paper started from
+# the ImageNet weights the character-level networks started from
 TIMM_ARCH = {"convnext_tiny": "convnext_tiny.fb_in22k_ft_in1k"}
 
 
@@ -147,7 +147,7 @@ def build(encoder="convnext_tiny", init="imagenet", tummhcd_dir=None, height=HEI
 
 
 def find_model_dir(root):
-    """The first paper's model folder (written by ``mayek.recognizer.export``: config.json
+    """The character-level model folder (written by ``mayek.recognizer.export``: config.json
     with its members and one state dict per member), anywhere below root, such as a
     download of the Hugging Face release; of several, the one with the most members."""
     found = []
@@ -164,7 +164,7 @@ def find_model_dir(root):
 
 
 def load_tummhcd(model_dir, arch="convnext_tiny"):
-    """The backbone weights of the first paper's network of this architecture on grey input
+    """The backbone weights of the character-level network of this architecture on grey input
     and without size features (see ``find_model_dir``)."""
     folder = find_model_dir(model_dir)
     members = json.loads((folder / "config.json").read_text(encoding="utf-8"))["members"]

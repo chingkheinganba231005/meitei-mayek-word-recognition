@@ -1,4 +1,4 @@
-"""Phase 2: recognising handwritten Meitei Mayek words (docs/phase2_recogniser.md).
+"""Recognising handwritten Meitei Mayek words.
 
 numpy only: ``labels`` (the output alphabet), ``images`` (word image normalisation),
 ``metrics`` (CER, WER, confusable pairs), ``lm`` (character n-gram language model),

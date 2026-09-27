@@ -1,14 +1,14 @@
-"""Words to write: the Phase 0 word lists in everyday spelling, split by word.
+"""Words to write: the corpus word lists in everyday spelling, split by word.
 
 Input: word-frequency lists (word<TAB>count), as written by ``scripts/corpus_stats.py
---words-out`` (one per source, on Drive after the Phase 0 run). Each word is normalised
+--words-out`` (one per source, written by the data audit notebook). Each word is normalised
 (ꯢ written ꯏ) and kept if ``charset.problem`` finds nothing wrong with it and it has at
 most MAX_LEN characters. Counts from several sources are combined by taking the largest:
 FineWeb-2 contains Wikipedia pages, so adding would count those twice.
 
 Split: by word, never by occurrence, so that no word is in two splits. A word's split
 depends only on the word (a hash), so it stays the same when sources are added: 90%
-train, 5% validation, 5% test. Real-test-set prompts (Phase 3) can be kept out of
+train, 5% validation, 5% test. Words written for a real test set can be kept out of
 training with ``exclude``.
 
 Sampling: a word is drawn with probability proportional to count ** alpha (alpha = 0.5
@@ -22,7 +22,7 @@ Scrambled words (``scramble``): a drawn word with every letter replaced by a ran
 every lonsum letter by a random lonsum letter and every vowel sign by a random vowel sign,
 so that each letter is seen in every context. Without them the recogniser learned where
 ꯘ may stand from the few training words that contain it, and read ꯘ as ꯗ where ꯗ is
-common (ꯟꯘ, ꯘ꯭ꯔ), whatever the image showed (owner's decision, 26 September 2026).
+common (ꯟꯘ, ꯘ꯭ꯔ), whatever the image showed.
 """
 
 import hashlib
@@ -152,7 +152,7 @@ class SyllableBank:
     weighted as the words are. ``word`` composes a word of real syllables: its number of
     syllables and the kind of each drawn evenly, so that short and long words and every
     kind of syllable are well represented, whatever the text's own mix. At most 6 syllables:
-    longer words are rare in writing (the owner, 25 September 2026)."""
+    longer words are rare in writing."""
 
     def __init__(self, lexicon):
         weights = np.diff(np.concatenate([[0.0], lexicon.cum]))

@@ -99,3 +99,15 @@ def test_rescore_main_writes_results_and_predictions(tmp_path):
     assert res["with_lm"]["wer"] == 0.0 and res["labels"]["corrected"][0]["file"] == "000002.png"
     new = list(csv.DictReader(open(tmp_path / "new" / "r1" / "real_predictions.tsv", encoding="utf-8"), delimiter="\t"))
     assert [r["reference"] for r in new] == [K + A, T + K]
+
+
+def test_update_cards_writes_the_quoted_scores(tmp_path):
+    cards_mod = load("update_cards")
+    paths = cards_mod.write(ROOT / "results", tmp_path, run="round2_convnext_tummhcd_seed1")
+    real = json.loads((ROOT / "results" / "phase3_real_round2_convnext_tummhcd_seed1.json").read_text(encoding="utf-8"))
+    cer = f"{100 * real['with_lm']['cer']:.2f}%"
+    for name in ("model/README.md", "space/README.md", "space/about.txt"):
+        text = paths[name].read_text(encoding="utf-8")
+        assert cer in text and "{" not in text.split("---", 2)[-1].replace("{\\", "")
+    saved = json.loads(paths["model/results.json"].read_text(encoding="utf-8"))
+    assert saved["run"] == "round2_convnext_tummhcd_seed1" and saved["real_words"]["with_lm"] == real["with_lm"]

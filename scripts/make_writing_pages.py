@@ -1,4 +1,4 @@
-"""Make the pages on which the real word set is written by hand (Phase 3): a PDF of A4
+"""Make the pages on which the real word set is written by hand: a PDF of A4
 pages, each word printed above an empty box, to be written on an iPad (or printed and
 photographed) and cut up by scripts/cut_writing_pages.py.
 

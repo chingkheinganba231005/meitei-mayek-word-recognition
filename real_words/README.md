@@ -2,9 +2,9 @@
 
 100 handwritten Meitei Mayek words (90 words of running text and 10 numbers; 592 characters,
 52 of the 54 characters of everyday spelling), written by one native writer, the author, with
-an Apple Pencil on an iPad. It is the real-handwriting test set of the paper "Whole words
-from isolated characters: handwritten Meitei Mayek word recognition" (C. Rajkumar, 2026) and
-of this repository's recogniser.
+an Apple Pencil on an iPad. It is the real-handwriting test set of the paper "Beyond isolated
+characters: the first segmentation-free recogniser of handwritten Meitei Mayek words"
+(C. Rajkumar, 2026) and of this repository's recogniser.
 
 ## Files
 

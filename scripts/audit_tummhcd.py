@@ -3,7 +3,7 @@
     python scripts/audit_tummhcd.py --zip /content/TUMMHCD-TEST-TRAIN.zip
     python scripts/audit_tummhcd.py --dir /content/drive/MyDrive/TUMMHCD
 
-Phase 1 composes words from characters of one writer and needs a train/test
+The word synthesiser would compose words from characters of one writer and needs a train/test
 split in which no writer appears on both sides. The dataset paper does not say
 whether writer identity survives in the release, so this script looks for it
 in four places:

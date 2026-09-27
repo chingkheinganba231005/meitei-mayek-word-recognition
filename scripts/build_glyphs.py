@@ -8,7 +8,7 @@
 Writes train.npz, val.npz and test.npz (images, labels, keys), used as:
 train for synthetic training words, val for synthetic validation words, test for
 synthetic test words. Test images with a pixel-identical train image, and the images in
-groups of identical pixels with conflicting labels, are left out (Phase 0 duplicates file).
+groups of identical pixels with conflicting labels, are left out (the duplicates file of scripts/audit_tummhcd.py).
 """
 
 import argparse
@@ -27,7 +27,7 @@ from mayek_words.glyphs import GlyphStore  # noqa: E402
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--split-dir", required=True, help="folder with train.csv, val.csv and test.csv")
-    ap.add_argument("--duplicates", help="results/tummhcd_audit_duplicates.csv from Phase 0")
+    ap.add_argument("--duplicates", help="results/tummhcd_audit_duplicates.csv from scripts/audit_tummhcd.py")
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--stats", default="results/glyph_store_stats.json")
     args = ap.parse_args()

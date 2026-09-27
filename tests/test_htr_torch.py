@@ -1,4 +1,4 @@
-"""The recogniser's PyTorch parts: model shapes, loading the first paper's weights, data
+"""The recogniser's PyTorch parts: model shapes, loading the character-level weights, data
 streams and sets, augmentation, and that training learns and resumes. Skipped without
 torch (and timm for the ConvNeXt tests)."""
 
@@ -57,7 +57,7 @@ def test_convnext_shapes_and_tummhcd_weights(tmp_path):
     logits, lengths = model(torch.zeros(1, 1, 64, 80), torch.tensor([80]))
     assert logits.shape == (1, 10, labels.NUM_CLASSES) and lengths.tolist() == [10]
 
-    # a model folder as the first paper exports it: config.json and state dicts with backbone.* keys
+    # a model folder as the character-level project exports it: config.json and state dicts with backbone.* keys
     net = timm.create_model("convnext_tiny", pretrained=False, num_classes=0, in_chans=1)
     state = {"backbone." + k: v for k, v in net.state_dict().items()}
     state["head.weight"] = torch.zeros(55, 768)

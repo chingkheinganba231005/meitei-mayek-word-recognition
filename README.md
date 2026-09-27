@@ -1,120 +1,116 @@
 # Handwritten Meitei Mayek word recognition
 
-Reading whole handwritten Meitei Mayek words instead of isolated characters, using a character
-language model and the script's orthographic rules to fix errors that isolated-character models
-make (such as the vowel sign ꯦ against the digit ꯰, or ꯨ against ꯁ). A second stage will generate
-handwriting in different writers' styles with a diffusion model. The project brief and every decision so far are
-in [`CLAUDE.md`](CLAUDE.md).
+The first segmentation-free recogniser of handwritten Meitei Mayek words. It reads a whole
+word image without cutting it into characters, and it is trained only on synthetic words
+composed from the isolated characters of the Tezpur University Meitei Mayek Handwritten
+Character Database (TUMMHCD).
 
-This follows the character-level work in
-[Handwritten-Meitei-Mayek-Recognition](https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition)
-(98.12% on TUMMHCD).
+- **Demo** (runs in the browser): [huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-word-recognition](https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-word-recognition)
+- **Trained model and language model:** [huggingface.co/Chingkheinganba/handwritten-meitei-mayek-word-recognition](https://huggingface.co/Chingkheinganba/handwritten-meitei-mayek-word-recognition)
+- **Real handwritten word set:** [`real_words/`](real_words) (100 words, CC BY 4.0)
 
-## Status
+## Results
 
-- Phase 0, the literature and data audit: done, [`docs/phase0_audit.md`](docs/phase0_audit.md).
-- Phase 1, synthetic words from TUMMHCD characters: done,
-  [`docs/phase1_synthetic_words.md`](docs/phase1_synthetic_words.md).
-- Phase 2, the word recogniser: done on synthetic data (synthetic test set: CER 0.24%, WER
-  1.57% with the language model, against 4.3% and 21% for the first paper's ensemble on the
-  same characters cut from the words); the real-handwriting evaluation waits for Phase 3,
-  [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
-- Phase 3, the real word set (words written by hand on printed pages, cut out
-  automatically): 100 words written by one native writer on a tablet, read once by every
-  run. Final recipe, mean of two seeds: CER 3.0%, WER 16% with the language model (seeds 12%
-  and 20%); the confusable pairs are read without a swap, and nearly all errors are in the
-  signs written above a letter (ꯥ, ꯩ). The set is released in [`real_words/`](real_words)
-  (CC BY 4.0). A Hugging Face demo that runs in the browser, like the first project's,
-  [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
-- Round 3, the signs above written as the real writer writes them: 99% of the real words'
-  character errors are ꯥ, ꯩ or ꯪ, which the writer puts after the letter at the top, where
-  print puts ꯣ and ꯦ, not over the letter. The synthesiser can now write them that way in some
-  words (off by default); training with it and a test on new real words come after the paper,
-  [`docs/round3_signs_beside.md`](docs/round3_signs_beside.md).
+Character error rate (CER) and word error rate (WER) of the final model (ConvNeXt-T encoder
+initialised from TUMMHCD, bidirectional LSTM, CTC, character 6-gram language model; mean of
+two training seeds):
 
-## Layout
+| Test set | CER | WER |
+|---|---:|---:|
+| 5,000 synthetic words (TUMMHCD test characters) | 0.24% | 1.57% |
+| The same words, character ensemble with perfect segmentation, perfect zones and the same language model | 4.26% | 20.98% |
+| 100 real handwritten words (one native writer, tablet, words never seen in training) | 2.96% | 16.0% |
 
-```
-mayek_words/         synthetic words (Phase 1)
-  charset.py         the 54-character alphabet and the TUMMHCD classes that draw it
-  glyphs.py          character images by split, ink maps, style matching
-  synth.py           layout from the font priors, drawing, word images on demand
-  lexicon.py         words in everyday spelling, split by word, sampling
-  sizes.py           characters' lost sizes recovered from stroke thickness
-  assets/            font priors, font characters as 24 x 24 images, Noto Sans Meetei Mayek (OFL)
-mayek_htr/           the word recogniser (Phase 2)
-  labels.py          the output alphabet (54 characters and the CTC blank)
-  images.py          word images: contrast, height, padding
-  data.py            training batches rendered on the fly, fixed sets
-  augment.py         augmentation on the GPU
-  model.py           ConvNeXt-T or small CNN encoder, BiLSTM, CTC; the first paper's weights
-  train.py           training loop (EMA, checkpoints, resuming)
-  lm.py              character n-gram language model
-  decode.py          greedy and beam search decoding
-  metrics.py         CER, WER, confusable pairs
-  pages.py           pages for writing words by hand, and cutting the written words out (Phase 3)
-  reader.py          reading word images with a trained recogniser (Python use)
-  web.py             the browser demo: ONNX export, the language model for the browser, the site
-web/                 the demo page: preprocessing and decoding ported to JavaScript, runs in the browser
-space/               cards for the Hugging Face Space and model repository
-scripts/
-  audit_tummhcd.py   writer information in TUMMHCD: folders, file names, side files, hidden grouping
-  corpus_stats.py    size of Meitei Mayek text corpora and how often the ꯢ / ꯏ rule holds
-  i_exceptions.py    words that break the ꯢ / ꯏ convention, as a review sheet for a language expert
-  glyph_priors.py    size and position of every character in the font (-> mayek_words/assets)
-  build_glyphs.py    character stores per split from the paper's split
-  glyph_sizes.py     how large people write each character, measured on TUMMHCD
-  build_lexicon.py   the lexicon from the Phase 0 word lists
-  render_words.py    fixed synthetic word sets and contact sheets
-  measure_spacing.py how close together handwritten letters are, in real images and synthetic pages
-  check_signs.py     where the signs sit on the ink: beside (never nearer the next letter), above, below
-  check_strokes.py   whether the pen step keeps every stroke, faint ones included
-  build_char_lm.py   the character language model, chosen on validation
-  train_recogniser.py  a training run of the recogniser
-  eval_recogniser.py   scores, with and without the language model
-  oracle_baseline.py   the baseline: perfect segmentation and the first paper's ensemble
-  make_writing_pages.py  the pages the real words are written on (a PDF)
-  cut_writing_pages.py   the written words cut out of the pages, as a word set
-  measure_strokes.py     how thick the strokes of word sets are, as the recogniser sees them
-  build_demo.py          the Hugging Face model repository and the Space from a trained run
-  compare_runs.py        runs compared word by word (paired exact tests), from their predictions
-  measure_sign_geometry.py  where the small vowel signs stand and how they are shaped, on the ink of word sets
-  release_real_set.py    the public release of the real word set (written items, corrected labels)
-  rescore_real.py        saved readings scored again after a label correction (networks not run again)
-notebooks/
-  phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
-  phase1_synthetic_words.ipynb  Phase 1 on Colab
-  phase2_recogniser.ipynb       Phase 2 on Colab (A100)
-  phase3_real_words_and_demo.ipynb  the real words read once by every run; the demo built and uploaded
-  round3_signs_beside.ipynb     round 3: the signs above beside their letter, training, validation, new real words
-  collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
-real_words/          the real word set: 100 handwritten words, their labels and a card (CC BY 4.0)
-results/             JSON files written by the code; every reported number comes from here
-docs/                Phase 0 report, Phase 1, 2 and 3 design, round 3, AI use log
-tests/               pytest
-```
+Every number comes from a results file in [`results/`](results), written by the code.
 
-## Running
+## How it works
+
+1. **Synthetic words** (`mayek_words`). TUMMHCD's characters are 24 x 24 images with the ink
+   stretched to the frame, so their size and position are lost. A word is laid out in units of
+   the letter height from the Noto Sans Meetei Mayek font; each character's handwritten size
+   is recovered from its stroke thickness; letter spacing follows measurements on real
+   handwriting; vowel signs are placed on the ink and kept with their syllable; characters
+   are matched in style. Words are rendered while training (a few milliseconds each).
+2. **Recogniser** (`mayek_htr`). The stem and first three stages of ConvNeXt-T (the third
+   stage halving the height only), a two-layer bidirectional LSTM and connectionist temporal
+   classification over the 54 characters of everyday spelling. Decoding is greedy or by beam
+   search with a Kneser-Ney character n-gram language model.
+3. **Spelling of i.** ꯢ and ꯏ are one letter in everyday writing; the recogniser reads one
+   letter and can render the standard spelling by rule (`charset.standard_spelling`).
+4. **Real words.** Words are printed on A4 pages above empty boxes, written by hand, and cut
+   out automatically (`mayek_htr/pages.py`, `scripts/make_writing_pages.py`,
+   `scripts/cut_writing_pages.py`).
+5. **Browser demo.** The network runs as ONNX in the browser, with the preprocessing, the
+   language model and the beam search ported to JavaScript (`mayek_htr/web.py`, `web/`).
+
+## Using the trained recogniser
 
 ```bash
-pip install -r requirements-dev.txt
-pytest -q
-python scripts/audit_tummhcd.py --zip TUMMHCD-TEST-TRAIN.zip          # -> results/tummhcd_audit.json
-python scripts/corpus_stats.py wiki=mniwiki-latest-pages-articles.xml.bz2   # -> results/corpus_stats.json
-python scripts/render_words.py --glyphs font --lexicon words.tsv --n 48 --sheet sheet.png   # a quick look
+git clone https://github.com/chingkheinganba231005/meitei-mayek-word-recognition
+cd meitei-mayek-word-recognition
+pip install -r requirements.txt -r requirements-htr.txt      # PyTorch: see pytorch.org
+huggingface-cli download Chingkheinganba/handwritten-meitei-mayek-word-recognition --local-dir word_model
 ```
 
-Phase 1 on TUMMHCD: `notebooks/phase1_synthetic_words.ipynb` (first project's split, character
-stores, size measurement, lexicon, contact sheets, fixed synthetic sets). Phase 2:
-`notebooks/phase2_recogniser.ipynb` (language model, training runs, validation, baseline,
-test once); its tests need PyTorch (`pip install -r requirements-htr.txt` after PyTorch).
+```python
+from mayek_htr.reader import Reader
 
-TUMMHCD comes from its authors, <http://agnigarh.tezu.ernet.in/~sarat/resources.html>, under
-their own terms.
+reader = Reader("word_model")
+print(reader.read("word.jpg"))                  # one word, dark ink on light paper
+print(reader.read("word.jpg", use_lm=False))    # the network alone (greedy decoding)
+```
+
+## Reproducing the results
+
+The notebooks run on Google Colab with a working folder on Google Drive; training needs one
+A100 GPU (about 2.5 hours per run).
+
+| Notebook | What it does |
+|---|---|
+| `notebooks/1_data_audit.ipynb` | audits TUMMHCD and counts the Meitei Mayek text corpora |
+| `notebooks/2_synthetic_words.ipynb` | character stores, handwritten sizes, lexicon, fixed synthetic sets |
+| `notebooks/3_recogniser.ipynb` | language model, training, validation, baseline, synthetic test |
+| `notebooks/4_real_words_and_demo.ipynb` | the real test, and the Hugging Face model and demo |
+| `notebooks/5_signs_beside.ipynb` | training with the signs above placed as the real writer places them |
+| `notebooks/collect_results.ipynb` | gathers the small result files from Drive in one zip |
+
+Tests: `pip install -r requirements-dev.txt -r requirements-htr.txt && pytest -q`.
+
+## Data
+
+- **TUMMHCD** is available from its authors at
+  <http://agnigarh.tezu.ernet.in/~sarat/resources.html>; it is not included here.
+- **Text** for the lexicon and the language model: the Meitei Wikipedia dump (CC BY-SA 4.0)
+  and FineWeb-2's Meitei Mayek text (ODC-By 1.0), downloaded by notebook 1.
+- **Real word set:** [`real_words/`](real_words), 100 handwritten words with their labels.
+
+## Repository
+
+```
+mayek_words/   synthetic words: alphabet, character stores, layout, drawing, lexicon
+mayek_htr/     the recogniser: data, augmentation, model, training, language model,
+               decoding, metrics, writing pages, reader, browser export
+scripts/       command-line tools used by the notebooks (each explains itself)
+notebooks/     the experiments, in order
+web/, space/   the browser demo and the Hugging Face cards
+real_words/    the real word set
+results/       results files written by the code
+tests/         pytest
+```
+
+## Citation
+
+```bibtex
+@misc{rajkumar2026words,
+  author       = {Rajkumar, Chingkheinganba},
+  title        = {Handwritten {Meitei Mayek} word recognition},
+  year         = {2026},
+  howpublished = {\url{https://github.com/chingkheinganba231005/meitei-mayek-word-recognition}}
+}
+```
 
 ## Licence
 
-Code: MIT ([`LICENSE`](LICENSE)). The real word set in [`real_words/`](real_words): CC BY 4.0.
-The bundled font (`mayek_words/assets/NotoSansMeeteiMayek-Regular.ttf`): SIL Open Font
-Licence 1.1. The language model on Hugging Face: CC BY-SA 4.0 (built from Wikipedia and
-FineWeb-2 text). TUMMHCD is not included; it is available from its authors.
+Code: MIT ([`LICENSE`](LICENSE)). The real word set: CC BY 4.0. The bundled font
+(`mayek_words/assets/NotoSansMeeteiMayek-Regular.ttf`): SIL Open Font Licence 1.1. The
+language model on Hugging Face: CC BY-SA 4.0 (built from Wikipedia and FineWeb-2 text).

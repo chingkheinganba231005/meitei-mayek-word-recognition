@@ -10,7 +10,7 @@ For a word in everyday spelling:
    placed relative to the pen position after the character before it, as the font does:
    ꯥ, ꯩ and ꯪ above that character, ꯨ below it, ꯦ, ꯣ, ꯧ and ꯤ beside it; apun under the
    whole letter before it. Every size and position is jittered, and the baseline drifts.
-   In some words (``Config.p_marks_beside``, round 3) ꯥ, ꯩ and ꯪ are written after their
+   In some words (``Config.p_marks_beside``) ꯥ, ꯩ and ꯪ are written after their
    letter at the top instead, where ꯣ and ꯦ stand, as the writer of the real words does.
 3. Each character image (24 x 24, ink stretched to the frame) is resized into its box,
    which gives back the proportions TUMMHCD lost, and its strokes are thickened or
@@ -46,13 +46,13 @@ class Config:
     max_overlap: float = 0.05           # neighbours' boxes may overlap this much, in L
     uneven: tuple = (0.0, 0.12)         # most handwriting is evenly spaced; in some words (p_uneven)
     p_uneven: float = 0.2               # syllables stand apart: gaps inside a syllable narrower, between
-    #                                     syllables wider, by this, in L (the owner's observation)
+    #                                     syllables wider, by this, in L
     touch: tuple = (0.02, 0.6)          # per word, the chance that a character joins the one before it
     touch_between: float = 0.5          # inside a syllable; between syllables times this. A joined
     #                                     character is slid left until its ink meets the ink before it
     #                                     (handwriting joins about a third of neighbouring letters:
     #                                     results/spacing_web_samples.json)
-    # A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), placed on the ink (owner, 25 September 2026): never
+    # A sign beside its letter (ꯤ, ꯦ, ꯣ, ꯧ), placed on the ink: never
     # nearer the next letter than its own, the next letter never touches it, it never merges with
     # its letter. ꯦ, ꯣ, ꯧ stay where the layout puts them (moved only to keep these rules); ꯤ
     # (close_signs), whose stem stands mid-image, is placed on the ink: the layout's gap from its
@@ -60,7 +60,7 @@ class Config:
     # away. Distances are measured from the sign's body (sign_body: the lead-in stroke of ꯤ and
     # ꯧ is left out).
     close_signs: tuple = (chr(0xABE4),) # signs placed on the ink, hugging their letter in uneven words
-    #                                     (ꯤ; owner: not ꯦ ꯣ ꯧ)
+    #                                     (ꯤ; not ꯦ ꯣ ꯧ)
     attach_gap: tuple = (0.02, 0.06)    # uneven words: such a sign's body this far from its letter, in L
     sign_touch: float = 0.1             # uneven words: chance that it touches its letter instead
     lead_in: float = 0.1                # a touching sign may reach this far past its letter's ink in the
@@ -73,7 +73,7 @@ class Config:
     #                                     ꯤ in the open side of ꯅ looked merged)
     mark_gap: float = 0.02              # a sign above or below its letter: at least this far from its
     #                                     ink (in print: about 0.08 L above, 0.09 L below), in L
-    # Signs above (ꯥ, ꯩ, ꯪ) written after their letter at the top (round 3). The writer of the
+    # Signs above (ꯥ, ꯩ, ꯪ) written after their letter at the top. The writer of the
     # real words puts them where ꯣ and ꯦ stand, not over the letter as print does (on the first
     # 100 real words, results/round3_sign_geometry_real.json: ꯥ centred 0.18 L past its letter's right
     # edge, its top 0.18 L above the letter's top). With chance p_marks_beside, a word has every
@@ -94,16 +94,16 @@ class Config:
     slant: float = 0.12                 # sd of the shear (tan of the angle), clipped at 2.5 sd
     rotation: float = 1.5               # sd in degrees, clipped at 2.5 sd
     pen: tuple = (0.06, 0.14)           # pen width per word, in L (TUMMHCD's scanned strokes are about
-    #                                     0.07; photos of handwriting look thicker; owner, 25 September
-    #                                     2026); None keeps the images' strokes
+    #                                     0.07; photos of handwriting look thicker); None keeps the
+    #                                     images' strokes
     style_k: int = 16                   # choose among the k images closest in style; None: any
     blur: tuple = (0.0, 0.8)            # gaussian sigma in px, per word
     noise: float = 3.0                  # sd of pixel noise in grey levels
     paper: tuple = (225.0, 255.0)
     ink: tuple = None                   # ink grey level range; None: from the chosen images
     min_contrast: float = 130.0         # the centre of a stroke at least this many grey levels darker than
-    #                                     the paper, after blur (owner, 25 September 2026: pale words looked
-    #                                     as if characters were disappearing); None: as the images are
+    #                                     the paper, after blur (pale words looked as if characters were
+    #                                     disappearing); None: as the images are
     margin: tuple = (0.1, 0.35)         # around the word, in L
 
 
@@ -134,7 +134,7 @@ def on_line(p, marks_beside=False):
 
 def load_priors(path=None, sizes=MEASURED, clip=(0.5, 2.0)):
     """Priors by character: the font's positions, and by default the width and height
-    measured on TUMMHCD (``scripts/glyph_sizes.py``; the owner's choice, 25 September 2026),
+    measured on TUMMHCD (``scripts/glyph_sizes.py``),
     where available, clipped to `clip` times the font's; sizes=None keeps the font's sizes.
     An above sign keeps its bottom, a sign below keeps its top, a letter or a sign standing
     on the baseline keeps its bottom."""
@@ -684,7 +684,7 @@ class Words:
     the seed sequence (seed, i). A word is drawn from the lexicon; with probability `numbers`
     it is a number in Meitei Mayek digits instead, and with probability `built` a word
     composed of real syllables (``lexicon.SyllableBank``: 1 to 6 syllables, every kind of
-    syllable; 15% by default, the owner's choice); with probability `scrambled` a lexicon
+    syllable; 15% by default); with probability `scrambled` a lexicon
     word with its letters replaced by random letters of the same kind (``lexicon.scramble``;
     0 by default, which leaves every item as it was); with probability `stop` a full stop
     (cheikhei) follows it."""
