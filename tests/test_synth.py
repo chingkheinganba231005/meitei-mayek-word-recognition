@@ -52,6 +52,38 @@ def test_signs_sit_where_they_belong(store):
     assert b[NUNG][3] <= b[chr(0xABE3)][3] and b[NUNG][2] > b[K][2]
 
 
+def test_marks_beside(store):
+    """Round 3: in a word with marks_beside, ꯥ ꯩ ꯪ stand after their letter at the top, where ꯣ
+    stands, reaching down beside it, and the next letter comes after them."""
+    import dataclasses
+
+    cfg = dataclasses.replace(PLAIN, p_marks_beside=1.0)
+    synth, L = WordSynth(store, config=cfg), PLAIN.letter_height
+    for sign in (ANAP, chr(0xABE9), NUNG):
+        for i in range(4):
+            trace = []
+            smp = synth.render(K + sign + LAI, np.random.default_rng(i), trace)
+            b = {ch: bx for ch, *bx in smp.boxes}
+            assert smp.style["marks_beside"]
+            assert b[sign][0] >= b[K][2] - 0.2 * L and b[sign][1] < b[K][1] < b[sign][3]
+            assert b[LAI][0] >= b[sign][2] - 0.1 * L
+            (_, kx, _, ki), (_, sx, _, si) = trace[0], trace[1]
+            weight = (si > 0.5).sum(0)
+            centre = sx + float(weight @ np.arange(si.shape[1]) / weight.sum())
+            assert centre > kx + np.flatnonzero((ki > 0.5).any(0))[-1]   # right of the letter's ink
+            gaps = line_gaps([smp.layout], synth.prior, [smp.style])
+            assert len(gaps["letter to sign beside it"]) == 1 and len(gaps["sign to next letter"]) == 1
+
+
+def test_marks_beside_off_draws_nothing(store):
+    """With the option off no random number is drawn for it, so every word renders as before;
+    with it on, one more number, after all the others of the word's style."""
+    a, b = np.random.default_rng(3), np.random.default_rng(3)
+    assert WordSynth(store).word_style(a)["marks_beside"] is False
+    WordSynth(store, config=Config(p_marks_beside=0.5)).word_style(b)
+    assert b.random() == (a.random(), a.random())[1]
+
+
 def test_layout_in_letter_heights(store):
     """Sample.layout keeps every box in letter heights, in writing order (a sign's box once
     came out in pixels, which broke the gap statistics of the fixed sets)."""

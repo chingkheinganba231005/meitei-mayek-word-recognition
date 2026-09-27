@@ -11,7 +11,8 @@ The training words are drawn as the fixed sets were (scripts/render_words.py: nu
 full stops 2%, count ** 0.5, rare characters 10%, words composed of syllables 15%), plus
 --scrambled (10% by default) of lexicon words with their letters replaced by random ones of
 the same kind, from the training lexicon and the training characters, with their own seed
-(--data-seed).
+(--data-seed). --marks-beside p (0 by default; round 3: 0.5): in a share p of the words the
+signs above (ꯥ ꯩ ꯪ) are written after their letter at the top (synth.Config.p_marks_beside).
 The run folder gets best.pt (the weights with the lowest validation CER), final.pt,
 last.pt (to resume) and history.json; --results gets a summary.
 """
@@ -31,7 +32,7 @@ from mayek_htr.data import FixedSet  # noqa: E402
 from mayek_htr.train import TrainConfig, load_checkpoint, train  # noqa: E402
 from mayek_words.glyphs import GlyphStore  # noqa: E402
 from mayek_words.lexicon import Lexicon  # noqa: E402
-from mayek_words.synth import MEASURED, Words, WordSynth, load_priors  # noqa: E402
+from mayek_words.synth import MEASURED, Config, Words, WordSynth, load_priors  # noqa: E402
 
 
 def config_args(ap):
@@ -68,8 +69,8 @@ def main():
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
     sizes = {"measured": MEASURED, "font": None}.get(args.sizes, args.sizes)
-    words = Words(WordSynth(store, load_priors(sizes=sizes)), Lexicon.load(args.lexicon), seed=cfg.data_seed,
-                  scrambled=cfg.scrambled)
+    words = Words(WordSynth(store, load_priors(sizes=sizes), Config(p_marks_beside=cfg.marks_beside)),
+                  Lexicon.load(args.lexicon), seed=cfg.data_seed, scrambled=cfg.scrambled)
     val = FixedSet(args.val, limit=args.val_limit)
     print(f"training characters: {len(store)} images; lexicon: {len(words.lexicon)} words; "
           f"validation: {len(val)} words; device: {args.device or ('cuda' if torch.cuda.is_available() else 'cpu')}",
@@ -87,7 +88,8 @@ def main():
                    "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
                    "training": {"glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
                                 "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
-                                "scrambled": cfg.scrambled, "words_seen": cfg.steps * cfg.batch},
+                                "scrambled": cfg.scrambled, "marks_beside": cfg.marks_beside,
+                                "words_seen": cfg.steps * cfg.batch},
                    "validation": {"set": Path(args.val).name, "words": len(val)},
                    "best": saved["best"], "val_at_best": best.get("val"),
                    "history": history,
