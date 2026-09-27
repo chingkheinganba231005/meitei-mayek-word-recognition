@@ -58,6 +58,9 @@ class TrainConfig:
     data_seed: int = 1000                # the training words (the fixed sets use seeds 1 and 2)
     scrambled: float = 0.1               # share of training words with random letters of each kind (owner,
     #                                      26 September 2026; the first round had none)
+    marks_beside: float = 0.0            # share of training words whose signs above (ꯥ ꯩ ꯪ) are written after
+    #                                      their letter at the top, as the writer of the real words does
+    #                                      (synth.Config.p_marks_beside; round 3; earlier rounds none)
 
 
 class EMA:
@@ -151,11 +154,15 @@ def load_checkpoint(path, device="cpu"):
 
 def train(cfg, words, val_set, run_dir, tummhcd_dir=None, device=None, log=print):
     """Train (or resume) into run_dir; returns the history. words: mayek_words.synth.Words
-    over the training characters and lexicon, made with seed cfg.data_seed and share
-    cfg.scrambled of scrambled words."""
-    if words.seed != cfg.data_seed or abs(getattr(words, "scrambled", 0.0) - cfg.scrambled) > 1e-12:
-        raise ValueError(f"the training words (seed {words.seed}, scrambled {getattr(words, 'scrambled', 0.0)}) "
-                         f"do not match the settings (data_seed {cfg.data_seed}, scrambled {cfg.scrambled})")
+    over the training characters and lexicon, made with seed cfg.data_seed, share
+    cfg.scrambled of scrambled words, and a synthesiser writing the signs above beside their
+    letter in share cfg.marks_beside of the words."""
+    beside = getattr(getattr(getattr(words, "synth", None), "cfg", None), "p_marks_beside", 0.0)
+    if (words.seed != cfg.data_seed or abs(getattr(words, "scrambled", 0.0) - cfg.scrambled) > 1e-12
+            or abs(beside - cfg.marks_beside) > 1e-12):
+        raise ValueError(f"the training words (seed {words.seed}, scrambled {getattr(words, 'scrambled', 0.0)}, "
+                         f"signs above beside {beside}) do not match the settings (data_seed {cfg.data_seed}, "
+                         f"scrambled {cfg.scrambled}, marks_beside {cfg.marks_beside})")
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)

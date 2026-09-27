@@ -5,6 +5,10 @@
 
     python scripts/render_words.py --glyphs font --lexicon words.tsv --n 48 --sheet sheet.png
 
+--marks-beside p: in a share p of the words the signs above (ꯥ ꯩ ꯪ) are written after their
+letter at the top (``synth.Config.p_marks_beside``, round 3); 0, the default, renders every
+word as the fixed sets were rendered.
+
 Writes out-dir/images/NNNNNN.png, out-dir/labels.tsv (file<TAB>text) and
 out-dir/config.json (everything needed to render the same set again). --sheet writes
 the first --sheet-n images with their text underneath. --glyphs font uses the font's own
@@ -65,19 +69,21 @@ def main():
                     help="share of words composed of real syllables (1-6 syllables, every kind)")
     ap.add_argument("--scrambled", type=float, default=0.0,
                     help="share of lexicon words with their letters replaced by random ones of the same kind")
+    ap.add_argument("--marks-beside", type=float, default=0.0,
+                    help="share of words whose signs above are written after their letter at the top")
     ap.add_argument("--sheet", help="contact sheet .png")
     ap.add_argument("--sheet-n", type=int, default=48)
     args = ap.parse_args()
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
-    cfg = Config()
+    cfg = Config(p_marks_beside=args.marks_beside)
     sizes = {"measured": MEASURED, "font": None}.get(args.sizes, args.sizes)
     synth = WordSynth(store, load_priors(sizes=sizes), cfg)
     lexicon = Lexicon.load(args.lexicon, args.alpha, args.rare_share)
     words = Words(synth, lexicon, args.seed, args.numbers, args.stop, args.built, args.scrambled)
 
     t0 = time.time()
-    samples, shapes, lines, layouts = [], [], [], []
+    samples, shapes, lines, layouts, styles = [], [], [], [], []
     out = Path(args.out_dir) if args.out_dir else None
     if out:
         (out / "images").mkdir(parents=True, exist_ok=True)
@@ -85,6 +91,7 @@ def main():
         s = words[i]
         shapes.append(s.image.shape)
         layouts.append(s.layout)
+        styles.append(s.style)
         if i < args.sheet_n:
             samples.append(s)
         if out:
@@ -97,7 +104,8 @@ def main():
                "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
                "numbers": args.numbers, "stop": args.stop,
                "alpha": args.alpha, "rare_share": lexicon.rare_share, "rare_characters": lexicon.rare_chars,
-               "built": args.built, "scrambled": args.scrambled,
+               "built": args.built, "scrambled": args.scrambled, "marks_beside": args.marks_beside,
+               "words_with_marks_beside": sum(bool(st.get("marks_beside")) for st in styles),
                "config": dataclasses.asdict(cfg),
                "height_px": {"mean": round(float(shapes[:, 0].mean()), 1), "max": int(shapes[:, 0].max())},
                "width_px": {"mean": round(float(shapes[:, 1].mean()), 1), "max": int(shapes[:, 1].max())},
@@ -107,7 +115,7 @@ def main():
                                      "p90": round(float(np.percentile(v, 90)), 3),
                                      "overlapping": round(float(np.mean(np.array(v) <= 0)), 3),
                                      "under_0.03": round(float(np.mean(np.array(v) < 0.03)), 3)}
-                                 for k, v in line_gaps(layouts, synth.prior).items() if v},
+                                 for k, v in line_gaps(layouts, synth.prior, styles).items() if v},
                "box_gaps_note": ("gaps between the boxes of neighbouring characters on the line (each box is "
                                  "a TUMMHCD image frame as placed, its ink's extent), not between their ink: "
                                  "signs beside a letter are placed on the ink, and the lead-in of ꯤ makes its "

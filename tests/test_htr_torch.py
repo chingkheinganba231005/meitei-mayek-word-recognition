@@ -180,6 +180,9 @@ def test_train_writes_and_resumes(words, tmp_path):
     with pytest.raises(ValueError):                                     # words not drawn as the settings say
         train(cfg, words, val, tmp_path / "wrong", device="cpu", log=lambda m: None)
     cfg.data_seed, cfg.scrambled = words.seed, words.scrambled
+    with pytest.raises(ValueError):                                     # signs above not written as the settings say
+        train(TrainConfig(**{**cfg.__dict__, "marks_beside": 0.5}), words, val, tmp_path / "wrong", device="cpu",
+              log=lambda m: None)
     run = tmp_path / "run"
     history = train(cfg, words, val, run, device="cpu", log=lambda m: None)
     assert [h["step"] for h in history] == [2, 4]

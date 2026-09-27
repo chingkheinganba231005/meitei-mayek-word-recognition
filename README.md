@@ -25,6 +25,11 @@ This follows the character-level work in
   and 21%); the confusable pairs are read without a swap, and nearly all errors are in the
   signs written above a letter (ꯥ, ꯩ). A Hugging Face demo that runs in the browser, like
   the first project's, [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
+- Round 3, the signs above written as the real writer writes them: 94% of the real words'
+  character errors are ꯥ, ꯩ or ꯪ, which the writer puts after the letter at the top, where
+  print puts ꯣ and ꯦ, not over the letter. The synthesiser now writes them that way in some
+  words; the final recipe is trained again with half its words so, and tested on new real
+  words, [`docs/round3_signs_beside.md`](docs/round3_signs_beside.md).
 
 ## Layout
 
@@ -72,14 +77,16 @@ scripts/
   measure_strokes.py     how thick the strokes of word sets are, as the recogniser sees them
   build_demo.py          the Hugging Face model repository and the Space from a trained run
   compare_runs.py        runs compared word by word (paired exact tests), from their predictions
+  measure_sign_geometry.py  where the small vowel signs stand and how they are shaped, on the ink of word sets
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
   phase2_recogniser.ipynb       Phase 2 on Colab (A100)
   phase3_real_words_and_demo.ipynb  the real words read once by every run; the demo built and uploaded
+  round3_signs_beside.ipynb     round 3: the signs above beside their letter, training, validation, new real words
   collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
 results/             JSON files written by the code; every reported number comes from here
-docs/                Phase 0 report, Phase 1, 2 and 3 design, AI use log
+docs/                Phase 0 report, Phase 1, 2 and 3 design, round 3, AI use log
 tests/               pytest
 ```
 

@@ -10,6 +10,8 @@ For a word in everyday spelling:
    placed relative to the pen position after the character before it, as the font does:
    ꯥ, ꯩ and ꯪ above that character, ꯨ below it, ꯦ, ꯣ, ꯧ and ꯤ beside it; apun under the
    whole letter before it. Every size and position is jittered, and the baseline drifts.
+   In some words (``Config.p_marks_beside``, round 3) ꯥ, ꯩ and ꯪ are written after their
+   letter at the top instead, where ꯣ and ꯦ stand, as the writer of the real words does.
 3. Each character image (24 x 24, ink stretched to the frame) is resized into its box,
    which gives back the proportions TUMMHCD lost, and its strokes are thickened or
    thinned to the word's pen width, since resizing scales the strokes with the box.
@@ -71,6 +73,18 @@ class Config:
     #                                     ꯤ in the open side of ꯅ looked merged)
     mark_gap: float = 0.02              # a sign above or below its letter: at least this far from its
     #                                     ink (in print: about 0.08 L above, 0.09 L below), in L
+    # Signs above (ꯥ, ꯩ, ꯪ) written after their letter at the top (round 3). The writer of the
+    # real words puts them where ꯣ and ꯦ stand, not over the letter as print does (on the first
+    # 100 real words, results/round3_sign_geometry_real.json: ꯥ centred 0.18 L past its letter's right
+    # edge, its top 0.18 L above the letter's top). With chance p_marks_beside, a word has every
+    # such sign on the line after the character before it, placed like ꯦ, ꯣ, ꯧ: its left end
+    # beside_left from that character's right edge, its top beside_top above its letter's top,
+    # reaching at most beside_depth below that top (a longer sign is drawn smaller), in L.
+    # 0 leaves every word as it was.
+    p_marks_beside: float = 0.0
+    beside_left: tuple = (-0.1, 0.1)    # writer: -0.14 to 0.12 (10th to 90th percentile)
+    beside_top: tuple = (0.06, 0.3)     # writer: 0.08 to 0.30
+    beside_depth: float = 0.5           # writer: ꯥ reaches 0.04 to 0.24 below the top, ꯣ and ꯦ about 0.4
     sign_margin: float = 0.04           # uneven words: the next letter this to twice this further from
     #                                     a hugging sign than the sign is from its letter, in L
     baseline_jitter: float = 0.04       # drift of the baseline, in L
@@ -105,6 +119,19 @@ class Sample(NamedTuple):
 MEASURED = ASSETS / "glyph_sizes_tummhcd.json"  # copy of results/glyph_sizes_tummhcd.json, first run
 
 
+def above_sign(p):
+    """Whether a character (its prior p) is a sign that print places above the character
+    before it: ꯥ, ꯩ, ꯪ."""
+    return p["kind"] == "mark" and p["bottom"] >= 0.9
+
+
+def on_line(p, marks_beside=False):
+    """Whether a character (its prior p) stands on the line: a letter, lonsum letter or digit,
+    a sign beside its letter, or, in a word whose signs above are written after their letter
+    (style "marks_beside"), a sign above."""
+    return p["kind"] == "base" or p["adv"] > 0.1 or bool(marks_beside and above_sign(p))
+
+
 def load_priors(path=None, sizes=MEASURED, clip=(0.5, 2.0)):
     """Priors by character: the font's positions, and by default the width and height
     measured on TUMMHCD (``scripts/glyph_sizes.py``; the owner's choice, 25 September 2026),
@@ -129,16 +156,18 @@ def load_priors(path=None, sizes=MEASURED, clip=(0.5, 2.0)):
     return prior
 
 
-def line_gaps(layouts, prior):
+def line_gaps(layouts, prior, styles=None):
     """Gaps between neighbours on the line, in units of L, from Sample.layout: letters,
-    lonsum letters, digits and the signs written beside a letter (not above or below).
+    lonsum letters, digits and the signs written beside a letter (not above or below; a
+    sign above is on the line in a word whose Sample.style, in `styles`, has marks_beside).
     -> {"letter to letter", "letter to sign beside it", "sign to next letter",
         "inside a syllable", "between syllables": [...]}"""
     out = {"letter to letter": [], "letter to sign beside it": [], "sign to next letter": [],
            "inside a syllable": [], "between syllables": []}
-    for boxes in layouts:
+    for k, boxes in enumerate(layouts):
         syl = syllables("".join(b[0] for b in boxes))
-        line = [(b, n) for b, n in zip(boxes, syl) if prior[b[0]]["kind"] == "base" or prior[b[0]]["adv"] > 0.1]
+        beside = bool(styles and styles[k].get("marks_beside"))
+        line = [(b, n) for b, n in zip(boxes, syl) if on_line(prior[b[0]], beside)]
         for (b1, n1), (b2, n2) in zip(line, line[1:]):
             k1, k2 = prior[b1[0]]["kind"], prior[b2[0]]["kind"]
             key = ("letter to letter" if k1 == k2 == "base" else
@@ -333,7 +362,9 @@ class WordSynth:
                 "uneven": uniform(c.uneven) * (rng.random() < c.p_uneven),  # both drawn: same draws after
                 "blur": uniform(c.blur),
                 "paper": uniform(c.paper),
-                "ink": uniform(c.ink) if c.ink else None}
+                "ink": uniform(c.ink) if c.ink else None,
+                # drawn only when it can happen, so that words without it render as before
+                "marks_beside": bool(c.p_marks_beside) and bool(rng.random() < c.p_marks_beside)}
 
     def layout(self, word, rng, st):
         """-> ([(character, x0, x1, bottom, top)] in units of L (y up, baseline at 0),
@@ -346,7 +377,9 @@ class WordSynth:
                 its distance from its letter in print, in L; None for the others]).
 
 
-        1. Every character is placed as the font places it, with its size jittered.
+        1. Every character is placed as the font places it, with its size jittered; in a word
+           with st["marks_beside"], a sign above stands on the line after the character
+           before it instead (Config.p_marks_beside) and is then treated as a sign beside.
         2. The gaps between neighbours on the line (letters, lonsum letters, digits and the
            signs written beside a letter) are set: the font's spacing, plus the word's gap,
            plus jitter. A syllable is kept together (``charset.syllables``): no gap inside
@@ -381,6 +414,16 @@ class WordSynth:
             else:
                 s = st["mark_scale"] * jitter(c.mark_size_jitter)
                 w, h = p["w"] * s, (p["top"] - p["bottom"]) * s
+                if st.get("marks_beside") and above_sign(p):  # after the character before it, at the top
+                    x0 = boxes[line[-1]][2] + float(rng.uniform(*c.beside_left))
+                    top = base[3] + float(rng.uniform(*c.beside_top))
+                    depth = top - base[3] + c.beside_depth
+                    if h > depth:                               # would reach too far down: smaller
+                        w, h = w * depth / h, depth
+                    boxes.append([ch, x0, x0 + w, top - h, top])
+                    pen = x0 + w                                # the line goes on after it, as after ꯣ
+                    line.append(i)
+                    continue
                 beside = p["adv"] > 0.1
                 tall = beside and abs(p["bottom"]) < 0.05  # ꯤ: sized like a letter, not like a small sign
                 if tall:

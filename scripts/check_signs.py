@@ -17,6 +17,9 @@ letter heights L, separately for evenly and unevenly spaced words:
 
 Signs above and below a letter (ꯥ, ꯩ, ꯪ, ꯨ, apun) are measured too: the shortest distance
 between the sign's ink and the ink of the character before it, in L.
+
+--marks-beside: every word has its signs above written after their letter at the top
+(``synth.Config.p_marks_beside`` = 1, round 3), and ꯥ, ꯩ, ꯪ are checked as signs beside.
 """
 
 import argparse
@@ -31,10 +34,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mayek_words.charset import syllables  # noqa: E402
 from mayek_words.glyphs import GlyphStore  # noqa: E402
 from mayek_words.lexicon import read_counts  # noqa: E402
-from mayek_words.synth import MEASURED, Config, WordSynth, load_priors, sign_body  # noqa: E402
+from mayek_words.synth import MEASURED, Config, WordSynth, load_priors, on_line, sign_body  # noqa: E402
 
 BESIDE = [chr(c) for c in (0xABE4, 0xABE6, 0xABE3, 0xABE7)]  # ꯤ ꯦ ꯣ ꯧ
-ABOVE_BELOW = [chr(c) for c in (0xABE5, 0xABE9, 0xABEA, 0xABE8, 0xABED)]  # ꯥ ꯩ ꯪ ꯨ apun
+ABOVE = [chr(c) for c in (0xABE5, 0xABE9, 0xABEA)]  # ꯥ ꯩ ꯪ
+BELOW = [chr(c) for c in (0xABE8, 0xABED)]  # ꯨ apun
+ABOVE_BELOW = ABOVE + BELOW
 
 
 def distance(a, b):
@@ -92,8 +97,7 @@ def check(synth, words, seed=0):
             smp = synth.render(w, np.random.default_rng(seed + i), trace)
             L, placed = smp.style["L"], [t[1:] for t in trace]
             syl = syllables(smp.text)
-            line = [k for k, c in enumerate(smp.text)
-                    if synth.prior[c]["kind"] == "base" or synth.prior[c]["adv"] > 0.1]
+            line = [k for k, c in enumerate(smp.text) if on_line(synth.prior[c], smp.style.get("marks_beside"))]
             for a, k, b in zip(line, line[1:], line[2:]):
                 if smp.text[k] != sign or syl[a] != syl[k] or syl[b] == syl[k]:
                     continue
@@ -144,15 +148,18 @@ def main():
     ap.add_argument("--sizes", default="measured", help="'measured', 'font' or a glyph_sizes_*.json file")
     ap.add_argument("--words", type=int, default=300, help="words per sign (the most frequent)")
     ap.add_argument("--seed", type=int, default=1000)
+    ap.add_argument("--marks-beside", action="store_true",
+                    help="signs above written after their letter at the top (round 3), checked as signs beside")
     args = ap.parse_args()
 
     store = GlyphStore.from_font() if args.glyphs == "font" else GlyphStore.load(args.glyphs)
     priors = load_priors(sizes={"measured": MEASURED, "font": None}.get(args.sizes, args.sizes))
-    synth = WordSynth(store, priors, Config(rotation=0))
+    synth = WordSynth(store, priors, Config(rotation=0, p_marks_beside=1.0 if args.marks_beside else 0.0))
+    beside, vertical_signs = (BESIDE + ABOVE, BELOW) if args.marks_beside else (BESIDE, ABOVE_BELOW)
     counts = read_counts(args.lexicon)
     ranked = [w for w, _ in counts.most_common()]
     words = {}
-    for s in BESIDE:
+    for s in beside:
         ws = []
         for w in ranked:
             syl = syllables(w)
@@ -161,10 +168,11 @@ def main():
                 if len(ws) == args.words:
                     break
         words[s] = ws
-    vertical = {s: [w for w in ranked if s in w][:args.words] for s in ABOVE_BELOW}
+    vertical = {s: [w for w in ranked if s in w][:args.words] for s in vertical_signs}
     report = {"glyphs": Path(args.glyphs).name, "lexicon": Path(args.lexicon).name,
               "sizes": args.sizes if args.sizes in ("measured", "font") else Path(args.sizes).name,
-              "words_per_sign": args.words, "seed": args.seed, "signs": check(synth, words, args.seed),
+              "words_per_sign": args.words, "seed": args.seed, "marks_beside": args.marks_beside,
+              "signs": check(synth, words, args.seed),
               "above_below": check_vertical(synth, vertical, args.seed)}
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

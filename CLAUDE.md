@@ -490,6 +490,37 @@ once, by the owner (100 words, all seven runs); the demo built for Hugging Face.
   `mayek_htr.reader.Reader`. The language model is built from CC BY-SA 4.0 (Wikipedia) and
   ODC-By (FineWeb-2) text: released under CC BY-SA 4.0 with attribution (model card).
 
+## Round 3: the signs above written beside (details in `docs/round3_signs_beside.md`)
+
+Owner's request (27 September 2026, after testing the demo: "it works pretty great"): "you
+pointed out some errors and said we could include them in our training data and train again.
+So lets do that ... Create synthetic data which imitates the new patterns . And finally write
+the paper." **Status: code and notebook (`notebooks/round3_signs_beside.ipynb`) ready and dry-run
+here; the owner trains next.**
+
+- **The errors (all seven runs on the 100 real words, `top_errors` in
+  `results/phase3_real_*.json`):** 118 of 126 character errors (94%) are ꯥ, ꯩ, ꯪ: ꯥ left out
+  45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other 8: item 35's full stop 7 (every
+  run; the writer left it out: proposed to correct the label, owner to decide) and ꯨ 1.
+- **Measured (`results/round3_sign_geometry_real.json`, `scripts/measure_sign_geometry.py`):**
+  the writer's ꯥ is a straight stroke falling to the right (52°, as print's 46°) but after the
+  letter at the top: centred 0.18 L past its letter's right edge, top 0.18 L above the letter's
+  top, bottom 0.19 L below it, where ꯣ (0.28 L past) and ꯦ (0.36) stand; ꯩ and ꯪ likewise.
+  Print and every synthetic word so far put it over the letter (font characters: centre 0.34 L
+  before the edge, wholly above the top line; `results/round3_sign_geometry_font.json`).
+- **Change:** `synth.Config.p_marks_beside` (per word, every ꯥ ꯩ ꯪ on the line after its
+  letter at the top: left end -0.1 to 0.1 L from its right edge, top 0.06-0.30 L above, at most
+  0.5 L deep; then placed like ꯣ). Default 0: every word renders as before (byte for byte), so
+  the fixed sets and earlier runs stay valid. Rules hold (`results/sign_placement_beside_font.json`).
+  **Round 3** = round 2's final recipe + `marks_beside 0.5` (runs `round3_convnext_tummhcd` and
+  `round3_convnext_tummhcd_seed1`), nothing else changed.
+- **Protocol (proposed, to confirm):** the first 100 real words stay round 2's test (used
+  once) and become round 3's development set (`round3_dev_*`), since their errors shaped it.
+  Round 3's test: new words by the same writer, pages 7-12 (items 107-209: 100 words, 3
+  numbers, 56 with a sign above), read once by round 2 and round 3, two seeds each
+  (`phase3_real2_*`). Synthetic: choices on `val.tar` as before; `val_beside.tar` (the same
+  5,000 words, every sign above beside) for the effect alone; synthetic test once.
+
 ## Working rules
 
 - Environment: Google Colab, one NVIDIA A100 (80 GB). Keep notebooks runnable top to bottom.
