@@ -543,33 +543,44 @@ diagnosis and the new placement (its Section 9.4), with training left to future 
   (`phase3_real2_*`). Synthetic: choices on `val.tar` as before; `val_beside.tar` (the same
   5,000 words, every sign above beside) for the effect alone; synthetic test once.
 
-## The paper (draft, 27 September 2026)
+## The paper (final, 27 September 2026)
 
-"Whole words from isolated characters: handwritten Meitei Mayek word recognition trained on
-synthetic words" (title proposed): 14 pages to the declarations, then the references and a
-draft-only appendix mapping every number to its results file (20 pages in all); `article`
-class, XeLaTeX (the Meitei Mayek text is shaped by HarfBuzz with the bundled Noto font). **Kept
-out of the public repository**, as the first paper's source is: sent to the owner as `paper_draft_20260927.zip` (source, figures, fonts, the
-scripts) and a PDF; the owner decides whether it goes into the repository.
+"Whole words from isolated characters: handwritten Meitei Mayek word recognition", for The
+Visual Computer (Springer): the Springer Nature template (`sn-jnl.cls` 2.1, numbered
+Math and Physical Sciences references), following the owner's first paper; XeLaTeX (the
+Meitei Mayek text shaped by HarfBuzz); 22 pages. **Kept out of the public repository**, as the
+first paper's source is: sent to the owner as `Rajkumar_TVC_word_recognition_source.zip` and
+the PDF.
 
-- Every number is a macro written by the draft's `make_numbers.py` from `results/*.json` (none
-  typed by hand except the first paper's and the thesis's own figures, cited to them); sentences
-  saying "never" are guarded (the script stops if the result under them changes). Numbers are
-  rounded halves up from the value the results file prints, so a check by hand gives the same
-  digits (this corrected one figure: the second round's small CNN on the real words with the
-  language model, then 18 errors in 593 characters, was 3.04%, not 3.03%).
-- Sections: introduction; related work; the script and the spelling of i; data; synthetic words;
-  the recogniser; baselines; synthetic results; real words (collection, results, errors, where
-  the signs stand, and the new placement of the signs above, its training left to future work);
-  reading in the browser (the demo; Figure 6 is the owner's screenshot of it reading the owner's
-  name, the owner's request of 27 September 2026); discussion; conclusion; declarations (code and
-  data, use of AI tools, ethics).
-- 25 of the 45 cited references are marked "[to check]" (abstracts or memory only): check each
-  against its full text before submission. The draft's README lists everything to verify before
-  submission (references, the first paper's figures, the script facts, a last novelty search,
-  TUMMHCD's terms for showing its images, the missing LICENSE file, the venue).
-- Owner to decide: venue and template, title, release of the real word set, funding statement,
-  whether the draft goes into the repository; owner to send: the demo screenshot as a file.
+- **Owner's answers (27 September 2026), applied:** the everyday sign names aatap, yetnap,
+  otnap (not Unicode's anap, yenap, onap); the script facts checked by the owner; the first
+  project cited as its GitHub repository with its Zenodo archive, not as the paper under
+  review; the six spacing samples are Figs. 3 and 4 of Laishram et al., IEEE ICCIC 2014
+  (doi 10.1109/ICCIC.2014.7238510) and the four photographs of Fig. 11 of Inunganbi et al.
+  (The Visual Computer 37, 2021), now cited; TUMMHCD allows showing its images; the real word
+  set released (CC BY 4.0, `real_words/`); item 35 corrected (Phase 3 above); the MIT
+  `LICENSE` added; Figure 6 is the owner's screenshot of the demo reading the owner's name
+  (taken from the session record, cropped); declarations in the first paper's form
+  ("Statements and Declarations"; funding: none, as in the first paper). Title shortened
+  (the owner allowed it): "trained on synthetic words" dropped.
+- **References:** all 45 checked on 27 September 2026 by web search against publisher,
+  proceedings or preprint records (Crossref and publisher pages are blocked from the
+  session); seven confirmed by the first paper's reference list.
+- **Final literature search (27 September 2026):** no other handwritten Meitei Mayek word or
+  line recogniser. NE-OCR reads print; UniLipi (arXiv 2608.28195, manuscript OCR) covers 13
+  Indic scripts, not Meitei Mayek; IIIT-Indic-HW-UC writes Manipuri in Bengali script.
+- **AI use:** the owner asked for "claude was used to optimise and polish the code in the
+  method section". The paper's Implementation paragraph (Section 6) says Claude Code was used
+  "to write, optimise and polish the source code and to draft and edit this manuscript".
+  Springer Nature asks for LLM use to be documented in the Methods, and the public
+  `docs/ai_use_log.md` records that the manuscript was drafted with Claude Code. Owner to
+  confirm the wording.
+- **Numbers:** every one from the results files (`make_numbers.py`, rounded halves up);
+  `check_numbers.py` recomputes the abstract's figures and every table value independently:
+  all agree.
+- **Before submitting (owner):** read it through; update the Hugging Face cards (they quote
+  the demo's real-word figures before item 35's correction); optionally archive this
+  repository on Zenodo for a DOI.
 
 ## Working rules
 
