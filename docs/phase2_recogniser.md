@@ -1,9 +1,8 @@
 # Phase 2: the word recogniser
 
-Started 25 September 2026. **Status: code ready, not yet run on TUMMHCD.** Everything below
-was checked in the cloud session on the CPU (section 5); training needs the Colab A100
-(`notebooks/phase2_recogniser.ipynb`). The decisions in section 6 wait for the owner's
-confirmation.
+Started 25 September 2026. **Status (26 September): done on synthetic data.** Two rounds
+of training, validation, the baseline, and the synthetic test set used once (section 7).
+The main evaluation, on real handwriting, waits for the Phase 3 set.
 
 ## 1. What the recogniser does
 
@@ -129,14 +128,16 @@ evaluation is the real set of Phase 3.
 | `scripts/oracle_baseline.py` | the baseline → `results/phase2_baseline_{val,test}.json` |
 | `notebooks/phase2_recogniser.ipynb` | all of it on Colab |
 
-## 4. Expected time on the A100
+## 4. Time on the A100
 
-Rendering takes about 7 ms per word per CPU core (measured here, with normalisation), so
-10 worker processes give about 1,400 words per second, 22 steps of 64 words per second:
-60,000 steps then take at least 45 minutes. The notebook measures the rendering and the
-GPU speed before training and prints the hours per run; about 1 to 1.5 hours is expected,
-so the three runs take an afternoon. If the log shows the GPU waiting for data most of the time, the runs are
-bound by rendering.
+Measured on the first run (`convnext_tummhcd`, Colab A100 40 GB, owner, 25 September 2026):
+25,000 steps in 67 minutes, about 6 steps (400 words) per second, so about 2.7 hours per run
+of 60,000 steps and about 8 hours for the three. The estimate made before (1 to 1.5 hours,
+from rendering at about 7 ms per word per CPU core in the cloud session) was too optimistic.
+The log's `waiting for data` share tells whether the CPU rendering the words or the GPU
+sets the pace; an A100 80 GB has the same compute as the 40 GB card (more memory, which
+this model does not need, and about a quarter more memory bandwidth), so it would help
+little either way.
 
 ## 5. Checks done in the cloud session (CPU)
 
@@ -149,9 +150,13 @@ bound by rendering.
 - Training stream, fixed sets from a folder or a .tar, word kinds, augmentation, a CTC
   model learning a batch, and a training run written, resumed and finished: tests
   (`tests/test_htr.py`, `tests/test_htr_torch.py`; the second is skipped without PyTorch).
-- Learning: the small CNN on the CPU (16 words per step, TUMMHCD validation characters,
-  the Phase 1 development word list, a 300-word validation set of other words): greedy
-  validation CER 1.0 at the start, 0.96 at step 250, 0.88 at step 500, 0.76 at step 750.
+- Learning: the small CNN on the CPU, 1,500 steps of 16 words (light augmentation,
+  learning rate 1e-3), TUMMHCD validation characters for both training and checking, the
+  Phase 1 development word list (7,000 words) for training and 300 words of other words for
+  checking: greedy CER 0.96 at step 250, 0.77 at 750, 0.42 at 1,000, 0.25 at 1,500 (WER
+  0.74). Beam search with the language model (alpha 0.25 and beta 1.5, chosen on the same
+  300 words) brought it to CER 0.20 and WER 0.61, and ꯗ/ꯘ from 66% to 79% read correctly.
+  A check that the chain works, not a result: the characters were the same, the run short.
 - The whole notebook, run top to bottom in this session with Colab stubbed out, the
   simulated release, the development data, the CPU and a few training steps (the ImageNet
   run left out, as Hugging Face is blocked here): every section works, including going on
@@ -167,10 +172,14 @@ bound by rendering.
 
 ## 6. For the owner to confirm
 
+Items 1 to 5 were run as proposed in the first round and kept for the second by the owner's
+decisions of 26 September 2026 (which added scrambled training words and a second seed of
+the main model, section 7); item 6 was declined.
+
 1. Input 64 px high and a column per 8 px (2.2).
 2. The three runs (2.3): ConvNeXt-T from TUMMHCD (main), from ImageNet, and the small CNN
    from scratch.
-3. 60,000 steps of 64 words per run (2.5), about 1 to 1.5 hours each.
+3. 60,000 steps of 64 words per run (2.5), about 2.7 hours each (section 4).
 4. The baseline with perfect segmentation and perfect zones (2.9), in its two forms.
 5. The language model from the training lexicon only, alpha and beta chosen on the
    synthetic validation set, and the synthetic test set used once (2.7, 2.10).
@@ -181,4 +190,204 @@ bound by rendering.
 
 ## 7. Runs
 
-None on TUMMHCD yet.
+### First round (owner, Colab A100 40 GB, 25-26 September 2026, commit 5680ae8)
+
+Three runs of 60,000 steps, one seed each, sections 1 to 6 of the notebook; the synthetic
+test set untouched. Files: `results/phase2_lm.json`, `results/phase2_train_<run>.json`,
+`results/phase2_val_<run>.json`, `results/phase2_baseline_val_released.json` (the baseline with the
+released networks; renamed, see finding 2).
+
+**Language model:** order 6, every distinct training word counted once (power 0),
+perplexity 7.61 per character on the validation words (order 5: 7.75; order 7: 7.75;
+words weighted by count ** 0.5: 8.15).
+
+**Recogniser on the synthetic validation set** (5,000 words, 33,175 characters):
+
+| Run | Best step | CER greedy | WER greedy | CER with LM | WER with LM | alpha, beta |
+|---|---|---|---|---|---|---|
+| `convnext_tummhcd` | 58,000 | 0.304% | 2.00% | 0.277% | 1.80% | 0.5, 0 |
+| `convnext_imagenet` | 60,000 | 0.289% | 1.88% | 0.265% | 1.76% | 0.25, 0 |
+| `crnn_scratch` | 46,000 | 0.317% | 2.08% | 0.265% | 1.76% | 0.5, 0 |
+
+The 95% intervals of word accuracy overlap (greedy: 97.6-98.4%, 97.7-98.5%, 97.5-98.3%):
+on synthetic words the three encoders cannot be told apart. The language model removes
+about a tenth of the errors; a bonus per character (beta) does not help. Confusable pairs,
+every run: ꯦ/꯰ 1,398 of 1,398 read correctly, ꯨ/ꯁ 2,839 of 2,840; ꯗ/ꯘ 1,015-1,020 of
+1,053, the misses being ꯘ read as ꯗ (31-33 per run, about half of the 64 ꯘ and a third of
+all errors). Next: ꯈ read as ꯗ (7-10). Numbers: WER 0.7-1.3% (150 words).
+
+**Findings.**
+
+1. *ꯘ on the synthetic sets rests on a few words.* ꯘ is 0.009% of the training lexicon's
+   characters (478 in running text); the validation lexicon holds it 4 times, the test
+   lexicon 6. The draws for rare letters (10% of draws, over seven letters) therefore fill
+   the 64 ꯘ of the validation set from at most four words, each repeated many times (the
+   owner's error sheets show two words again and again). Whether the images of ꯘ are
+   ambiguous or the recogniser has learned that ꯘ occurs only in the few training words
+   that contain it is to be checked on the per-word predictions
+   (`WORK/runs/<run>/val_predictions.tsv`). ꯗ/ꯘ needs the real set, with prompts that
+   hold ꯘ in many different words.
+2. *The baseline's validation numbers are not usable.* The released networks are the first
+   paper's final models, trained on TUMMHCD train including our validation part
+   (`mayek.data.load_index`: `full` = train + val; `mayek.recognizer.export` reads
+   `runs/<name>/full/final.pt`), so they have seen every character of the validation set:
+   classified as isolated images, 1 error in 33,175 characters (on TUMMHCD test the same
+   ensemble misses 1.9%). The synthetic test set is clean (TUMMHCD test characters). The
+   encoder of `convnext_tummhcd` also started from such a network; on validation it is no
+   better than the ImageNet start. Fix (26 September): the owner still has the first
+   paper's development networks, trained without the validation part (the first project's
+   `runs/<network>/dev/final.pt` for `convnext_t`, `effv2_s`, `resnet50d_topo` and their
+   `_meta` versions). `scripts/dev_ensemble.py` puts them together in the release's format
+   (checking that each holds the same tensors as the released network, and not the released
+   weights themselves), and the notebook's section 6 validates the baseline with them; the
+   test uses the released networks with the language-model weights chosen that way, as in
+   the first paper (choices on the development networks, the final ones on test).
+3. *Cut from the word, the same characters are misread much more:* CER 13.6% and WER 53.8%
+   (most probable class); with perfect zones and the language model 4.2% and 20.9%, against
+   the recogniser's 0.27% and 1.8%. Commonest errors: ꯁ read as ꯨ (1,181 of 1,824 ꯁ; zones
+   remove these) and ꯤ (51% wrong: its box, with the lead-in, takes in part of its letter).
+   A likely reason for ꯁ/ꯨ: the classifier separates them by stroke thickness relative to
+   the character (check (1) for the first paper in `CLAUDE.md`), and a pen thicker than
+   TUMMHCD's makes a stretched ꯁ look like a stretched ꯨ.
+4. *Rendering sets the pace:* the GPU waited for data 49% of the time in the ConvNeXt runs
+   and 65% in the small CNN's (2.4-2.6 hours per run, about 420 words per second).
+
+### The baseline with the development networks, and the ꯘ words (26 September 2026)
+
+Section 6 run again by the owner with the first paper's development networks
+(`results/phase2_baseline_val.json`; the per-word predictions of the three runs came with
+it). Isolated, these networks miss 0.97% of the validation characters (the released ones
+missed 0.003%), so they had not seen them. On the 5,000 validation words:
+
+| System | CER | WER |
+|---|---|---|
+| Recogniser, with the language model (the three runs) | 0.27-0.28% | 1.8% |
+| Baseline, characters cut from the word, perfect zones, language model | 4.0% | 20.2% |
+| Baseline, the same with each character's original TUMMHCD image (not attainable) | 0.17% | 1.1% |
+| Baseline, original images, most probable class only | 0.97% | 6.3% |
+
+Cut from the words, the characters are read far worse than whole words are (ꯁ as ꯨ, ꯤ
+taking in part of its letter, ꯕ as ꯗ); only characters freed from their neighbours and
+written alone, as in TUMMHCD, beat the recogniser, and no segmenter delivers those.
+
+*ꯘ.* The validation set's 64 ꯘ belong to five words. Two are misread every time by all
+three runs, greedy and with the language model: ꯇꯃꯟꯘꯁꯦꯠ (19 of 19, read ꯇꯃꯟꯗꯁꯦꯠ) and
+ꯃꯘ꯭ꯔꯦꯕꯤ (12-13 of 13, read ꯃꯗ꯭ꯔꯦꯕꯤ); the other three (ꯔꯥꯘꯣꯕꯨ, ꯃꯦꯘꯥꯟ, ꯃꯦꯘꯥꯟ꯫, 32
+instances) are read correctly (one miss in one run). The development networks read all 64
+ꯘ right as isolated images. So the images are clear; the recogniser misreads ꯘ where ꯗ is
+common in text (after ꯟ, and in the cluster ꯗ꯭ꯔ) whichever image of ꯘ is drawn: it has
+learned from its training words a prior that overrides what it sees. ꯘ occurs in training
+only inside the few words that contain it (0.009% of the lexicon's characters), repeated by
+the draws for rare letters. Without these two words the recogniser's CER is 0.17-0.18% and
+WER 1.1-1.2% with the language model (greedy 0.19-0.23%, 1.2-1.5%), the level of the
+isolated-image baseline. The other errors are spread thinly (62-73 distinct words per run;
+the next largest, ꯈꯥ read as ꯗꯥ, 2 of 13). A remedy would be training words in which every
+letter appears in every context, for example a share of words with their letters replaced
+by random letters of the same kind; it needs retraining (owner's decision pending).
+
+### Second round (decided 26 September 2026)
+
+The owner's decisions: scrambled training words, yes; the second round below, yes; a real
+development set, no (to the owner the synthetic words look as realistic as actual writing;
+the first check on real handwriting is therefore the Phase 3 set).
+
+*Scrambled words* (`mayek_words.lexicon.scramble`, `Words(scrambled=...)`,
+`TrainConfig.scrambled` = 0.1): a tenth of the training words are lexicon words with each
+letter replaced by a random letter (any of the 27), each lonsum letter by a random lonsum
+letter and each vowel sign by a random vowel sign, uniformly; nung, apun, digits and the
+full stop stay. The word keeps its shape (length, syllables, signs above, beside and below)
+and every letter meets every neighbour: on the development word list ꯘ stands in 456
+different (before, after) pairs instead of 21, and ꯟꯘ and ꯘ꯭, never seen before, occur 21
+and 43 times per 100,000 words. The share comes out of the lexicon words (numbers 3%,
+syllable-built words 15%, scrambled 10%, lexicon 72%). With the share at 0 every word is
+drawn and rendered exactly as before (checked on 300 words), so the fixed validation and
+test sets and the baseline's re-rendering are unchanged; the evaluation sets have no
+scrambled words. Contact sheet of 48 scrambled words shown to the owner.
+
+*Runs* (60,000 steps each, otherwise as in the first round): `round2_convnext_tummhcd`
+(seed 0, training words 1000), `round2_convnext_tummhcd_seed1` (seed 1, words 1001),
+`round2_convnext_imagenet`, `round2_crnn_scratch`; about 10 hours on the A100 40 GB. Then
+validation (section 5); the baseline on validation is done; the test waits.
+
+**Second round, results (owner, 26 September 2026; `results/phase2_{train,val}_round2_*.json`,
+per-word predictions sent with `notebooks/collect_results.ipynb`).** Synthetic validation,
+5,000 words:
+
+| Run | Best step | CER greedy | WER greedy | CER with LM | WER with LM | alpha, beta |
+|---|---|---|---|---|---|---|
+| `round2_convnext_tummhcd` | 60,000 | 0.274% | 1.78% | 0.253% | 1.68% | 0.5, 0 |
+| `round2_convnext_tummhcd_seed1` | 52,000 | 0.298% | 1.92% | 0.253% | 1.64% | 0.5, 0 |
+| `round2_convnext_imagenet` | 58,000 | 0.326% | 2.10% | 0.268% | 1.78% | 0.5, 0.5 |
+| `round2_crnn_scratch` | 54,000 | 0.298% | 1.92% | 0.259% | 1.70% | 0.25, 1.5 |
+
+Against the first round (WER with LM 1.76-1.80%) slightly better, but not measurably: word
+by word, the main model's first and second rounds differ on 37 against 26 words (greedy)
+and 19 against 13 (with the language model), and its two seeds differ as much (23 against
+30; 15 against 13). The two seeds agree closely (CER with LM 0.253% both). The encoders are
+still indistinguishable on synthetic words.
+
+*ꯘ.* The network alone now reads more of the two failing words: ꯃꯘ꯭ꯔꯦꯕꯤ is misread in 4-5
+of 13 (first round 12) and ꯇꯃꯟꯘꯁꯦꯠ in 10-15 of 19 (first round 19), greedy. The language
+model, which has never seen ꯘ after ꯟ or before ꯭ꯔ, pulls most of them back (ConvNeXt runs
+with the language model: 13 of 13 and 14-19 of 19 still wrong). And the network now reads ꯗ
+as ꯘ more often (12-18 times, each in a different word, against 3), so the pair ꯗ/ꯘ keeps
+35-36 errors per run. ꯗ/ꯘ remains the hardest pair (as for the first paper's isolated
+characters: the development networks read ꯗ as ꯘ 48 times); on the synthetic sets it rests
+on five words, and the real set, with prompts holding ꯘ in varied words, is where it can be
+measured. The second round is the final recipe (the owner's decision, the ꯘ images read
+better, overall no worse).
+
+*Test plan.* One pass (section 7) over the four second-round runs, the three first-round
+runs (so that the effect of the scrambled words can be reported on test) and the baseline
+(released networks, language-model weights chosen with the development networks).
+
+### The synthetic test set, used once (owner, 26 September 2026)
+
+5,000 words (seed 2) from the test lexicon, written with TUMMHCD test characters (without
+the 469 that have a training twin); every checkpoint, alpha and beta as chosen on
+validation (checked in each file). Files: `results/phase2_test_<run>.json`,
+`results/phase2_baseline_test.json`.
+
+| System | CER greedy | WER greedy | CER with LM | WER with LM |
+|---|---|---|---|---|
+| **Recogniser, final recipe** (ConvNeXt-T from TUMMHCD, second round), seed 0 | 0.329% | 2.12% | 0.236% | 1.52% |
+| same, seed 1 | 0.370% | 2.32% | 0.251% | 1.62% |
+| same, mean of the two seeds | 0.35% | 2.22% | 0.24% | 1.57% |
+| ConvNeXt-T from ImageNet, second round | 0.326% | 2.04% | 0.245% | 1.56% |
+| Small CNN from scratch (CRNN), second round | 0.335% | 2.10% | 0.275% | 1.70% |
+| First round (no scrambled words): TUMMHCD / ImageNet / small CNN | 0.317 / 0.329 / 0.341% | 2.04 / 2.08 / 2.20% | 0.266 / 0.257 / 0.269% | 1.74 / 1.60 / 1.74% |
+| Baseline, cut from the word, perfect zones, LM | | | 4.26% | 20.98% |
+| Baseline, original isolated images, most probable class | 1.20% | 7.64% | | |
+| Baseline, original isolated images, perfect zones, LM (not attainable) | | | 0.173% | 1.12% |
+
+(The baseline's figures are per character with as many characters as the truth; its LM
+column uses the weights chosen with the development networks, the released networks
+classify.)
+
+**Findings on test.**
+
+1. *Reading whole words against cutting them up:* with the language model the recogniser
+   misreads 0.24% of the characters and 1.57% of the words (mean of two seeds); the first
+   paper's ensemble on the same characters cut from the words, with perfect cuts, perfect
+   zones and the same language model, misreads 4.26% and 21%: about 17 times as many
+   character errors and 13 times as many word errors. Only characters handed over alone,
+   as TUMMHCD images, with perfect zones, do better (0.17%, 1.1%), which no segmenter can
+   deliver.
+2. *The confusable pairs:* as isolated images the ensemble reads ꯦ as ꯰ or the reverse 94
+   times and ꯨ/ꯁ 115 times; the recogniser 0 times for both (every run). ꯗ/ꯘ: 6-17 swaps per
+   run and decoding (ensemble 51).
+3. *No measurable differences between the runs:* word by word (exact binomial test on the
+   words one run reads and the other misreads) the rounds, the seeds and the encoders
+   differ with p of 0.16 or more, greedy and with the language model. The scrambled words
+   neither help nor hurt measurably on synthetic words; the TUMMHCD start, the ImageNet
+   start and the small CNN from scratch are equal on them. Synthetic words cannot rank the
+   encoders; the real set may.
+4. *ꯘ on test:* the seven test words with ꯘ are read right nearly always by every run; their
+   contexts (ꯘ first, after ꯔ, ꯗ꯭ꯔꯘ) are not the ones that failed on validation.
+5. *By kind of word* (final model, with the language model): lexicon words WER 1.04-1.07%,
+   words composed of syllables 3.9-4.7% (the language model favours real words), numbers
+   2.2%.
+6. *What the synthetic test measures:* the recogniser was trained on words from the same
+   synthesiser, with characters from the same TUMMHCD writers (TUMMHCD has no writer
+   information), so these figures are in-distribution. Real handwriting (Phase 3) will be
+   harder; how much harder is the main open question.

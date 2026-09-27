@@ -82,7 +82,8 @@ confusable pairs (ꯢ/ꯏ turned out to be a spelling convention: see Phase 0 fi
 **Phase 3: real test set.** Collect real handwritten words from volunteers with written consent
 (what is collected, how it is used and licensed). Target roughly 50+ writers. This set is the main
 evaluation; synthetic data is only for training. Releasing it publicly would be a contribution in
-itself.
+itself. **Changed by the owner (26 September 2026): no volunteers; the owner writes the set
+alone on an iPad** (see the Phase 3 section below).
 
 **Phase 4: generation (project 2).** Diffusion model conditioned on text and writer style. Evaluate
 by training the recogniser on generated data and testing on the real set, plus standard image
@@ -278,9 +279,71 @@ paper; 32.4% of neighbouring letters touching (real 33.5%). Next: Phase 2 (recog
 
 ## Phase 2: recogniser (details in `docs/phase2_recogniser.md`)
 
-Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Code ready (25 September
-2026), not yet run on TUMMHCD; the design below waits for the owner's confirmation**
-(`docs/phase2_recogniser.md`, section 6).
+Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Done on synthetic data
+(26 September 2026):** two rounds of training by the owner, validation, the baseline, and
+the synthetic test set used once (`docs/phase2_recogniser.md`, sections 6 and 7). The main
+evaluation, on real handwriting, waits for the Phase 3 set.
+
+- **Synthetic test, used once (`results/phase2_test_*.json`, `results/phase2_baseline_test.json`;
+  5,000 words, TUMMHCD test characters):** final recipe (ConvNeXt-T from TUMMHCD, second
+  round), mean of two seeds: CER 0.35%, WER 2.22% greedy; **CER 0.24%, WER 1.57% with the
+  language model** (seeds 0.236% / 0.251%, 1.52% / 1.62%). Baseline with the same
+  characters cut from the words, perfect cuts, perfect zones and the language model: CER
+  4.26%, WER 21.0% (17 and 13 times as many errors); original isolated images with perfect
+  zones and the language model (not attainable): 0.17%, 1.1%; the ensemble alone on
+  isolated images: 1.20%, 7.6%. Swaps ꯦ/꯰ and ꯨ/ꯁ: ensemble on isolated images 94 and 115,
+  recogniser 0 and 0 (every run); ꯗ/ꯘ 6-17 (ensemble 51). Rounds, seeds and encoders do not
+  differ measurably (paired tests p >= 0.16). The figures are in-distribution (same
+  synthesiser, same TUMMHCD writers): real handwriting will be harder.
+
+- **Owner's decisions (26 September 2026):** (1) 10% of the training words are scrambled
+  (`lexicon.scramble`: a lexicon word with each letter, lonsum letter and vowel sign replaced
+  by a random one of its kind; `TrainConfig.scrambled`, default 0.1) to break the context
+  prior behind the ꯘ errors; with scrambling off every word renders exactly as before, so
+  the fixed sets stay reproducible. (2) Second round with this recipe: ConvNeXt-T from
+  TUMMHCD with two seeds (0 and 1, training words 1000 and 1001), from ImageNet and the
+  small CNN once each (runs `round2_*`, about 10 hours); the first round's runs are kept.
+  (3) No real development set: to the owner the synthetic words look as realistic as
+  actual writing, so the first check on real handwriting is the Phase 3 set.
+
+- **Second round, synthetic validation (`results/phase2_val_round2_*.json`):** with the
+  language model CER 0.253% / 0.253% / 0.268% / 0.259% and WER 1.68% / 1.64% / 1.78% / 1.70%
+  (ConvNeXt-T from TUMMHCD seeds 0 and 1, from ImageNet, small CNN): slightly better than the
+  first round but within the difference between two seeds; the seeds agree closely. The
+  network alone reads the failing ꯘ words better (ꯃꯘ꯭ꯔꯦꯕꯤ misread 4-5 of 13 instead of 12,
+  ꯇꯃꯟꯘꯁꯦꯠ 10-15 of 19 instead of 19, greedy), the language model pulls most back, and ꯗ is
+  now read as ꯘ more often, so ꯗ/ꯘ keeps 35-36 errors: the hardest pair, to be measured on
+  the real set. Second round = final recipe.
+- **First round, synthetic validation (5,000 words; `results/phase2_val_*.json`):** CER
+  0.30% / 0.29% / 0.32% and WER 2.0% / 1.9% / 2.1% greedy for ConvNeXt-T from TUMMHCD, from
+  ImageNet and the small CNN from scratch; with the language model (order 6, every
+  distinct word once, perplexity 7.61) CER 0.28% / 0.27% / 0.27%, WER 1.8% / 1.8% / 1.8%.
+  Intervals overlap: synthetic words do not separate the encoders. ꯦ/꯰ and ꯨ/ꯁ read
+  (almost) perfectly; ꯘ read as ꯗ half the time, but the validation set's 64 ꯘ come from
+  at most four words (ꯘ is 0.009% of text; the draws for rare letters repeat them).
+  Training was bound by CPU rendering (GPU waiting 49-65%; 2.4-2.6 h per run).
+- **Baseline caveat:** the released first-paper networks were trained on TUMMHCD train
+  *including* our validation part (`full` = train + val), so the baseline cannot be
+  validated with them (isolated: 1 error in 33,175 validation characters,
+  `results/phase2_baseline_val_released.json`); the synthetic test set is clean. Cut from
+  the words, the same characters give CER 13.6%, and 4.2% with perfect zones and the
+  language model (ꯁ read as ꯨ, ꯤ taking in its letter). Fix: the baseline is validated
+  with the first paper's development networks (the first project's
+  `runs/<network>/dev/final.pt`, trained without the validation part; the owner's Drive:
+  `MyDrive/tummhcd98/runs`), assembled by `scripts/dev_ensemble.py`; the test uses the
+  released networks with the weights chosen that way.
+- **Clean baseline on validation (development networks, `results/phase2_baseline_val.json`):**
+  isolated they miss 0.97% of the characters (so they had not seen them). Characters cut
+  from the words, perfect zones and the language model: CER 4.0%, WER 20.2% (recogniser
+  0.27%, 1.8%). Each character's original TUMMHCD image with perfect zones and the language
+  model (not attainable by any segmenter): CER 0.17%, WER 1.1%.
+- **ꯘ diagnosed (26 September 2026):** of the five validation words with ꯘ, two are misread
+  every time by all three runs (ꯇꯃꯟꯘꯁꯦꯠ as ꯇꯃꯟꯗꯁꯦꯠ, ꯃꯘ꯭ꯔꯦꯕꯤ as ꯃꯗ꯭ꯔꯦꯕꯤ) and three
+  never; the development networks read all 64 ꯘ images right. The recogniser has learned
+  from its training words a context prior (ꯟꯗ, ꯗ꯭ꯔ are common) that overrides the image.
+  Without those two words: CER 0.17-0.18%, WER 1.1-1.2% with the language model, the level
+  of the isolated-image baseline. Proposed remedy (owner to decide; needs retraining):
+  training words with letters replaced by random letters of the same kind.
 
 - **Model:** the word image contrast-normalised (paper = its 90th percentile, ink = its 1st),
   64 px high, proportions kept (at most 1,024 px wide); ConvNeXt-T stem and stages 1-3, the
@@ -308,8 +371,42 @@ Package `mayek_htr`, notebook `notebooks/phase2_recogniser.ipynb`. **Code ready 
   same language model. The CRNN from scratch is the segmentation-free baseline.
 - **Protocol:** choices on the synthetic validation set; the synthetic test set once (the
   notebook's `RUN_TEST`); two or more seeds for final numbers; the Phase 3 real set is the
-  main evaluation. Suggested to the owner: a small real development set in their own hand,
-  apart from the Phase 3 test set.
+  main evaluation (no real development set: owner, 26 September 2026).
+
+## Phase 3: the real word set (details in `docs/phase3_real_words.md`)
+
+Module `mayek_htr/pages.py`, scripts `make_writing_pages.py` and `cut_writing_pages.py`.
+**Status (27 September 2026): tools ready and tested on simulated pages; a trial page is with
+the owner; the test pages wait for `WORK/lexicon/test.tsv` and the owner's confirmation of
+the proposals below.**
+
+- **Owner's decision (26 September 2026):** "I dont have any people to write actual words for
+  me. I want to do it myself. I can write on my ipad many words in one page for many pages and
+  you can crop them into the required real word test dataset." One writer (the owner, a
+  native writer), Apple Pencil on an iPad. The set stays text-disjoint (test-split words) and
+  its writer is not one of TUMMHCD's, but one writer cannot show the spread across writers,
+  and digital ink is a second change of domain (even strokes on white, no paper). Contribution
+  (3) of the novelty statement no longer holds as written.
+- **Pages:** A4 at 200 dpi; each word printed (shaped, Noto Sans Meetei Mayek) above an empty
+  box 2.2 cm high and as wide as the word needs; about 18 words a page; four corner squares;
+  the layout embedded in the PDF (`manifest.json`).
+- **Words:** distinct test-split words (hash, so never training words), 2-14 characters,
+  count >= 2, drawn by count ** 0.5 without replacement; every letter and sign 8 times where
+  the test words allow; 5% numbers, 2% full stops; random order. Only counts are committed.
+- **Cutting:** corner squares -> projective alignment (photos too, paper flattened); page
+  identified by its printed ink; handwriting = darker than the printed page nearby, any pen
+  colour; each piece of ink to its box (`outside`, `shared` flags; words over a box line kept
+  whole); word cut from its own ink with margin 0.15 x height; empty boxes skipped. Output in
+  the fixed-set form (`images/`, `labels.tsv`) with `manifest.json` (kinds, flags), and a
+  contact sheet per page. On simulated pages every page found, foreign pages refused, words
+  keep 1.00-1.01 of their ink on exported pages (0.89-1.04 on a phone photo).
+- **Proposed, to confirm:** (1) 500 items, about 28 pages; (2) the trial page first (17
+  validation words, to check the iPad export and the cutting; never scored); (3) contribution
+  (3) reworded: "a real handwritten word set, about 500 words written by a native writer on a
+  tablet, text-disjoint from training, with a fixed protocol (CER, WER, the confusable
+  pairs), released with the tools to add writers"; (4) evaluation: all seven Phase 2 runs,
+  greedy and with the language model at the alpha and beta chosen on synthetic validation,
+  the set used once (the oracle baseline cannot run on real words: it needs character boxes).
 
 ## Working rules
 

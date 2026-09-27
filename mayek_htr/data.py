@@ -12,7 +12,9 @@ fails the same way, so it would otherwise stop every resumed run at the same pla
 ``scripts/render_words.py --out-dir`` (images/NNNNNN.png and labels.tsv, file<TAB>text),
 such as the synthetic validation and test sets, or later the real set in the same form.
 A synthetic set also holds config.json (how it was rendered); ``kinds`` tells from it which
-words are lexicon words, words composed of syllables, or numbers.
+words are lexicon words, words composed of syllables, or numbers. A real set (written by
+hand, cut by ``scripts/cut_writing_pages.py``) holds manifest.json instead, with each
+word's kind.
 
 A batch is a dict: x uint8 (B, 1, H, W) ink high, widths (B,), targets (all label ids
 concatenated), target_lengths (B,), texts, and index (the items' positions).
@@ -87,28 +89,45 @@ def _read_set(path):
     return [r[0] for r in rows], [r[1] for r in rows], grays
 
 
-def set_info(path):
-    """The config.json of a set written by scripts/render_words.py, or None (a real set)."""
+def _read_json(path, name):
+    """A JSON file of a set (folder or .tar), or None if it has none."""
     path = Path(path)
     if path.is_dir():
-        f = path / "config.json"
+        f = path / name
         return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
     with tarfile.open(path) as tar:
         for m in tar.getmembers():
-            if m.isfile() and m.name.lstrip("./") == "config.json":
+            if m.isfile() and m.name.lstrip("./") == name:
                 return json.loads(tar.extractfile(m).read().decode("utf-8"))
     return None
 
 
+def set_info(path):
+    """The config.json of a set written by scripts/render_words.py, or None (a real set)."""
+    return _read_json(path, "config.json")
+
+
+def real_kinds(path, names):
+    """The kind of each word of a real set ('lexicon', 'number'), from its manifest.json,
+    or None if the set has no manifest."""
+    manifest = _read_json(path, "manifest.json")
+    if manifest is None:
+        return None
+    kind = {it["file"]: it["kind"] for it in manifest["items"] if it.get("file")}
+    return [kind[name] for name in names]
+
+
 def kinds(info, names):
     """The kind of each word of a synthetic set as ``mayek_words.synth.Words.text`` drew it:
-    'number', 'syllables' (composed of real syllables) or 'lexicon'. Item i is the file
-    images/{i:06d}.png; its first random number decides."""
-    out = []
+    'number', 'syllables' (composed of real syllables), 'scrambled' (random letters in a
+    word's shape) or 'lexicon'. Item i is the file images/{i:06d}.png; its first random
+    number decides."""
+    out, scrambled = [], info.get("scrambled", 0.0)
     for name in names:
         r = np.random.default_rng([info["seed"], int(Path(name).stem)]).random()
         out.append("number" if r < info["numbers"] else
-                   "syllables" if r < info["numbers"] + info["built"] else "lexicon")
+                   "syllables" if r < info["numbers"] + info["built"] else
+                   "scrambled" if r < info["numbers"] + info["built"] + scrambled else "lexicon")
     return out
 
 
@@ -122,7 +141,7 @@ class FixedSet:
         self.grays = grays
         self.images = [images.normalise(g, height, max_width) for g in grays]
         self.info = set_info(path)
-        self.kinds = kinds(self.info, names) if self.info else None
+        self.kinds = kinds(self.info, names) if self.info else real_kinds(path, names)
 
     def __len__(self):
         return len(self.texts)

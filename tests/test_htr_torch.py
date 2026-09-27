@@ -127,6 +127,16 @@ def test_fixed_set_folder_tar_and_kinds(words, tmp_path):
             assert all(0xABF0 <= ord(c) <= 0xABF9 for c in text)
         elif kind == "lexicon":
             assert text in WORDS
+    w = Words(words.synth, words.lexicon, seed=5, numbers=0.1, stop=0.0, built=0.1, scrambled=0.5)
+    got = data.kinds({"seed": 5, "numbers": 0.1, "built": 0.1, "scrambled": 0.5},
+                     [f"images/{i:06d}.png" for i in range(60)])
+    assert "scrambled" in got
+    for i, kind in enumerate(got):
+        text = w.text(np.random.default_rng([5, i]))
+        if kind == "lexicon":
+            assert text in WORDS
+        elif kind == "scrambled":
+            assert len(text) in {len(x) for x in WORDS}
 
 
 def test_augment_shapes_and_range():
@@ -167,6 +177,9 @@ def test_train_writes_and_resumes(words, tmp_path):
     val = data.FixedSet(write_set(words, tmp_path / "val", n=4))
     cfg = TrainConfig(encoder="small_cnn", init="none", steps=4, batch=4, pool=1, workers=0, warmup=2,
                       eval_every=2, save_every=2, log_every=2, hidden=32, layers=1)
+    with pytest.raises(ValueError):                                     # words not drawn as the settings say
+        train(cfg, words, val, tmp_path / "wrong", device="cpu", log=lambda m: None)
+    cfg.data_seed, cfg.scrambled = words.seed, words.scrambled
     run = tmp_path / "run"
     history = train(cfg, words, val, run, device="cpu", log=lambda m: None)
     assert [h["step"] for h in history] == [2, 4]
@@ -180,3 +193,44 @@ def test_train_writes_and_resumes(words, tmp_path):
         f.unlink()                                            # not the local copy of the old one
     history = train(cfg, words, val, run, device="cpu", log=lambda m: None)
     assert [h["step"] for h in history] == [2, 4, 6] and (run / "best.pt").exists()
+
+
+def test_dev_ensemble(tmp_path):
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "dev_ensemble.py"
+    release = tmp_path / "release" / "model"
+    release.mkdir(parents=True)
+    members = [{"name": "net_a", "file": "net_a.pt", "cfg": {"arch": "convnext_tiny.fb_in22k_ft_in1k",
+                                                              "channels": "gray"}, "views": ["id"], "weight": 0.5},
+               {"name": "net_a_meta", "file": "net_a_meta.pt", "cfg": {"arch": "convnext_tiny", "channels": "gray",
+                                                                       "meta": True}, "views": ["id"], "weight": 0.5}]
+    (release / "config.json").write_text(json.dumps({"img": 128, "stats": {}, "members": members}))
+    runs = tmp_path / "runs"
+    for m in members:
+        weights = {"w": torch.randn(3, 2), "steps": torch.tensor(5)}
+        torch.save(weights, release / m["file"])
+        (runs / m["name"] / "dev").mkdir(parents=True)
+        dev = {"w": weights["w"] + 1.0, "steps": torch.tensor(5)}
+        torch.save({"model": dev, "cfg": m["cfg"], "history": [{"epoch": 1, "val_acc": 0.98}]},
+                   runs / m["name"] / "dev" / "final.pt")
+
+    def make(out):
+        return subprocess.run([sys.executable, str(script), "--release", str(tmp_path / "release"),
+                               "--runs", str(runs), "--out", str(out)], capture_output=True, text=True)
+
+    r = make(tmp_path / "dev")
+    assert r.returncode == 0, r.stderr
+    config = json.loads((tmp_path / "dev" / "config.json").read_text())
+    assert [m["name"] for m in config["members"]] == ["net_a", "net_a_meta"] and "validation" in config["trained_on"]
+    assert torch.equal(torch.load(tmp_path / "dev" / "net_a.pt")["w"], torch.load(release / "net_a.pt")["w"] + 1.0)
+
+    torch.save({"model": torch.load(release / "net_a.pt"), "cfg": members[0]["cfg"]},
+               runs / "net_a" / "dev" / "final.pt")                      # the released weights: refused
+    r = make(tmp_path / "bad")
+    assert r.returncode != 0 and "released weights themselves" in r.stderr
+    (runs / "net_a" / "dev" / "final.pt").unlink()                         # a member missing: refused
+    r = make(tmp_path / "bad")
+    assert r.returncode != 0 and "missing" in r.stderr

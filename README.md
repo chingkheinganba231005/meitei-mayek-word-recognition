@@ -15,8 +15,13 @@ This follows the character-level work in
 - Phase 0, the literature and data audit: done, [`docs/phase0_audit.md`](docs/phase0_audit.md).
 - Phase 1, synthetic words from TUMMHCD characters: done,
   [`docs/phase1_synthetic_words.md`](docs/phase1_synthetic_words.md).
-- Phase 2, the word recogniser: code ready, first run on Colab pending,
+- Phase 2, the word recogniser: done on synthetic data (synthetic test set: CER 0.24%, WER
+  1.57% with the language model, against 4.3% and 21% for the first paper's ensemble on the
+  same characters cut from the words); the real-handwriting evaluation waits for Phase 3,
   [`docs/phase2_recogniser.md`](docs/phase2_recogniser.md).
+- Phase 3, the real word set (words written by hand on printed pages, cut out
+  automatically): tools ready, pages being written,
+  [`docs/phase3_real_words.md`](docs/phase3_real_words.md).
 
 ## Layout
 
@@ -38,6 +43,7 @@ mayek_htr/           the word recogniser (Phase 2)
   lm.py              character n-gram language model
   decode.py          greedy and beam search decoding
   metrics.py         CER, WER, confusable pairs
+  pages.py           pages for writing words by hand, and cutting the written words out (Phase 3)
 scripts/
   audit_tummhcd.py   writer information in TUMMHCD: folders, file names, side files, hidden grouping
   corpus_stats.py    size of Meitei Mayek text corpora and how often the ꯢ / ꯏ rule holds
@@ -54,10 +60,13 @@ scripts/
   train_recogniser.py  a training run of the recogniser
   eval_recogniser.py   scores, with and without the language model
   oracle_baseline.py   the baseline: perfect segmentation and the first paper's ensemble
+  make_writing_pages.py  the pages the real words are written on (a PDF)
+  cut_writing_pages.py   the written words cut out of the pages, as a word set
 notebooks/
   phase0_data_audit.ipynb       Phase 0 on Colab (TUMMHCD from Google Drive, corpora downloaded)
   phase1_synthetic_words.ipynb  Phase 1 on Colab
   phase2_recogniser.ipynb       Phase 2 on Colab (A100)
+  collect_results.ipynb         the small result files from Drive in one zip, to send (CPU runtime)
 results/             JSON files written by the code; every reported number comes from here
 docs/                Phase 0 report, Phase 1 and Phase 2 design, AI use log
 tests/               pytest

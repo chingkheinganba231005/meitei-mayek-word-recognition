@@ -90,7 +90,7 @@ def rerender(info, glyphs, lexicon, sizes):
     store = GlyphStore.load(glyphs)
     synth = WordSynth(store, load_priors(sizes=sizes), cfg)
     words = Words(synth, Lexicon.load(lexicon, info["alpha"], info["rare_share"]), info["seed"],
-                  info["numbers"], info["stop"], info["built"])
+                  info["numbers"], info["stop"], info["built"], info.get("scrambled", 0.0))
     return words, store, synth.prior
 
 
@@ -205,7 +205,7 @@ def main():
     n_chars = len(iso)
     out = {"set": Path(args.set).name, "words": len(refs), "characters": n_chars,
            "model": {"folder": folder.name, "members": [m["name"] for m in rec.config["members"]],
-                     "tta": not args.no_tta},
+                     "trained_on": rec.config.get("trained_on"), "tta": not args.no_tta},
            "reproduced": {"identical_images": int(same), "of": len(refs),
                           "largest_mean_difference_grey_levels": round(max(diffs), 3) if diffs else None},
            "zones": {"from": "each character's own zone (perfect zones)",
