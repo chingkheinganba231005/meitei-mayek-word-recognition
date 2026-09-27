@@ -503,15 +503,18 @@ here; the owner trains next.**
   45, read as ꯣ 30 or ꯦ 6; ꯩ as ꯧ 28; ꯪ as ꯦ or ꯣ 9. The other 8: item 35's full stop 7 (every
   run; the writer left it out: proposed to correct the label, owner to decide) and ꯨ 1.
 - **Measured (`results/round3_sign_geometry_real.json`, `scripts/measure_sign_geometry.py`):**
-  the writer's ꯥ is a straight stroke falling to the right (52°, as print's 46°) but after the
-  letter at the top: centred 0.18 L past its letter's right edge, top 0.18 L above the letter's
-  top, bottom 0.19 L below it, where ꯣ (0.28 L past) and ꯦ (0.36) stand; ꯩ and ꯪ likewise.
-  Print and every synthetic word so far put it over the letter (font characters: centre 0.34 L
-  before the edge, wholly above the top line; `results/round3_sign_geometry_font.json`).
+  the writer's ꯥ is a straight stroke falling to the right (52°; TUMMHCD's ꯥ images too: 97%
+  fall to the right, median 51°) but after the letter at the top: centred 0.18 L past its
+  letter's right edge, top 0.18 L above the letter's top, bottom 0.19 L below it, where ꯣ (0.28 L
+  past) and ꯦ (0.36) stand; ꯩ and ꯪ likewise. Print and every synthetic word so far put it over
+  the letter (TUMMHCD characters: centre 0.29 L before the edge, bottom 0.07 L above the top
+  line; with the new placement 0.20 L past, bottom 0.27 L below, 52°:
+  `results/round3_sign_geometry_tummhcd.json`, 1,000 validation words each way).
 - **Change:** `synth.Config.p_marks_beside` (per word, every ꯥ ꯩ ꯪ on the line after its
   letter at the top: left end -0.1 to 0.1 L from its right edge, top 0.06-0.30 L above, at most
   0.5 L deep; then placed like ꯣ). Default 0: every word renders as before (byte for byte), so
-  the fixed sets and earlier runs stay valid. Rules hold (`results/sign_placement_beside_font.json`).
+  the fixed sets and earlier runs stay valid. Rules hold (`results/sign_placement_beside_tummhcd.json`:
+  a sign above nearer the next letter than its own in 1 of 839 words, never touched by it).
   **Round 3** = round 2's final recipe + `marks_beside 0.5` (runs `round3_convnext_tummhcd` and
   `round3_convnext_tummhcd_seed1`), nothing else changed.
 - **Protocol (proposed, to confirm):** the first 100 real words stay round 2's test (used

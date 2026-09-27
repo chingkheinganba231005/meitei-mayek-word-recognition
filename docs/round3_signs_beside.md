@@ -42,15 +42,17 @@ letters' band; 10th, 50th and 90th percentiles:
 | ꯩ | 3 | 0.26 (median) | 0.32 | -0.27 | 96° | 1.5 |
 | ꯪ | 2 | 0.29 (median) | 0.18 | -0.46 | 97° | 1.9 |
 
-The writer draws ꯥ as print does, a straight stroke falling to the right (the font's ꯥ: 46°,
-elongation 3.4), but puts it after the letter at the top, where ꯣ and ꯦ stand, reaching down
-beside the letter. ꯩ and ꯪ go there too. Print, and every synthetic word so far, put ꯥ over
-the right half of the letter and wholly above its top line: on words drawn with the font's
-characters, centred 0.34 L before the letter's right edge, its bottom 0.08 L above the top
-line (`results/round3_sign_geometry_font.json`, 600 validation words each way; the synthetic
-sets of TUMMHCD characters are measured by the notebook, section 2). A
-recogniser that has only seen ꯥ over the letter meets a stroke in ꯣ's and ꯦ's place and
-reads ꯣ or ꯦ, or nothing.
+The writer draws ꯥ as TUMMHCD's writers do, a straight stroke falling to the right (TUMMHCD's
+191 validation images of ꯥ, drawn at the size the synthesiser gives them: 97% fall to the
+right, median 51°, elongation 6.4; the font's ꯥ: 46°, 3.4), but puts it after the letter at
+the top, where ꯣ and ꯦ stand, reaching down beside the letter. ꯩ and ꯪ go there too. Print,
+and every synthetic word so far, put ꯥ over the right half of the letter and wholly above its
+top line: on 1,000 validation words drawn with TUMMHCD's validation characters, ꯥ is centred
+0.29 L before the letter's right edge (10th to 90th percentile -0.47 to 0.65; the upper tail is
+signs over a narrow letter), its bottom 0.07 L above the top line
+(`results/round3_sign_geometry_tummhcd.json`; with the font's characters -0.34 and 0.08 L,
+`results/round3_sign_geometry_font.json`). A recogniser that has only seen ꯥ over the letter
+meets a stroke in ꯣ's and ꯦ's place and reads ꯣ or ꯦ, or nothing.
 
 ## 3. The change (`mayek_words/synth.py`, `Config.p_marks_beside`)
 
@@ -65,12 +67,15 @@ letter than its own, never touched by it, never into its letter. The shapes stay
   renders as before (30 renders compared byte for byte before and after the change;
   `tests/test_synth.py` checks that nothing is drawn for it): the fixed sets and the earlier
   runs stay valid.
-- On words drawn with the font's characters, ꯥ is now centred 0.24 L after its letter, its
-  bottom 0.22 L below the top line, at 46° (writer 0.18, -0.19, 52°).
+- The same 1,000 words with every sign above beside (TUMMHCD's validation characters): ꯥ is
+  centred 0.20 L after its letter, its top 0.15 L above the letter's top and its bottom 0.27 L
+  below it, at 52° (writer 0.18, 0.18, -0.19, 52°; `results/round3_sign_geometry_tummhcd.json`;
+  font characters 0.24 L, `results/round3_sign_geometry_font.json`).
 - The placement rules hold for the new placement (`scripts/check_signs.py --marks-beside`,
-  150 words a sign, font characters, `results/sign_placement_beside_font.json`): body never
-  nearer the next letter, never touching its letter, never crossing into it, the next letter
-  never touching it.
+  TUMMHCD's validation characters, `results/sign_placement_beside_tummhcd.json`): the body of
+  ꯥ nearer the next letter than its own in 0 of 316 words, of ꯩ in 1 of 303, of ꯪ in 0 of 220;
+  never touching its letter or crossing into it; the next letter never touching it (with the
+  font's characters, 150 words a sign, none: `results/sign_placement_beside_font.json`).
 - Training: `TrainConfig.marks_beside`, `scripts/train_recogniser.py --marks-beside`;
   `scripts/render_words.py --marks-beside` for fixed sets. A run refuses training words
   drawn with another setting.
