@@ -18,7 +18,7 @@ Write a whole Meitei Mayek word, or upload a photo of one, and see what the firs
 segmentation-free recogniser of handwritten Meitei Mayek words reads. It reads the word
 without cutting it into characters (a convolutional encoder, a
 bidirectional LSTM and CTC over 54 characters), and a character language model helps it
-choose between look-alikes such as ꯦ and ꯰, or ꯨ and ꯁ. Words are read in everyday
+choose between look-alikes such as ꯦ and ꯰, or ꯨ and ꯁ.{training} Words are read in everyday
 spelling (ꯏ for every i); the standard spelling (ꯢ after ꯥ, ꯣ, ꯨ) is one tick away.
 
 Everything runs in your browser with ONNX Runtime Web: nothing you write or upload is sent

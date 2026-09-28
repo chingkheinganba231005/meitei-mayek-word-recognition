@@ -19,19 +19,21 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from mayek_htr.cards import HF_ID, about_text, cards, load_results, results_json, results_text  # noqa: E402
+from mayek_htr.cards import (HF_ID, about_text, cards, load_extras, load_results, results_json,  # noqa: E402
+                             results_text, training_text)
 
 
 def write(results, out, hf_id=HF_ID, run=None):
     """The cards and results.json from the results files -> {name: path}."""
     run, val, test, real = load_results(results, run=run)
-    text = results_text(test, real)
-    model_card, space_card = cards(text, run, val.get("step") if val else None, hf_id)
+    beside, marks_beside = load_extras(results, run)
+    text, training = results_text(test, real, beside), training_text(marks_beside)
+    model_card, space_card = cards(text, run, val.get("step") if val else None, hf_id, training)
     out = Path(out)
     (out / "model").mkdir(parents=True, exist_ok=True)
     (out / "space").mkdir(parents=True, exist_ok=True)
-    files = {"model/README.md": model_card, "space/README.md": space_card, "space/about.txt": about_text(text),
-             "model/results.json": json.dumps(results_json(run, val, test, real), indent=1, ensure_ascii=False)}
+    files = {"model/README.md": model_card, "space/README.md": space_card, "space/about.txt": about_text(text, training),
+             "model/results.json": json.dumps(results_json(run, val, test, real, beside), indent=1, ensure_ascii=False)}
     for name, content in files.items():
         (out / name).write_text(content, encoding="utf-8")
     return {name: out / name for name in files}

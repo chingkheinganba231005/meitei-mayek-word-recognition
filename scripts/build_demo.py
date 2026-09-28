@@ -10,7 +10,9 @@ with the language model on the synthetic validation set (phase2_val_<run>.json);
 decoding weights come from the same file. The ONNX export is checked against PyTorch on
 --check-n words of the synthetic validation set; if float16 weights change more than 1%
 of the greedy readings, the weights are kept in float32. The cards quote the synthetic test
-(phase2_test_<run>.json) and, if present, the real words (phase3_real_<run>.json).
+(phase2_test_<run>.json) and, if present, the same test with every sign above written
+beside its letter (round3_test_beside_<run>.json) and the real words (phase3_real_<run>.json);
+they say where the run's training words put the signs above (its marks_beside setting).
 """
 
 import argparse
@@ -22,7 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import torch  # noqa: E402
 
-from mayek_htr.cards import REPO_URL, about_text, cards, results_json, results_text  # noqa: E402
+from mayek_htr.cards import REPO_URL, about_text, cards, load_extras, results_json, results_text, training_text  # noqa: E402
 from mayek_htr.data import FixedSet  # noqa: E402
 from mayek_htr.lm import CharLM  # noqa: E402
 from mayek_htr.train import load_checkpoint  # noqa: E402
@@ -49,6 +51,7 @@ def main():
     test_f, real_f = res / f"phase2_test_{run}.json", res / f"phase3_real_{run}.json"
     test = json.loads(test_f.read_text(encoding="utf-8")) if test_f.exists() else None
     real = json.loads(real_f.read_text(encoding="utf-8")) if real_f.exists() else None
+    beside, _ = load_extras(res, run)
     chosen = val[run]["lm"]
     decoding = {"alpha": chosen["alpha"], "beta": chosen["beta"], "beam": chosen["beam"],
                 "chosen_on": f"phase2_val_{run}.json (synthetic validation, {val[run]['words']} words)"}
@@ -64,8 +67,8 @@ def main():
     torch.save({"model": model.state_dict(), "cfg": ck["cfg"], "step": ck.get("step")}, out / "recogniser.pt")
     shutil.copy(args.lm, out / "char_lm.pkl")
     (out / "decoding.json").write_text(json.dumps(decoding, indent=1), encoding="utf-8")
-    (out / "results.json").write_text(json.dumps(results_json(run, val[run], test, real), indent=1, ensure_ascii=False),
-                                      encoding="utf-8")
+    (out / "results.json").write_text(json.dumps(results_json(run, val[run], test, real, beside), indent=1,
+                                                 ensure_ascii=False), encoding="utf-8")
 
     check = FixedSet(args.check_set, limit=args.check_n)
     onnx_path = export_onnx(model, out / "web" / "model.onnx")
@@ -81,13 +84,14 @@ def main():
         lm_info = export_lm(CharLM.load(args.lm), out / "web" / "lm.bin.gz")
         print(f"language model for the browser: {lm_info['entries']:,} entries, {lm_info['file_mb']} MB")
 
-    text = results_text(test, real)
-    model_card, space_card = cards(text, run, ck.get("step"), args.hf_id)
+    text = results_text(test, real, beside)
+    training = training_text(ck["cfg"].get("marks_beside", 0.0))
+    model_card, space_card = cards(text, run, ck.get("step"), args.hf_id, training)
     (out / "README.md").write_text(model_card, encoding="utf-8")
 
     base = f"https://huggingface.co/{args.hf_id}/resolve/main/web/"
     model_mb = round(onnx_path.stat().st_size / 1e6, 1)
-    site = build_site(args.space_dir, decoding, {"about": about_text(text), "repo_url": REPO_URL, "run": run},
+    site = build_site(args.space_dir, decoding, {"about": about_text(text, training), "repo_url": REPO_URL, "run": run},
                       model_url=base + "model.onnx", lm_url=None if lm_info is None else base + "lm.bin.gz",
                       model_mb=model_mb, lm_mb=lm_info and lm_info["file_mb"])
     (site / "README.md").write_text(space_card, encoding="utf-8")
