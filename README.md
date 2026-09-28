@@ -75,6 +75,7 @@ A100 GPU (about 2.5 hours per run).
 | `notebooks/3_recogniser.ipynb` | language model, training, validation, baseline, synthetic test |
 | `notebooks/4_real_words_and_demo.ipynb` | the real test, and the Hugging Face model and demo |
 | `notebooks/5_signs_beside.ipynb` | training with the signs above placed as the real writer places them |
+| `notebooks/6_signs_beside_demo.ipynb` | retrains the demo's model with ꯥ, ꯩ and ꯪ also written beside their letter at the top, checks it on synthetic words and updates the Hugging Face demo (the earlier version kept at tag `paper-v1`) |
 | `notebooks/collect_results.ipynb` | gathers the small result files from Drive in one zip |
 | `notebooks/update_hf_cards.ipynb` | rewrites the Hugging Face model card, Space card and demo text from `results/` and uploads them (no GPU, no Drive) |
 

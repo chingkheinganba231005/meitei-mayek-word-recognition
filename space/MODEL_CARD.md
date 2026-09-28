@@ -14,9 +14,9 @@ tags:
 The first segmentation-free recogniser of handwritten Meitei Mayek words: the stem and first
 three stages of ConvNeXt-T (started from a network trained on the TUMMHCD characters), a two-layer bidirectional LSTM and CTC over the 54 characters of everyday
 spelling, decoded by beam search with a character 6-gram language model (interpolated
-Kneser-Ney). Trained only on synthetic words composed from TUMMHCD training characters.
+Kneser-Ney). Trained only on synthetic words composed from TUMMHCD training characters.{training}
 
-{results}
+{results}{versions}
 
 | File | What |
 |---|---|
@@ -50,7 +50,7 @@ renders the standard spelling (ꯢ after ꯥ, ꯣ, ꯨ).
 
 ## Limitations
 
-The real-handwriting figures come from one writer on a tablet; other hands, pens and
+Real handwriting has been measured on one writer on a tablet only; other hands, pens and
 photographs will be read less reliably. Characters outside TUMMHCD (lum iyek ꯬, the
 Extensions) cannot be read.
 
